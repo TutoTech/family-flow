@@ -5,6 +5,7 @@ import ParentTaskList from "./ParentTaskList";
 import ParentRewardList from "./ParentRewardList";
 import ParentPenaltyList from "./ParentPenaltyList";
 import ActivityHistory from "./ActivityHistory";
+import StatsCharts from "./StatsCharts";
 
 interface Props {
   name: string;
@@ -31,6 +32,7 @@ export default function ParentDashboard({ name }: Props) {
 
         {profile?.family_id && (
           <>
+            <StatsCharts />
             <ParentTaskList />
             <ParentRewardList />
             <ParentPenaltyList />
