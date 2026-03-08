@@ -573,7 +573,8 @@
     "activationCodeNotFound": "Code d'activation introuvable.",
     "activationCodeUsed": "Ce code a déjà été utilisé.",
     "activationNoFamily": "Vous devez d'abord créer ou rejoindre une famille.",
-    "orActivationCode": "ou utiliser un code d'activation"
+    "orActivationCode": "ou utiliser un code d'activation",
+    "featureRequiresPremium": "Cette fonctionnalité est réservée au Plan Famille."
   },
   "avatar": {
     "title": "Modifier l'avatar",

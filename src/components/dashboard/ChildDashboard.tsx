@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Star, Flame, CheckCircle2, Gift, AlertTriangle, Wallet } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
+import { useFamilyPlan } from "@/hooks/useFamilyPlan";
 import FamilyCard from "./FamilyCard";
 import ChildTaskList from "./ChildTaskList";
 import ChildRewardShop from "./ChildRewardShop";
@@ -24,6 +25,8 @@ export default function ChildDashboard({ name }: Props) {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { activeProfile, isImpersonating } = useProfileSwitch();
+  const { plan } = useFamilyPlan();
+  const isPaid = plan === "family";
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
   const { data: stats } = useChildStats(isImpersonating ? viewUserId : undefined);
   const { symbol: currencySymbol } = useCurrency();
@@ -95,7 +98,7 @@ export default function ChildDashboard({ name }: Props) {
               <BadgesDisplay />
             </div>
             <ChildTaskList />
-            <SavingsGoalCard />
+            {isPaid && <SavingsGoalCard />}
             <ChildRewardShop />
             <ChildPenaltyHistory />
             <ActivityHistory />
