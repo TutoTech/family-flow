@@ -541,6 +541,15 @@
     "familyPlan": "Family",
     "limitReached": "Limit reached",
     "limitReachedDesc": "Your free plan is limited to 1 parent and 1 child. Upgrade to the Family Plan to add more members.",
-    "upgradeNow": "Upgrade to Family Plan — €10"
+    "upgradeNow": "Upgrade to Family Plan — €10",
+    "activationCode": "Activation code",
+    "activationCodePlaceholder": "Enter your code",
+    "activateButton": "Activate",
+    "activating": "Activating…",
+    "activationSuccess": "Family Plan activated successfully!",
+    "activationCodeNotFound": "Activation code not found.",
+    "activationCodeUsed": "This code has already been used.",
+    "activationNoFamily": "You must first create or join a family.",
+    "orActivationCode": "or use an activation code"
   }
 }
