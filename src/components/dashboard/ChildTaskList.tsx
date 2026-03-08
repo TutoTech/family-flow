@@ -103,7 +103,7 @@ export default function ChildTaskList() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className={`font-medium text-sm ${isPending ? "text-foreground" : "text-muted-foreground"}`}>
+                    <span className={`font-medium text-sm ${canAct ? "text-foreground" : "text-muted-foreground"}`}>
                       {tmpl?.title}
                     </span>
                     {tmpl?.requires_photo && <Camera className="h-3 w-3 text-muted-foreground" />}
