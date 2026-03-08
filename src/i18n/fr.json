@@ -95,7 +95,8 @@
     "liability": "Responsabilité",
     "applicableLaw": "Droit applicable",
     "cguTitle": "Conditions Générales d'Utilisation",
-    "cgvTitle": "Conditions Générales de Vente"
+    "cgvTitle": "Conditions Générales de Vente",
+    "privacyTitle": "Politique de confidentialité"
   },
   "auth": {
     "loginTitle": "Connexion",
