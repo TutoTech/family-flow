@@ -401,6 +401,20 @@
       "Légende": "Légende"
     }
   },
+  "levels": {
+    "names": {
+      "1": "Débutant",
+      "2": "Apprenti",
+      "3": "Confirmé",
+      "4": "Expert",
+      "5": "Champion",
+      "6": "Légende"
+    },
+    "celebration": {
+      "levelUp": "🚀 Nouveau niveau !",
+      "reached": "Tu as atteint le niveau {{level}} !"
+    }
+  },
   "badges": {
     "title": "Mes badges",
     "earnedAgo": "Obtenu il y a {{time}}",
