@@ -14,6 +14,7 @@ import i18n from "@/i18n";
 
 export default function ParentPenaltyList() {
   const { t } = useTranslation();
+  const { isImpersonating } = useProfileSwitch();
   const { data: rules = [], isLoading } = useFamilyRules();
   const { data: penalties = [] } = useRecentPenalties();
   const { data: children = [] } = useFamilyChildren();
