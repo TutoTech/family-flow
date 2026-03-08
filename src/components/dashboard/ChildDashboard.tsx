@@ -98,7 +98,9 @@ export default function ChildDashboard({ name }: Props) {
               <BadgesDisplay />
             </div>
             <ChildTaskList />
-            {isPaid && <SavingsGoalCard />}
+            {isPaid ? <SavingsGoalCard /> : (
+              <PremiumGate featureLabel={t("savings.title")}><SavingsGoalCard /></PremiumGate>
+            )}
             <ChildRewardShop />
             <ChildPenaltyHistory />
             <ActivityHistory />
