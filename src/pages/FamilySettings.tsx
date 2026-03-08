@@ -42,7 +42,6 @@ export default function FamilySettingsPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
@@ -75,7 +74,7 @@ export default function FamilySettingsPage() {
           tts_delay_minutes: data.tts_delay_minutes,
           parent_alert_delay_minutes: data.parent_alert_delay_minutes,
           photo_retention_days: data.photo_retention_days,
-          currency: (data as any).currency ?? "EUR",
+          currency: data.currency ?? "EUR",
         });
       }
       if (error) toast.error(t("settings.loadError"));

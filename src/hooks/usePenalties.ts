@@ -34,14 +34,17 @@ export function useFamilyChildren() {
         .select("user_id, name, avatar_url")
         .eq("family_id", familyId!);
       if (pErr) throw pErr;
+      if (!profiles || profiles.length === 0) return [];
 
+      const memberIds = profiles.map((p) => p.user_id);
       const { data: roles, error: rErr } = await supabase
         .from("user_roles")
-        .select("user_id, role");
+        .select("user_id, role")
+        .in("user_id", memberIds);
       if (rErr) throw rErr;
 
       const childIds = new Set(roles?.filter((r) => r.role === "child").map((r) => r.user_id));
-      return profiles?.filter((p) => childIds.has(p.user_id)) ?? [];
+      return profiles.filter((p) => childIds.has(p.user_id));
     },
     enabled: !!familyId,
   });
