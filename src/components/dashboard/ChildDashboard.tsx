@@ -8,6 +8,8 @@ import ChildTaskList from "./ChildTaskList";
 import ChildRewardShop from "./ChildRewardShop";
 import ActivityHistory from "./ActivityHistory";
 import ChildPenaltyHistory from "./ChildPenaltyHistory";
+import LevelProgressCard from "./LevelProgressCard";
+import BadgesDisplay from "./BadgesDisplay";
 import { useChildStats } from "@/hooks/useRewards";
 import { useTodayTasks } from "@/hooks/useTasks";
 import { useCurrency } from "@/hooks/useCurrency";
