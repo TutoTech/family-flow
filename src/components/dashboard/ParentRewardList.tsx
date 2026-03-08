@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +15,7 @@ import CreateRewardDialog from "./CreateRewardDialog";
 export default function ParentRewardList() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { isImpersonating } = useProfileSwitch();
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: pendingRedemptions = [] } = usePendingRedemptions();
   const { toast } = useToast();
@@ -48,7 +50,7 @@ export default function ParentRewardList() {
             <Gift className="h-5 w-5 text-primary" />
             {t("rewards.title")}
           </CardTitle>
-          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1">
+          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isImpersonating}>
             <Plus className="h-4 w-4" />
             {t("common.add")}
           </Button>
@@ -67,10 +69,10 @@ export default function ParentRewardList() {
                       {r.reward?.cost_points} {t("common.pts")}
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={() => handleRedemption(r.id, true)}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={() => handleRedemption(r.id, true)} disabled={isImpersonating}>
                     <CheckCircle2 className="h-5 w-5" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleRedemption(r.id, false)}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleRedemption(r.id, false)} disabled={isImpersonating}>
                     <XCircle className="h-5 w-5" />
                   </Button>
                 </div>

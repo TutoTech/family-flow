@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ import i18n from "@/i18n";
 
 export default function ParentPenaltyList() {
   const { t } = useTranslation();
+  const { isImpersonating } = useProfileSwitch();
   const { data: rules = [], isLoading } = useFamilyRules();
   const { data: penalties = [] } = useRecentPenalties();
   const { data: children = [] } = useFamilyChildren();
@@ -31,11 +33,11 @@ export default function ParentPenaltyList() {
             {t("penalties.rulesAndPenalties")}
           </CardTitle>
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1">
+            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isImpersonating}>
               <Plus className="h-4 w-4" />
               {t("penalties.rule")}
             </Button>
-            <Button size="sm" variant="destructive" onClick={() => setApplyOpen(true)} className="gap-1" disabled={rules.length === 0}>
+            <Button size="sm" variant="destructive" onClick={() => setApplyOpen(true)} className="gap-1" disabled={rules.length === 0 || isImpersonating}>
               <AlertTriangle className="h-4 w-4" />
               {t("penalties.penalty")}
             </Button>
