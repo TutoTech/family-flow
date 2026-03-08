@@ -76,6 +76,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
         points_reward: parseInt(points) || 1,
         due_time: dueTime,
         recurrence_type: recurrence as any,
+        recurrence_config: recurrence === "weekly" ? { day_of_week: parseInt(weeklyDay) } : {},
         assigned_to_user_id: childId,
         family_id: profile.family_id,
         created_by_user_id: user.id,
