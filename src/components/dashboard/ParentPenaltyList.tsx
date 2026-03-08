@@ -33,11 +33,11 @@ export default function ParentPenaltyList() {
             {t("penalties.rulesAndPenalties")}
           </CardTitle>
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1">
+            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isImpersonating}>
               <Plus className="h-4 w-4" />
               {t("penalties.rule")}
             </Button>
-            <Button size="sm" variant="destructive" onClick={() => setApplyOpen(true)} className="gap-1" disabled={rules.length === 0}>
+            <Button size="sm" variant="destructive" onClick={() => setApplyOpen(true)} className="gap-1" disabled={rules.length === 0 || isImpersonating}>
               <AlertTriangle className="h-4 w-4" />
               {t("penalties.penalty")}
             </Button>

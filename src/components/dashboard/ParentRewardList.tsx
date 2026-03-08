@@ -69,10 +69,10 @@ export default function ParentRewardList() {
                       {r.reward?.cost_points} {t("common.pts")}
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={() => handleRedemption(r.id, true)}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={() => handleRedemption(r.id, true)} disabled={isImpersonating}>
                     <CheckCircle2 className="h-5 w-5" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleRedemption(r.id, false)}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleRedemption(r.id, false)} disabled={isImpersonating}>
                     <XCircle className="h-5 w-5" />
                   </Button>
                 </div>
