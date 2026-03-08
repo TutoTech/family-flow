@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTodayTasks } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw } from "lucide-react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,9 +17,14 @@ export default function ParentTaskList() {
   const { t } = useTranslation();
   const { tasks, isLoading, validateTask, resetTask } = useTodayTasks();
   const { toast } = useToast();
+  const { role: realRole } = useAuth();
+  const { isImpersonating } = useProfileSwitch();
   const navigate = useNavigate();
   const [createOpen, setCreateOpen] = useState(false);
   const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
+
+  // A child impersonating a parent cannot perform write operations
+  const isReadOnly = isImpersonating && realRole === "child";
 
   const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
     pending: { label: t("taskList.pending"), variant: "outline" },
