@@ -32,6 +32,7 @@ export default function ParentDashboard({ name }: Props) {
           <>
             <ParentTaskList />
             <ParentRewardList />
+            <ParentPenaltyList />
           </>
         )}
       </div>

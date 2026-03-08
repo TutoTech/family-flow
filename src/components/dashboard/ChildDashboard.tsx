@@ -6,6 +6,7 @@ import FamilyCard from "./FamilyCard";
 import ChildTaskList from "./ChildTaskList";
 import ChildRewardShop from "./ChildRewardShop";
 import { useChildStats } from "@/hooks/useRewards";
+import { useChildPenalties } from "@/hooks/usePenalties";
 import { useTodayTasks } from "@/hooks/useTasks";
 
 interface Props {
