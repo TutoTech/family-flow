@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 interface ActiveProfile {
@@ -20,6 +20,11 @@ const ProfileSwitchContext = createContext<ProfileSwitchContextType | undefined>
 export function ProfileSwitchProvider({ children }: { children: ReactNode }) {
   const { user, profile, role } = useAuth();
   const [impersonated, setImpersonated] = useState<ActiveProfile | null>(null);
+
+  // Reset impersonation when the authenticated user changes (logout/login)
+  useEffect(() => {
+    setImpersonated(null);
+  }, [user?.id]);
 
   const realProfile: ActiveProfile | null = user
     ? { userId: user.id, name: profile?.name ?? "", role: role ?? "parent", avatarUrl: profile?.avatar_url }
