@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo.png";
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="border-t border-border/50 bg-muted/20 py-12 px-6">
       <div className="container max-w-6xl mx-auto">
@@ -10,7 +12,7 @@ const Footer = () => {
             <span className="font-bold font-display text-foreground">Stop Repeat</span>
           </div>
           <p className="text-sm text-muted-foreground font-body">
-            © {new Date().getFullYear()} Stop Repeat. Conçu pour les familles.
+            © {new Date().getFullYear()} Stop Repeat. {t("footer.tagline")}
           </p>
         </div>
       </div>
