@@ -2,6 +2,7 @@ import DashboardLayout from "./DashboardLayout";
 import { useAuth } from "@/hooks/useAuth";
 import FamilyCard from "./FamilyCard";
 import ParentTaskList from "./ParentTaskList";
+import ParentRewardList from "./ParentRewardList";
 
 interface Props {
   name: string;
@@ -26,7 +27,12 @@ export default function ParentDashboard({ name }: Props) {
 
         <FamilyCard />
 
-        {profile?.family_id && <ParentTaskList />}
+        {profile?.family_id && (
+          <>
+            <ParentTaskList />
+            <ParentRewardList />
+          </>
+        )}
       </div>
     </DashboardLayout>
   );

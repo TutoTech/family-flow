@@ -4,13 +4,21 @@ import { Star, Flame, CheckCircle2, Gift } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import FamilyCard from "./FamilyCard";
 import ChildTaskList from "./ChildTaskList";
+import ChildRewardShop from "./ChildRewardShop";
+import { useChildStats } from "@/hooks/useRewards";
+import { useTodayTasks } from "@/hooks/useTasks";
 
 interface Props {
   name: string;
 }
 
 export default function ChildDashboard({ name }: Props) {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
+  const { data: stats } = useChildStats();
+  const { tasks } = useTodayTasks();
+
+  const myTasks = tasks.filter((t) => t.assigned_to_user_id === user?.id);
+  const completedTasks = myTasks.filter((t) => ["validated", "awaiting_validation", "done"].includes(t.status));
 
   return (
     <DashboardLayout title="Mon espace">
@@ -33,7 +41,7 @@ export default function ChildDashboard({ name }: Props) {
               <Star className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">0</div>
+              <div className="text-2xl font-bold text-primary">{stats?.current_points ?? 0}</div>
             </CardContent>
           </Card>
 
@@ -43,7 +51,7 @@ export default function ChildDashboard({ name }: Props) {
               <Flame className="h-4 w-4 text-accent-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-accent-foreground">0 jours</div>
+              <div className="text-2xl font-bold text-accent-foreground">{stats?.streak_days ?? 0} jours</div>
             </CardContent>
           </Card>
 
@@ -53,7 +61,7 @@ export default function ChildDashboard({ name }: Props) {
               <CheckCircle2 className="h-4 w-4 text-secondary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">0/0</div>
+              <div className="text-2xl font-bold text-foreground">{completedTasks.length}/{myTasks.length}</div>
               <p className="text-xs text-muted-foreground">terminées</p>
             </CardContent>
           </Card>
@@ -70,7 +78,12 @@ export default function ChildDashboard({ name }: Props) {
           </Card>
         </div>
 
-        {profile?.family_id && <ChildTaskList />}
+        {profile?.family_id && (
+          <>
+            <ChildTaskList />
+            <ChildRewardShop />
+          </>
+        )}
       </div>
     </DashboardLayout>
   );
