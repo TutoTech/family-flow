@@ -11,8 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield } from "lucide-react";
+import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2 } from "lucide-react";
 import SetPinDialog from "@/components/dashboard/SetPinDialog";
 import { CURRENCIES, CurrencyCode } from "@/hooks/useCurrency";
 
@@ -35,6 +39,9 @@ export default function FamilySettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [hasPin, setHasPin] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -315,6 +322,24 @@ export default function FamilySettingsPage() {
           </CardContent>
         </Card>
 
+        {/* Danger Zone */}
+        <Card className="border-destructive/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg text-destructive">
+              <Trash2 className="h-5 w-5" />
+              {t("settings.dangerZone")}
+            </CardTitle>
+            <CardDescription>{t("settings.dangerZoneDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">{t("settings.deleteAccountDesc")}</p>
+            <Button variant="destructive" onClick={() => setDeleteOpen(true)} className="gap-2">
+              <Trash2 className="h-4 w-4" />
+              {t("settings.deleteAccount")}
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Save Button */}
         <div className="flex justify-end pb-8">
           <Button onClick={handleSave} disabled={saving} className="gap-2">
@@ -323,6 +348,61 @@ export default function FamilySettingsPage() {
           </Button>
         </div>
       </div>
+
+      {/* Delete Account Confirmation */}
+      <AlertDialog open={deleteOpen} onOpenChange={(open) => { if (!open) { setDeleteOpen(false); setDeleteConfirmText(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive">{t("settings.deleteAccountConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("settings.deleteAccountConfirmDesc")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-2">
+            <Label className="text-sm">{t("settings.typeConfirm")}</Label>
+            <Input
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder={t("settings.confirmWord")}
+              className="mt-2"
+            />
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleteConfirmText !== t("settings.confirmWord") || deleting}
+              onClick={async (e) => {
+                e.preventDefault();
+                setDeleting(true);
+                try {
+                  const { data: { session } } = await supabase.auth.getSession();
+                  const res = await fetch(
+                    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`,
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${session?.access_token}`,
+                      },
+                    }
+                  );
+                  if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.error || "Failed to delete");
+                  }
+                  toast.success(t("settings.deleteAccountSuccess"));
+                  await supabase.auth.signOut();
+                  navigate("/");
+                } catch (err: any) {
+                  toast.error(t("settings.deleteAccountError"), { description: err.message });
+                  setDeleting(false);
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? t("common.loading") : t("settings.deleteAccountConfirmButton")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 }
