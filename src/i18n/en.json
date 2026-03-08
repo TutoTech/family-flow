@@ -477,5 +477,21 @@
     "confirmNewPin": "Confirm your PIN code.",
     "pinMismatch": "PIN codes don't match.",
     "pinSet": "PIN code set successfully!"
+  },
+  "savingsGoals": {
+    "title": "My Savings Goals",
+    "add": "New Goal",
+    "addFirst": "Create my first goal",
+    "empty": "No savings goals yet.",
+    "createTitle": "New Savings Goal",
+    "goalName": "Goal name",
+    "goalNamePlaceholder": "E.g.: New controller, Book...",
+    "chooseIcon": "Icon",
+    "targetAmount": "Target amount",
+    "remaining": "{{amount}}{{symbol}} left to save",
+    "claim": "Claim",
+    "completed": "Goal reached! Well done! 🎉",
+    "created": "Goal created!",
+    "completedSection": "Completed goals"
   }
 }

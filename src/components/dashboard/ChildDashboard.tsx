@@ -95,6 +95,7 @@ export default function ChildDashboard({ name }: Props) {
               <BadgesDisplay />
             </div>
             <ChildTaskList />
+            <SavingsGoalCard />
             <ChildRewardShop />
             <ChildPenaltyHistory />
             <ActivityHistory />
