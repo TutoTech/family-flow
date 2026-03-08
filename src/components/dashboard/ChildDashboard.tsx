@@ -1,12 +1,16 @@
 import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Star, Flame, CheckCircle2, Gift } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import FamilyCard from "./FamilyCard";
 
 interface Props {
   name: string;
 }
 
 export default function ChildDashboard({ name }: Props) {
+  const { profile } = useAuth();
+
   return (
     <DashboardLayout title="Mon espace">
       <div className="space-y-6">
@@ -14,8 +18,12 @@ export default function ChildDashboard({ name }: Props) {
           <h2 className="text-3xl font-bold text-foreground" style={{ fontFamily: "var(--font-display)" }}>
             Salut, {name} ⭐
           </h2>
-          <p className="text-muted-foreground mt-1">Voici tes tâches et tes progrès</p>
+          <p className="text-muted-foreground mt-1">
+            {profile?.family_id ? "Voici tes tâches et tes progrès" : "Rejoins un foyer pour commencer"}
+          </p>
         </div>
+
+        {!profile?.family_id && <FamilyCard />}
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="shadow-card bg-primary/5 border-primary/20">
@@ -61,15 +69,17 @@ export default function ChildDashboard({ name }: Props) {
           </Card>
         </div>
 
-        <Card className="border-dashed border-2 border-secondary/30 bg-secondary/5">
-          <CardContent className="py-8 text-center">
-            <CheckCircle2 className="h-12 w-12 mx-auto text-secondary mb-4" />
-            <h3 className="text-lg font-bold text-foreground mb-2">Pas de tâches pour le moment</h3>
-            <p className="text-muted-foreground text-sm">
-              Tes parents vont bientôt ajouter des missions !
-            </p>
-          </CardContent>
-        </Card>
+        {profile?.family_id && (
+          <Card className="border-dashed border-2 border-secondary/30 bg-secondary/5">
+            <CardContent className="py-8 text-center">
+              <CheckCircle2 className="h-12 w-12 mx-auto text-secondary mb-4" />
+              <h3 className="text-lg font-bold text-foreground mb-2">Pas de tâches pour le moment</h3>
+              <p className="text-muted-foreground text-sm">
+                Tes parents vont bientôt ajouter des missions !
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </DashboardLayout>
   );
