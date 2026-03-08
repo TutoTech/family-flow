@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTodayTasks } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2 } from "lucide-react";
+import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw } from "lucide-react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function ParentTaskList() {
   const { t } = useTranslation();
-  const { tasks, isLoading, validateTask } = useTodayTasks();
+  const { tasks, isLoading, validateTask, resetTask } = useTodayTasks();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [createOpen, setCreateOpen] = useState(false);
@@ -32,6 +32,15 @@ export default function ParentTaskList() {
     try {
       await validateTask.mutateAsync({ instanceId, approved });
       toast({ title: approved ? t("taskList.taskValidated") : t("taskList.taskRejected") });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleReset = async (instanceId: string) => {
+    try {
+      await resetTask.mutateAsync(instanceId);
+      toast({ title: t("taskList.taskReset") });
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     }
@@ -99,6 +108,17 @@ export default function ParentTaskList() {
                             <XCircle className="h-5 w-5" />
                           </Button>
                         </>
+                      )}
+                      {["validated", "rejected", "awaiting_validation", "done", "late"].includes(task.status) && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-primary"
+                          onClick={() => handleReset(task.id)}
+                          title={t("taskList.resetTask")}
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                        </Button>
                       )}
                     </div>
                   </div>

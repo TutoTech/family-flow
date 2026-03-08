@@ -81,7 +81,23 @@ export function useTodayTasks() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["today-tasks"] }),
   });
 
-  return { tasks: tasksQuery.data ?? [], isLoading: tasksQuery.isLoading, completeTask, validateTask };
+  const resetTask = useMutation({
+    mutationFn: async (instanceId: string) => {
+      const { error } = await supabase
+        .from("task_instances")
+        .update({
+          status: "pending" as any,
+          completed_at: null,
+          validated_at: null,
+          validated_by_user_id: null,
+        })
+        .eq("id", instanceId);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["today-tasks"] }),
+  });
+
+  return { tasks: tasksQuery.data ?? [], isLoading: tasksQuery.isLoading, completeTask, validateTask, resetTask };
 }
 
 export function useFamilyChildren() {
