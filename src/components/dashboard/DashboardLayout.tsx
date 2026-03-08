@@ -32,6 +32,11 @@ export default function DashboardLayout({ children, title }: Props) {
           </div>
           <div className="flex items-center gap-1">
             <NotificationBell />
+            {role === "parent" && (
+              <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
+                <Settings className="h-4 w-4" />
+              </Button>
+            )}
             <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
               <Home className="h-4 w-4" />
             </Button>
