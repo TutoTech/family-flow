@@ -52,7 +52,9 @@ export default function ParentDashboard({ name }: Props) {
         <UpgradeBanner />
         {profile?.family_id && (
           <>
-            {isPaid && <StatsCharts />}
+            {isPaid ? <StatsCharts /> : (
+              <PremiumGate featureLabel={t("dashboard.statsTitle")}><StatsCharts /></PremiumGate>
+            )}
             <ParentTaskList />
             <ParentRewardList />
             <ParentPenaltyList />
