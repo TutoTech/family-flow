@@ -33,6 +33,7 @@ export default function DashboardLayout({ children, title }: Props) {
             </h1>
           </div>
           <div className="flex items-center gap-1">
+            <ThemeToggle />
             <NotificationBell />
             {role === "parent" && (
               <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
