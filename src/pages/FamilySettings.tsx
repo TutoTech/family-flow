@@ -29,6 +29,7 @@ export default function FamilySettingsPage() {
   const { t, i18n } = useTranslation();
   const { profile, role } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [settings, setSettings] = useState<FamilySettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
