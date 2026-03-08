@@ -160,6 +160,19 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
               </Select>
             </div>
           </div>
+          {recurrence === "weekly" && (
+            <div className="space-y-2">
+              <Label>{t("createTask.weeklyDay")}</Label>
+              <Select value={weeklyDay} onValueChange={setWeeklyDay}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {DAY_OPTIONS.map((d) => (
+                    <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="task-points">{t("createTask.pointsLabel")}</Label>
