@@ -2,11 +2,16 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useLevelBadges, LEVELS } from "@/hooks/useLevelBadges";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
+import { useAuth } from "@/hooks/useAuth";
 import { Sparkles } from "lucide-react";
 
 export default function LevelProgressCard() {
   const { t } = useTranslation();
-  const { levelInfo, totalPoints } = useLevelBadges();
+  const { user } = useAuth();
+  const { activeProfile, isImpersonating } = useProfileSwitch();
+  const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
+  const { levelInfo, totalPoints } = useLevelBadges(viewUserId);
 
   if (!levelInfo) return null;
 

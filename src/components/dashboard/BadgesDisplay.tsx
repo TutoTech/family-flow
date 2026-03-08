@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useLevelBadges } from "@/hooks/useLevelBadges";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
+import { useAuth } from "@/hooks/useAuth";
 import { Award } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
@@ -10,7 +12,10 @@ import i18n from "@/i18n";
 
 export default function BadgesDisplay() {
   const { t } = useTranslation();
-  const { allBadges, badges } = useLevelBadges();
+  const { user } = useAuth();
+  const { activeProfile, isImpersonating } = useProfileSwitch();
+  const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
+  const { allBadges, badges } = useLevelBadges(viewUserId);
   const dateFnsLocale = i18n.language === "fr" ? fr : enUS;
 
   const earnedCount = badges.length;
