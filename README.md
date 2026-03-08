@@ -238,11 +238,11 @@ L'application dépend fortement de Supabase (base de données, auth, edge functi
    - `anon public` key → c'est votre `VITE_SUPABASE_PUBLISHABLE_KEY`
    - `service_role` key → gardez-la secrète, elle sera utilisée dans les Edge Functions
 
-#### Option B : Supabase auto-hébergé sur Azure (utilisateurs avancés)
+#### Option B : Supabase auto-hébergé sur un VPS / VM Azure (utilisateurs avancés)
 
-Si vous souhaitez un contrôle total sans dépendre de Supabase Cloud, vous pouvez auto-héberger Supabase sur une **VM Azure** avec Docker Compose. Cela demande plus de travail mais vous donne une indépendance complète.
+Si vous souhaitez un contrôle total sans dépendre de Supabase Cloud, vous pouvez auto-héberger Supabase sur une **VM Azure** (ou tout autre VPS : OVH, Hetzner, DigitalOcean, etc.) avec Docker Compose. Cela demande plus de travail mais vous donne une indépendance complète.
 
-> **⚠️ Prérequis** : Être à l'aise avec Linux, SSH, Docker et la configuration réseau. Prévoyez ~1h de setup.
+> **⚠️ Prérequis** : Être à l'aise avec Linux, SSH, Docker et la configuration réseau. Prévoyez ~1-2h de setup.
 
 **B.1 — Créer une VM Azure :**
 
@@ -267,25 +267,45 @@ az vm open-port --resource-group rg-supabase --name vm-supabase --port 8000 --pr
 ```
 
 > **💡 Taille de VM** : `Standard_B2s` (2 vCPU, 4 Go RAM) est le **minimum absolu** pour faire tourner Supabase. Pour un usage familial (~10 utilisateurs), c'est suffisant. Pour plus de confort, choisissez `Standard_B2ms` (8 Go RAM). Coût : ~15-30€/mois.
+>
+> **💡 Autre VPS** : Si vous n'utilisez pas Azure, créez simplement un VPS Ubuntu 22.04 avec au minimum 4 Go de RAM chez votre hébergeur préféré (OVH VPS, Hetzner, DigitalOcean Droplet, etc.) et passez directement à l'étape B.2.
 
 **B.2 — Se connecter à la VM et installer Docker :**
 
 ```bash
-# Récupérer l'IP publique de la VM
+# Récupérer l'IP publique de la VM (Azure uniquement)
 az vm show --resource-group rg-supabase --name vm-supabase -d --query publicIps -o tsv
 
 # Se connecter en SSH
 ssh azureuser@VOTRE_IP_PUBLIQUE
 
-# Sur la VM : Installer Docker et Docker Compose
+# Sur la VM : Mettre à jour le système
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y docker.io docker-compose-v2 git
+
+# Installer Docker (méthode officielle recommandée)
+sudo apt install -y ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin git
 
 # Ajouter votre user au groupe docker (évite de taper sudo à chaque fois)
 sudo usermod -aG docker azureuser
+
 # Déconnectez-vous et reconnectez-vous pour que ça prenne effet
 exit
 ssh azureuser@VOTRE_IP_PUBLIQUE
+
+# Vérifiez que Docker fonctionne
+docker --version
+docker compose version
 ```
 
 **B.3 — Cloner et configurer Supabase :**
@@ -309,18 +329,16 @@ cp .env.example .env
 # Clé JWT secrète — Générez-en une avec : openssl rand -base64 32
 JWT_SECRET=votre-cle-jwt-secrete-de-32-caracteres-minimum
 
-# Clé anon (utilisée côté client) — Générez avec jwt.io ou la CLI Supabase
-# Payload: {"role":"anon","iss":"supabase","iat":1672531200,"exp":1830297600}
+# Clé anon (utilisée côté client) — voir B.3bis ci-dessous pour la générer
 ANON_KEY=eyJhbG...votre_anon_key
 
-# Clé service_role (admin, ne jamais exposer côté client)
-# Payload: {"role":"service_role","iss":"supabase","iat":1672531200,"exp":1830297600}
+# Clé service_role (admin, ne jamais exposer côté client) — voir B.3bis
 SERVICE_ROLE_KEY=eyJhbG...votre_service_role_key
 
-# Mot de passe PostgreSQL
+# Mot de passe PostgreSQL — Générez avec : openssl rand -base64 24
 POSTGRES_PASSWORD=un-mot-de-passe-tres-solide
 
-# Dashboard Supabase
+# Dashboard Supabase (interface web d'administration)
 DASHBOARD_USERNAME=admin
 DASHBOARD_PASSWORD=un-autre-mot-de-passe-solide
 
@@ -333,16 +351,71 @@ SITE_URL=https://supabase.votre-domaine.com
 API_EXTERNAL_URL=https://supabase.votre-domaine.com
 SUPABASE_PUBLIC_URL=https://supabase.votre-domaine.com
 
-# Si vous n'avez pas de domaine, utilisez temporairement l'IP :
+# Si vous n'avez pas encore de domaine, utilisez temporairement l'IP :
 # SITE_URL=http://VOTRE_IP_PUBLIQUE:8000
+
+############
+# SMTP — OBLIGATOIRE pour les emails d'authentification (voir B.6)
+############
+SMTP_ADMIN_EMAIL=admin@votre-domaine.com
+SMTP_HOST=smtp.votre-fournisseur.com
+SMTP_PORT=587
+SMTP_USER=votre-email@votre-domaine.com
+SMTP_PASS=votre-mot-de-passe-smtp
+SMTP_SENDER_NAME=Stop Repeat
 ```
 
-> **🔑 Générer les clés JWT** : Supabase fournit un outil pour générer les clés `anon` et `service_role` à partir de votre `JWT_SECRET`. Utilisez [supabase.com/docs/guides/self-hosting#api-keys](https://supabase.com/docs/guides/self-hosting/docker#api-keys) ou la commande :
-> ```bash
-> # Installer la CLI Supabase sur la VM
-> npm install -g supabase
-> supabase bootstrap # génère les clés automatiquement
-> ```
+**B.3bis — Générer les clés JWT `ANON_KEY` et `SERVICE_ROLE_KEY` :**
+
+> **⚠️ Étape critique** : Les clés `ANON_KEY` et `SERVICE_ROLE_KEY` sont des JWT signés avec votre `JWT_SECRET`. Vous **devez** les générer vous-même. Voici comment faire :
+
+1. **D'abord**, choisissez votre `JWT_SECRET` et notez-le :
+   ```bash
+   openssl rand -base64 32
+   # Exemple de sortie : K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=
+   ```
+
+2. **Ensuite**, allez sur [jwt.io](https://jwt.io) pour générer les clés :
+
+   **Pour `ANON_KEY`** :
+   - Algorithm : `HS256`
+   - Payload :
+     ```json
+     {
+       "role": "anon",
+       "iss": "supabase",
+       "iat": 1672531200,
+       "exp": 1830297600
+     }
+     ```
+   - Dans le champ "Verify Signature", entrez votre `JWT_SECRET`
+   - Copiez le token JWT généré → c'est votre `ANON_KEY`
+
+   **Pour `SERVICE_ROLE_KEY`** :
+   - Même procédure mais avec le payload :
+     ```json
+     {
+       "role": "service_role",
+       "iss": "supabase",
+       "iat": 1672531200,
+       "exp": 1830297600
+     }
+     ```
+   - Copiez le token JWT généré → c'est votre `SERVICE_ROLE_KEY`
+
+3. **Alternative en ligne de commande** (si vous avez Node.js sur votre machine locale) :
+   ```bash
+   # Installer jsonwebtoken
+   npm install -g jsonwebtoken
+
+   # Générer ANON_KEY
+   node -e "console.log(require('jsonwebtoken').sign({role:'anon',iss:'supabase',iat:1672531200,exp:1830297600},'VOTRE_JWT_SECRET'))"
+
+   # Générer SERVICE_ROLE_KEY
+   node -e "console.log(require('jsonwebtoken').sign({role:'service_role',iss:'supabase',iat:1672531200,exp:1830297600},'VOTRE_JWT_SECRET'))"
+   ```
+
+> **⚠️ Gardez votre `SERVICE_ROLE_KEY` secrète !** Elle a un accès admin total à votre base. Ne la mettez jamais dans du code côté client.
 
 **B.4 — Lancer Supabase :**
 
@@ -350,21 +423,37 @@ SUPABASE_PUBLIC_URL=https://supabase.votre-domaine.com
 # Depuis le dossier supabase/docker
 docker compose up -d
 
-# Vérifier que tous les conteneurs tournent
+# Vérifier que tous les conteneurs tournent (il devrait y en avoir ~15)
 docker compose ps
 ```
 
-Vous devriez voir environ 15 conteneurs dont : `supabase-kong`, `supabase-auth`, `supabase-rest`, `supabase-db`, `supabase-storage`, `supabase-studio`, etc.
+Vous devriez voir environ 15 conteneurs dont : `supabase-kong`, `supabase-auth`, `supabase-rest`, `supabase-db`, `supabase-storage`, `supabase-studio`, `supabase-edge-functions`, etc.
 
-> **💡 Vérification rapide** : Accédez à `http://VOTRE_IP:8000` dans votre navigateur. Vous devriez voir le dashboard Supabase Studio.
+> **💡 Vérification rapide** : Accédez à `http://VOTRE_IP:8000` dans votre navigateur. Vous devriez voir le dashboard Supabase Studio. Connectez-vous avec `DASHBOARD_USERNAME` / `DASHBOARD_PASSWORD`.
 
-**B.5 — Configurer HTTPS avec Caddy (recommandé) :**
+> **🔧 En cas de problème** : Consultez les logs des conteneurs :
+> ```bash
+> # Logs de tous les conteneurs
+> docker compose logs
+>
+> # Logs d'un conteneur spécifique
+> docker compose logs auth    # Pour les problèmes d'authentification
+> docker compose logs rest    # Pour les problèmes d'API REST
+> docker compose logs db      # Pour les problèmes de base de données
+> docker compose logs functions  # Pour les Edge Functions
+> ```
 
-En production, vous **devez** utiliser HTTPS. Le plus simple est d'installer [Caddy](https://caddyserver.com) comme reverse proxy :
+**B.5 — Configurer HTTPS avec Caddy (obligatoire en production) :**
+
+En production, vous **devez** utiliser HTTPS. Le plus simple est d'installer [Caddy](https://caddyserver.com) comme reverse proxy (il gère automatiquement les certificats SSL Let's Encrypt) :
 
 ```bash
 # Installer Caddy
-sudo apt install -y caddy
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update
+sudo apt install caddy
 
 # Configurer Caddy
 sudo nano /etc/caddy/Caddyfile
@@ -381,13 +470,67 @@ supabase.votre-domaine.com {
 ```bash
 # Redémarrer Caddy — il obtiendra automatiquement un certificat Let's Encrypt
 sudo systemctl restart caddy
+
+# Vérifier que Caddy tourne
+sudo systemctl status caddy
 ```
 
-> **⚠️ Prérequis DNS** : Créez un enregistrement **A** chez votre registrar DNS pointant `supabase.votre-domaine.com` vers l'IP publique de votre VM Azure.
+> **⚠️ Prérequis DNS** : Créez un enregistrement **A** chez votre registrar DNS (OVH, Cloudflare, Gandi, etc.) pointant `supabase.votre-domaine.com` vers l'IP publique de votre VM.
+>
+> Exemple chez votre registrar :
+> ```
+> Type: A    Nom: supabase    Valeur: 20.13.45.67    TTL: 300
+> ```
+> Attendez 5-15 minutes pour la propagation DNS avant de redémarrer Caddy.
 
-**B.6 — Installer les extensions PostgreSQL nécessaires :**
+**B.6 — Configurer l'envoi d'emails (SMTP) — OBLIGATOIRE :**
 
-L'application utilise `pg_net` (pour les appels HTTP depuis les triggers) et `pg_cron` (pour les tâches planifiées). Sur Supabase auto-hébergé, connectez-vous à PostgreSQL :
+> **⚠️ Étape souvent oubliée !** Sans SMTP configuré, les emails de confirmation d'inscription, de réinitialisation de mot de passe et de changement d'email **ne seront pas envoyés**. Les utilisateurs ne pourront pas confirmer leur compte.
+
+Supabase Auth a besoin d'un serveur SMTP pour envoyer les emails. Voici vos options :
+
+| Fournisseur SMTP | Plan gratuit | Facilité |
+|---|---|---|
+| [Resend](https://resend.com) | 3 000 emails/mois | ⭐⭐⭐ Très simple |
+| [Brevo (ex-Sendinblue)](https://brevo.com) | 300 emails/jour | ⭐⭐⭐ |
+| [Mailgun](https://mailgun.com) | 1 000 emails/mois (essai) | ⭐⭐ |
+| Gmail SMTP | 500/jour | ⭐ (nécessite "App password") |
+
+**Exemple avec Resend (recommandé) :**
+
+1. Créez un compte sur [resend.com](https://resend.com)
+2. Ajoutez et vérifiez votre domaine (Resend vous guidera avec les enregistrements DNS)
+3. Créez une API key
+4. Dans le fichier `.env` de Supabase (étape B.3), configurez :
+   ```env
+   SMTP_HOST=smtp.resend.com
+   SMTP_PORT=465
+   SMTP_USER=resend
+   SMTP_PASS=re_VOTRE_API_KEY
+   SMTP_SENDER_NAME=Stop Repeat
+   SMTP_ADMIN_EMAIL=noreply@votre-domaine.com
+   ```
+5. Redémarrez Supabase : `docker compose restart`
+
+**Exemple avec Gmail (rapide pour tester) :**
+
+1. Activez la [vérification en 2 étapes](https://myaccount.google.com/signinoptions/two-step-verification) sur votre compte Google
+2. Créez un [mot de passe d'application](https://myaccount.google.com/apppasswords) (sélectionnez "Autre" → "Supabase")
+3. Configurez :
+   ```env
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_USER=votre-email@gmail.com
+   SMTP_PASS=le-mot-de-passe-dapplication-genere
+   SMTP_SENDER_NAME=Stop Repeat
+   SMTP_ADMIN_EMAIL=votre-email@gmail.com
+   ```
+
+> **💡 Vérification** : Après avoir configuré le SMTP et redémarré Supabase (`docker compose restart`), testez en créant un compte sur votre application. Vous devriez recevoir un email de confirmation.
+
+**B.7 — Installer les extensions PostgreSQL nécessaires :**
+
+L'application utilise `pg_net` (pour les appels HTTP depuis les triggers, nécessaire pour les notifications push) et `pg_cron` (pour les tâches planifiées). Sur Supabase auto-hébergé, connectez-vous à PostgreSQL :
 
 ```bash
 # Se connecter au PostgreSQL du conteneur
@@ -400,39 +543,103 @@ CREATE EXTENSION IF NOT EXISTS pg_net;
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 
 -- Vérifier qu'elles sont installées
-SELECT * FROM pg_extension WHERE extname IN ('pg_net', 'pg_cron');
+SELECT extname, extversion FROM pg_extension WHERE extname IN ('pg_net', 'pg_cron');
+
+-- Si pg_net n'est pas disponible, l'alternative est documentée à l'étape 8
+-- Si pg_cron n'est pas disponible, voir l'étape 15 pour les alternatives CRON
+\q
 ```
 
-**B.7 — Déployer les Edge Functions :**
+> **⚠️ Si `pg_net` n'est pas disponible** : Cette extension est pré-compilée dans l'image Docker Supabase. Si elle manque, vérifiez que vous utilisez bien l'image officielle `supabase/postgres`. Sans `pg_net`, les notifications push en temps réel (trigger `send_push_on_notification`) ne fonctionneront pas automatiquement. L'alternative est de déclencher la fonction `send-push` côté application au lieu du trigger SQL.
+
+**B.8 — Configurer les secrets des Edge Functions :**
+
+> **⚠️ Étape critique souvent manquée !** Les Edge Functions Supabase ont besoin de variables d'environnement (secrets) pour fonctionner. Sur Supabase auto-hébergé, ces secrets sont définis dans le fichier `docker-compose.yml` ou via des fichiers `.env`.
+
+Éditez le fichier `supabase/docker/.env` et ajoutez ces variables qui seront accessibles par les Edge Functions :
+
+```env
+# Dans le fichier .env de Supabase Docker, ajoutez :
+
+# Stripe (pour le paiement du plan Famille)
+STRIPE_SECRET_KEY=sk_live_votre_cle_stripe
+
+# Notifications push VAPID (générez avec : npx web-push generate-vapid-keys)
+VAPID_PUBLIC_KEY=BNh3v...votre_cle_publique
+VAPID_PRIVATE_KEY=dGhpc...votre_cle_privee
+VAPID_EMAIL=mailto:admin@votre-domaine.com
+```
+
+Puis redémarrez le conteneur Edge Functions :
+```bash
+docker compose restart functions
+```
+
+> **💡 Note** : Les variables `SUPABASE_URL`, `SUPABASE_ANON_KEY`, et `SUPABASE_SERVICE_ROLE_KEY` sont automatiquement injectées par Supabase dans les Edge Functions. Vous n'avez pas besoin de les configurer manuellement.
+
+**B.9 — Créer le bucket de stockage :**
+
+Sur Supabase auto-hébergé, vous devez créer le bucket de stockage manuellement. Accédez au dashboard Supabase Studio (`https://supabase.votre-domaine.com`) :
+
+1. Allez dans **Storage** (menu de gauche)
+2. Cliquez **« New Bucket »**
+3. Nom : `task-evidence`
+4. Cochez **« Public bucket »**
+5. Cliquez **« Create »**
+
+Ou bien via SQL :
+```sql
+INSERT INTO storage.buckets (id, name, public) VALUES ('task-evidence', 'task-evidence', true);
+```
+
+**B.10 — Déployer les Edge Functions :**
 
 Sur Supabase auto-hébergé, les Edge Functions sont gérées par le conteneur `supabase-edge-functions`. Copiez vos fonctions dans le bon répertoire :
 
 ```bash
-# Depuis la racine de votre projet Stop Repeat (pas la VM Supabase)
+# Depuis votre machine locale (pas la VM)
 # Copiez le dossier supabase/functions/ vers la VM
 scp -r supabase/functions/ azureuser@VOTRE_IP:~/supabase/docker/volumes/functions/
 
 # Sur la VM, redémarrez le conteneur edge-functions
+ssh azureuser@VOTRE_IP
 cd ~/supabase/docker
 docker compose restart functions
+
+# Vérifier que les fonctions sont chargées
+docker compose logs functions | tail -20
 ```
 
-> **💡 Alternative** : Utilisez la CLI Supabase pour déployer les fonctions même vers une instance auto-hébergée :
+> **💡 Vérification** : Testez une Edge Function simple :
 > ```bash
-> supabase functions deploy --project-ref local
+> curl -X POST https://supabase.votre-domaine.com/functions/v1/push-vapid-key \
+>   -H "Authorization: Bearer VOTRE_ANON_KEY"
 > ```
+> Vous devriez recevoir `{"publicKey":"..."}` si VAPID est configuré, ou une erreur explicite sinon.
 
-**B.8 — Notes de vos valeurs :**
+**B.11 — Notes de vos valeurs :**
 
 Pour la suite du tutoriel, vos valeurs seront :
 
 | Variable | Valeur pour l'Option B |
 |---|---|
 | `VITE_SUPABASE_URL` | `https://supabase.votre-domaine.com` (ou `http://VOTRE_IP:8000`) |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Votre `ANON_KEY` générée en B.3 |
-| `service_role key` | Votre `SERVICE_ROLE_KEY` générée en B.3 |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Votre `ANON_KEY` générée en B.3bis |
+| `service_role key` | Votre `SERVICE_ROLE_KEY` générée en B.3bis |
 
-**B.9 — Maintenance et sauvegardes :**
+**B.12 — Configurer l'authentification Supabase (URLs de redirection) :**
+
+> **⚠️ Si vous oubliez cette étape, la connexion OAuth et les liens dans les emails ne fonctionneront pas.**
+
+Accédez au dashboard Supabase Studio → **Authentication → URL Configuration** :
+
+1. **Site URL** : `https://app.votre-domaine.com` (l'URL de votre frontend)
+2. **Redirect URLs** : ajoutez :
+   - `https://app.votre-domaine.com/**`
+   - `https://app.votre-domaine.com/dashboard`
+   - `http://localhost:5173/**` (pour le développement local)
+
+**B.13 — Maintenance et sauvegardes :**
 
 ```bash
 # Mettre à jour Supabase (nouvelles versions)
@@ -450,9 +657,31 @@ cat backup_20260308.sql | docker compose exec -T db psql -U supabase_admin postg
 
 > **💡 Automatiser les sauvegardes** : Créez un cron job sur la VM :
 > ```bash
+> # Créer le dossier de sauvegardes
+> mkdir -p ~/backups
+>
 > crontab -e
 > # Ajouter cette ligne (sauvegarde quotidienne à 3h du matin)
 > 0 3 * * * cd ~/supabase/docker && docker compose exec -T db pg_dump -U supabase_admin postgres > ~/backups/backup_$(date +\%Y\%m\%d).sql
+>
+> # Optionnel : supprimer les sauvegardes de plus de 30 jours
+> 0 4 * * * find ~/backups -name "backup_*.sql" -mtime +30 -delete
+> ```
+
+> **💡 Sauvegardes sur Azure Blob Storage** (recommandé pour ne pas perdre les sauvegardes si la VM tombe) :
+> ```bash
+> # Installer Azure CLI sur la VM
+> curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+> az login
+>
+> # Créer un conteneur de stockage pour les sauvegardes
+> az storage container create --name backups --account-name votrecompte
+>
+> # Script de sauvegarde + upload (à mettre dans le crontab)
+> #!/bin/bash
+> BACKUP_FILE=~/backups/backup_$(date +%Y%m%d).sql
+> cd ~/supabase/docker && docker compose exec -T db pg_dump -U supabase_admin postgres > $BACKUP_FILE
+> az storage blob upload --container-name backups --file $BACKUP_FILE --name $(basename $BACKUP_FILE) --account-name votrecompte
 > ```
 
 > **⚠️ Coûts estimés** : VM B2s (~15€/mois) + disque (~5€/mois) + IP publique (~3€/mois) = **~23€/mois**. Plus cher que Supabase Cloud (gratuit pour un petit projet) mais vous avez un contrôle total sur vos données.
