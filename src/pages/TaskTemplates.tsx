@@ -26,7 +26,7 @@ const RECURRENCE_LABELS: Record<string, string> = {
 };
 
 export default function TaskTemplatesPage() {
-  const { role } = useAuth();
+  const { role, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { templates, isLoading, deleteTemplate, toggleActive } = useTaskTemplates();
@@ -38,8 +38,13 @@ export default function TaskTemplatesPage() {
 
   const childNameMap = new Map(children.map((c) => [c.user_id, c.name]));
 
-  if (role !== "parent") {
-    navigate("/dashboard");
+  useEffect(() => {
+    if (!loading && role !== "parent") {
+      navigate("/dashboard");
+    }
+  }, [loading, role, navigate]);
+
+  if (loading || role !== "parent") {
     return null;
   }
 
