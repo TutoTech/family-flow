@@ -31,7 +31,7 @@ export default function DashboardLayout({ children, title }: Props) {
             <h1 className="text-lg font-bold text-foreground" style={{ fontFamily: "var(--font-display)" }}>
               {title}
             </h1>
-          </div>
+          </Link>
           <div className="flex items-center gap-1">
             <AccountSwitcher />
             <ThemeToggle />
