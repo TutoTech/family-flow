@@ -20,6 +20,8 @@
     "parent": "Parent",
     "child": "Enfant",
     "manage": "Gérer",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
     "add": "Ajouter",
     "copied": "Copié !",
     "loading": "Chargement...",
