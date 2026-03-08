@@ -79,7 +79,22 @@
     "cta": "Create my household"
   },
   "footer": {
-    "tagline": "Designed for families."
+    "tagline": "Designed for families.",
+    "legalNotice": "Legal Notice",
+    "cgu": "Terms of Use",
+    "cgv": "Terms of Sale"
+  },
+  "legal": {
+    "mentionsTitle": "Legal Notice",
+    "editor": "Website Publisher",
+    "hosting": "Hosting",
+    "intellectualProperty": "Intellectual Property",
+    "personalData": "Personal Data",
+    "cookies": "Cookies",
+    "liability": "Liability",
+    "applicableLaw": "Applicable Law",
+    "cguTitle": "Terms of Use",
+    "cgvTitle": "Terms of Sale"
   },
   "auth": {
     "loginTitle": "Log in",

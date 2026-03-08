@@ -14,6 +14,9 @@ import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import FamilySettings from "./pages/FamilySettings";
 import TaskTemplates from "./pages/TaskTemplates";
+import MentionsLegales from "./pages/MentionsLegales";
+import CGU from "./pages/CGU";
+import CGV from "./pages/CGV";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +35,9 @@ const App = () => (
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/mentions-legales" element={<MentionsLegales />} />
+              <Route path="/cgu" element={<CGU />} />
+              <Route path="/cgv" element={<CGV />} />
               <Route
                 path="/dashboard"
                 element={

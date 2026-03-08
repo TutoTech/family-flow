@@ -79,7 +79,22 @@
     "cta": "Créer mon foyer"
   },
   "footer": {
-    "tagline": "Conçu pour les familles."
+    "tagline": "Conçu pour les familles.",
+    "legalNotice": "Mentions légales",
+    "cgu": "CGU",
+    "cgv": "CGV"
+  },
+  "legal": {
+    "mentionsTitle": "Mentions légales",
+    "editor": "Éditeur du site",
+    "hosting": "Hébergement",
+    "intellectualProperty": "Propriété intellectuelle",
+    "personalData": "Données personnelles",
+    "cookies": "Cookies",
+    "liability": "Responsabilité",
+    "applicableLaw": "Droit applicable",
+    "cguTitle": "Conditions Générales d'Utilisation",
+    "cgvTitle": "Conditions Générales de Vente"
   },
   "auth": {
     "loginTitle": "Connexion",

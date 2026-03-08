@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
 const Footer = () => {
@@ -11,6 +12,17 @@ const Footer = () => {
             <img src={logo} alt="Stop Repeat" className="w-6 h-6" />
             <span className="font-bold font-display text-foreground">Stop Repeat</span>
           </div>
+          <nav className="flex items-center gap-6 text-sm font-body">
+            <Link to="/mentions-legales" className="text-muted-foreground hover:text-foreground transition-colors">
+              {t("footer.legalNotice")}
+            </Link>
+            <Link to="/cgu" className="text-muted-foreground hover:text-foreground transition-colors">
+              {t("footer.cgu")}
+            </Link>
+            <Link to="/cgv" className="text-muted-foreground hover:text-foreground transition-colors">
+              {t("footer.cgv")}
+            </Link>
+          </nav>
           <p className="text-sm text-muted-foreground font-body">
             © {new Date().getFullYear()} Stop Repeat. {t("footer.tagline")}
           </p>
