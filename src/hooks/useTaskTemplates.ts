@@ -36,11 +36,13 @@ export function useTaskTemplates() {
   });
 
   const updateTemplate = useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: Partial<TaskTemplate> }) => {
+    mutationFn: async ({ id, updates }: { id: string; updates: Record<string, unknown> }) => {
       const { error } = await supabase
         .from("task_templates")
-        .update(updates)
+        .update(updates as any)
         .eq("id", id);
+      if (error) throw error;
+    },
       if (error) throw error;
     },
     onSuccess: () => {
