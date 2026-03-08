@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe } from "lucide-react";
+import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins } from "lucide-react";
+import { CURRENCIES, CurrencyCode } from "@/hooks/useCurrency";
 
 interface FamilySettings {
   points_to_money_rate: number;
@@ -20,6 +21,7 @@ interface FamilySettings {
   tts_delay_minutes: number;
   parent_alert_delay_minutes: number;
   photo_retention_days: number;
+  currency: string;
 }
 
 export default function FamilySettingsPage() {
@@ -46,6 +48,7 @@ export default function FamilySettingsPage() {
           tts_delay_minutes: data.tts_delay_minutes,
           parent_alert_delay_minutes: data.parent_alert_delay_minutes,
           photo_retention_days: data.photo_retention_days,
+          currency: (data as any).currency ?? "EUR",
         });
       }
       if (error) toast.error(t("settings.loadError"));
@@ -85,6 +88,12 @@ export default function FamilySettingsPage() {
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
   };
+
+  const handleCurrencyChange = (code: string) => {
+    setSettings((prev) => (prev ? { ...prev, currency: code } : prev));
+  };
+
+  const currencySymbol = CURRENCIES.find((c) => c.code === settings?.currency)?.symbol ?? "€";
 
   if (role !== "parent") {
     return <Navigate to="/dashboard" replace />;
@@ -137,6 +146,29 @@ export default function FamilySettingsPage() {
           </CardContent>
         </Card>
 
+        {/* Currency */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Coins className="h-5 w-5 text-primary" />
+              {t("settings.currency")}
+            </CardTitle>
+            <CardDescription>{t("settings.currencyDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select value={settings.currency} onValueChange={handleCurrencyChange}>
+              <SelectTrigger className="max-w-64">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CURRENCIES.map((c) => (
+                  <SelectItem key={c.code} value={c.code}>{c.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+
         {/* Points & Argent */}
         <Card>
           <CardHeader>
@@ -148,12 +180,12 @@ export default function FamilySettingsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="points_to_money_rate">{t("settings.conversionRate")}</Label>
+              <Label htmlFor="points_to_money_rate">{t("settings.conversionRate", { symbol: currencySymbol })}</Label>
               <div className="flex items-center gap-2">
                 <Input id="points_to_money_rate" type="number" step="0.01" min="0" max="100" value={settings.points_to_money_rate} onChange={(e) => updateField("points_to_money_rate", parseFloat(e.target.value) || 0)} className="max-w-32" />
-                <span className="text-sm text-muted-foreground">{t("settings.perPoint")}</span>
+                <span className="text-sm text-muted-foreground">{currencySymbol} / {t("common.pts")}</span>
               </div>
-              <p className="text-xs text-muted-foreground">{t("settings.conversionExample")}</p>
+              <p className="text-xs text-muted-foreground">{t("settings.conversionExample", { symbol: currencySymbol })}</p>
             </div>
           </CardContent>
         </Card>

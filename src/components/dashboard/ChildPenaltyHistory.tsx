@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ShieldAlert, Star, Wallet } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 import { useChildPenalties } from "@/hooks/usePenalties";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
@@ -10,6 +11,7 @@ import i18n from "@/i18n";
 export default function ChildPenaltyHistory() {
   const { t } = useTranslation();
   const { data: penalties = [], isLoading } = useChildPenalties();
+  const { symbol: currencySymbol } = useCurrency();
   const dateFnsLocale = i18n.language === "fr" ? fr : enUS;
 
   return (
@@ -48,7 +50,7 @@ export default function ChildPenaltyHistory() {
                   </Badge>
                   {p.rule?.wallet_penalty > 0 && (
                     <Badge variant="outline" className="text-xs text-destructive border-destructive/30">
-                      <Wallet className="h-3 w-3 mr-1" />-{p.rule?.wallet_penalty}€
+                      <Wallet className="h-3 w-3 mr-1" />-{p.rule?.wallet_penalty}{currencySymbol}
                     </Badge>
                   )}
                 </div>

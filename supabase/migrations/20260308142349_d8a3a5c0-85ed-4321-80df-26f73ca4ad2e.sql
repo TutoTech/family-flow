@@ -1,0 +1,1 @@
+ALTER TABLE public.family_settings ADD COLUMN currency text NOT NULL DEFAULT 'EUR';

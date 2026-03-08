@@ -97,6 +97,7 @@ export type Database = {
       }
       family_settings: {
         Row: {
+          currency: string
           family_id: string
           id: string
           parent_alert_delay_minutes: number
@@ -108,6 +109,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          currency?: string
           family_id: string
           id?: string
           parent_alert_delay_minutes?: number
@@ -119,6 +121,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          currency?: string
           family_id?: string
           id?: string
           parent_alert_delay_minutes?: number

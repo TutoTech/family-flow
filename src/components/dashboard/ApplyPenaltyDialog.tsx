@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFamilyRules, useFamilyChildren } from "@/hooks/usePenalties";
 import { Star, Wallet } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
   open: boolean;
@@ -22,6 +23,7 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
   const { user, profile } = useAuth();
   const { data: rules = [] } = useFamilyRules();
   const { data: children = [] } = useFamilyChildren();
+  const { symbol: currencySymbol } = useCurrency();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [childId, setChildId] = useState("");
@@ -90,7 +92,7 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
               <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1"><Star className="h-3 w-3" />-{selectedRule.points_penalty} {t("common.pts")}</span>
                 {selectedRule.wallet_penalty > 0 && (
-                  <span className="flex items-center gap-1"><Wallet className="h-3 w-3" />-{selectedRule.wallet_penalty}€</span>
+                  <span className="flex items-center gap-1"><Wallet className="h-3 w-3" />-{selectedRule.wallet_penalty}{currencySymbol}</span>
                 )}
               </div>
             )}
