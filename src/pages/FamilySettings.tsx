@@ -73,7 +73,7 @@ export default function FamilySettingsPage() {
 
     const { error } = await supabase
       .from("family_settings")
-      .update(settings)
+      .update(settings as any)
       .eq("family_id", profile.family_id!);
 
     if (error) toast.error(t("settings.saveError"));
