@@ -16,7 +16,7 @@ export type Level = (typeof LEVELS)[number];
 
 export const BADGES = {
   streak_7: { name: "Semaine parfaite", icon: "🔥", description: "7 jours de série" },
-  streak_30: { name: "Mois parfait", icon: "🔥💎", description: "30 jours de série" },
+  streak_30: { name: "Mois parfait", icon: "💎", description: "30 jours de série" },
   tasks_10: { name: "Premiers pas", icon: "🎯", description: "10 tâches validées" },
   tasks_50: { name: "En route", icon: "🚀", description: "50 tâches validées" },
   tasks_100: { name: "Centurion", icon: "💯", description: "100 tâches validées" },
