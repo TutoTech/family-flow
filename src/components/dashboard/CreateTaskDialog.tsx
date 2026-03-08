@@ -32,11 +32,22 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
     { value: "weekly", label: t("createTask.weekly") },
   ] as const;
 
+  const DAY_OPTIONS = [
+    { value: "1", label: t("createTask.monday") },
+    { value: "2", label: t("createTask.tuesday") },
+    { value: "3", label: t("createTask.wednesday") },
+    { value: "4", label: t("createTask.thursday") },
+    { value: "5", label: t("createTask.friday") },
+    { value: "6", label: t("createTask.saturday") },
+    { value: "0", label: t("createTask.sunday") },
+  ];
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [points, setPoints] = useState("1");
   const [dueTime, setDueTime] = useState("18:00");
   const [recurrence, setRecurrence] = useState("daily");
+  const [weeklyDay, setWeeklyDay] = useState(String(new Date().getDay()));
   const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
   const [requiresPhoto, setRequiresPhoto] = useState(false);
   const [loading, setLoading] = useState(false);
