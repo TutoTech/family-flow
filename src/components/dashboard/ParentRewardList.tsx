@@ -15,6 +15,7 @@ import CreateRewardDialog from "./CreateRewardDialog";
 export default function ParentRewardList() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { isImpersonating } = useProfileSwitch();
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: pendingRedemptions = [] } = usePendingRedemptions();
   const { toast } = useToast();
