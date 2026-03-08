@@ -82,7 +82,8 @@
     "tagline": "Conçu pour les familles.",
     "legalNotice": "Mentions légales",
     "cgu": "CGU",
-    "cgv": "CGV"
+    "cgv": "CGV",
+    "privacy": "Confidentialité"
   },
   "legal": {
     "mentionsTitle": "Mentions légales",
@@ -94,7 +95,8 @@
     "liability": "Responsabilité",
     "applicableLaw": "Droit applicable",
     "cguTitle": "Conditions Générales d'Utilisation",
-    "cgvTitle": "Conditions Générales de Vente"
+    "cgvTitle": "Conditions Générales de Vente",
+    "privacyTitle": "Politique de confidentialité"
   },
   "auth": {
     "loginTitle": "Connexion",

@@ -82,7 +82,8 @@
     "tagline": "Designed for families.",
     "legalNotice": "Legal Notice",
     "cgu": "Terms of Use",
-    "cgv": "Terms of Sale"
+    "cgv": "Terms of Sale",
+    "privacy": "Privacy Policy"
   },
   "legal": {
     "mentionsTitle": "Legal Notice",
@@ -94,7 +95,8 @@
     "liability": "Liability",
     "applicableLaw": "Applicable Law",
     "cguTitle": "Terms of Use",
-    "cgvTitle": "Terms of Sale"
+    "cgvTitle": "Terms of Sale",
+    "privacyTitle": "Privacy Policy"
   },
   "auth": {
     "loginTitle": "Log in",

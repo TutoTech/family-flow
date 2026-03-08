@@ -17,6 +17,7 @@ import TaskTemplates from "./pages/TaskTemplates";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGU from "./pages/CGU";
 import CGV from "./pages/CGV";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/cgu" element={<CGU />} />
               <Route path="/cgv" element={<CGV />} />
+              <Route path="/confidentialite" element={<PrivacyPolicy />} />
               <Route
                 path="/dashboard"
                 element={
