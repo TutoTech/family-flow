@@ -898,6 +898,12 @@ Committez et pushez ce fichier — Azure le détectera automatiquement.
    ```
 5. Azure provisionne automatiquement un **certificat SSL** gratuit
 
+> **⚠️ N'oubliez pas** de mettre à jour les URLs de redirection dans Supabase Auth !
+> - Dashboard Supabase → **Authentication → URL Configuration**
+> - **Site URL** : `https://app.stoprepeat.fr` (votre domaine personnalisé)
+> - **Redirect URLs** : ajoutez `https://app.stoprepeat.fr/**` et `https://app.stoprepeat.fr/dashboard`
+> - Si vous avez configuré Google OAuth, mettez aussi à jour les **Authorized redirect URIs** dans la console Google Cloud
+
 ---
 
 ### 📝 Étape 15 — Configurer le CRON pour le reset quotidien des tâches
