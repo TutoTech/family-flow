@@ -85,6 +85,7 @@ export default function ChildDashboard({ name }: Props) {
         {profile?.family_id && (
           <>
             <BadgeCelebration />
+            <LevelCelebration />
             <div className="grid md:grid-cols-2 gap-4">
               <LevelProgressCard />
               <BadgesDisplay />
