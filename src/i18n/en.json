@@ -32,7 +32,8 @@
     "howItWorks": "How it works",
     "pricing": "Pricing",
     "login": "Log in",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "dashboard": "My Dashboard"
   },
   "pricing": {
     "title": "Simple pricing, no subscription",

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { LogOut, Home, Settings } from "lucide-react";
@@ -26,12 +26,12 @@ export default function DashboardLayout({ children, title }: Props) {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <img src={logo} alt="Stop Repeat" className="h-8 w-8" />
             <h1 className="text-lg font-bold text-foreground" style={{ fontFamily: "var(--font-display)" }}>
               {title}
             </h1>
-          </div>
+          </Link>
           <div className="flex items-center gap-1">
             <AccountSwitcher />
             <ThemeToggle />
