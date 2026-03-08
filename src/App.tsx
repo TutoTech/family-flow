@@ -17,6 +17,7 @@ import TaskTemplates from "./pages/TaskTemplates";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGU from "./pages/CGU";
 import CGV from "./pages/CGV";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
