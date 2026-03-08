@@ -32,6 +32,7 @@ export default function ParentDashboard({ name }: Props) {
 
         {profile?.family_id && (
           <>
+            <StatsCharts />
             <ParentTaskList />
             <ParentRewardList />
             <ParentPenaltyList />
