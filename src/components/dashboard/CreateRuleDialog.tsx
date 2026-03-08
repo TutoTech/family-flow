@@ -91,7 +91,7 @@ export default function CreateRuleDialog({ open, onOpenChange }: Props) {
               <Input id="pts-pen" type="number" min="0" value={pointsPenalty} onChange={(e) => setPointsPenalty(e.target.value)} />
             </div>
             <div>
-              <Label htmlFor="wallet-pen">{t("penalties.walletPenalty")}</Label>
+              <Label htmlFor="wallet-pen">{t("penalties.walletPenalty")} ({currencySymbol})</Label>
               <Input id="wallet-pen" type="number" min="0" step="0.1" value={walletPenalty} onChange={(e) => setWalletPenalty(e.target.value)} />
             </div>
           </div>
