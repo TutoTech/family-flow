@@ -26,9 +26,9 @@ export default function SignupForm() {
       await signUp(email, password, name, role);
       toast({
         title: "Inscription réussie !",
-        description: "Vérifiez votre email pour confirmer votre compte.",
+        description: "Bienvenue sur Stop Repeat !",
       });
-      navigate("/login");
+      navigate("/dashboard");
     } catch (error: any) {
       toast({
         title: "Erreur d'inscription",
