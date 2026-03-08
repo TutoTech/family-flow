@@ -124,16 +124,16 @@ export default function ChildTaskList() {
                   </div>
                 </div>
 
-                {isPending && (
+                {canAct && (
                   <Button
                     size="sm"
-                    variant="default"
+                    variant={isRejected ? "outline" : "default"}
                     className="gap-1 flex-shrink-0"
                     onClick={() => handleComplete(task.id, tmpl?.requires_photo)}
                     disabled={completeTask.isPending}
                   >
                     {tmpl?.requires_photo ? <Camera className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                    {t("childTasks.done")}
+                    {isRejected ? t("childTasks.retry") : t("childTasks.done")}
                   </Button>
                 )}
               </div>
