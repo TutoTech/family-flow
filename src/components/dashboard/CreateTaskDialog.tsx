@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFamilyChildren } from "@/hooks/useTasks";
@@ -36,26 +37,41 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
   const [points, setPoints] = useState("1");
   const [dueTime, setDueTime] = useState("18:00");
   const [recurrence, setRecurrence] = useState("daily");
-  const [assignedTo, setAssignedTo] = useState("");
+  const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
   const [requiresPhoto, setRequiresPhoto] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const toggleChild = (childId: string) => {
+    setSelectedChildren((prev) =>
+      prev.includes(childId) ? prev.filter((id) => id !== childId) : [...prev, childId]
+    );
+  };
+
+  const selectAllChildren = () => {
+    if (selectedChildren.length === children.length) {
+      setSelectedChildren([]);
+    } else {
+      setSelectedChildren(children.map((c) => c.user_id));
+    }
+  };
+
   const handleCreate = async () => {
-    if (!title.trim() || !assignedTo || !user || !profile?.family_id) return;
+    if (!title.trim() || selectedChildren.length === 0 || !user || !profile?.family_id) return;
     setLoading(true);
     try {
-      const { error } = await supabase.from("task_templates").insert({
+      const rows = selectedChildren.map((childId) => ({
         title: title.trim(),
         description: description.trim() || null,
         points_reward: parseInt(points) || 1,
         due_time: dueTime,
         recurrence_type: recurrence as any,
-        assigned_to_user_id: assignedTo,
+        assigned_to_user_id: childId,
         family_id: profile.family_id,
         created_by_user_id: user.id,
         requires_photo: requiresPhoto,
-      });
+      }));
 
+      const { error } = await supabase.from("task_templates").insert(rows);
       if (error) throw error;
 
       await supabase.rpc("generate_daily_task_instances", { _family_id: profile.family_id });
@@ -64,7 +80,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
 
       setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
-      setRecurrence("daily"); setAssignedTo(""); setRequiresPhoto(false);
+      setRecurrence("daily"); setSelectedChildren([]); setRequiresPhoto(false);
       onOpenChange(false);
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
@@ -92,15 +108,33 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>{t("createTask.assignedTo")}</Label>
-              <Select value={assignedTo} onValueChange={setAssignedTo}>
-                <SelectTrigger><SelectValue placeholder={t("createTask.selectChild")} /></SelectTrigger>
-                <SelectContent>
-                  {children.map((child) => (
-                    <SelectItem key={child.user_id} value={child.user_id}>{child.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex items-center justify-between">
+                <Label>{t("createTask.assignedTo")}</Label>
+                {children.length > 1 && (
+                  <button
+                    type="button"
+                    className="text-xs text-primary hover:underline"
+                    onClick={selectAllChildren}
+                  >
+                    {selectedChildren.length === children.length ? t("common.deselectAll") : t("common.selectAll")}
+                  </button>
+                )}
+              </div>
+              <div className="space-y-2 rounded-lg border p-2 max-h-32 overflow-y-auto">
+                {children.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">{t("createTask.noChildren")}</p>
+                ) : (
+                  children.map((child) => (
+                    <label key={child.user_id} className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 rounded p-1">
+                      <Checkbox
+                        checked={selectedChildren.includes(child.user_id)}
+                        onCheckedChange={() => toggleChild(child.user_id)}
+                      />
+                      <span className="text-sm">{child.name}</span>
+                    </label>
+                  ))
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label>{t("createTask.recurrence")}</Label>
@@ -135,7 +169,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
-          <Button onClick={handleCreate} disabled={!title.trim() || !assignedTo || loading}>
+          <Button onClick={handleCreate} disabled={!title.trim() || selectedChildren.length === 0 || loading}>
             {loading ? t("createTask.creating") : t("createTask.createButton")}
           </Button>
         </DialogFooter>
