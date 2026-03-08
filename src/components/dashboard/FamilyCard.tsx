@@ -1,3 +1,10 @@
+/**
+ * Carte famille.
+ * Affiche les membres de la famille, le code d'invitation,
+ * ou propose de créer/rejoindre une famille si l'utilisateur
+ * n'en a pas encore.
+ */
+
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,3 +1,9 @@
+/**
+ * Formulaire de réinitialisation du mot de passe.
+ * Accessible via le lien envoyé par email (contient un token de type "recovery").
+ * Vérifie la présence du token dans l'URL avant d'afficher le formulaire.
+ */
+
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +23,7 @@ export default function ResetPasswordForm() {
   const [isRecovery, setIsRecovery] = useState(false);
   const navigate = useNavigate();
 
+  // Vérifie que l'URL contient un hash de type "recovery"
   useEffect(() => {
     const hash = window.location.hash;
     if (hash.includes("type=recovery")) {
@@ -24,6 +31,7 @@ export default function ResetPasswordForm() {
     }
   }, []);
 
+  /** Met à jour le mot de passe via l'API d'authentification */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -43,6 +51,7 @@ export default function ResetPasswordForm() {
     }
   };
 
+  // Message d'erreur si le lien est invalide ou expiré
   if (!isRecovery) {
     return (
       <Card className="w-full max-w-md shadow-elevated border-border/50">

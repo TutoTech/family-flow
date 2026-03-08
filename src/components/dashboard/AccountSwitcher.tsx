@@ -1,3 +1,10 @@
+/**
+ * Sélecteur de compte (Account Switcher).
+ * Permet aux parents de basculer vers le profil d'un enfant
+ * pour visualiser son tableau de bord. Le retour au profil parent
+ * nécessite la saisie d'un code PIN si configuré.
+ */
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,6 +43,7 @@ interface MemberAvatarProps {
   roleClass?: string;
 }
 
+/** Composant d'avatar réutilisable, supporte les emojis et les images */
 const MemberAvatar = React.forwardRef<HTMLSpanElement, MemberAvatarProps>(
   ({ avatarUrl, name, className = "h-8 w-8", textClass = "text-xs", roleClass = "" }, ref) => {
     const isEmoji = avatarUrl && !avatarUrl.startsWith("http");
@@ -69,8 +77,9 @@ export default function AccountSwitcher() {
   const [verifying, setVerifying] = useState(false);
   const [avatarEditorOpen, setAvatarEditorOpen] = useState(false);
 
+  // Pas de sélecteur si pas de famille ou un seul membre
   if (!profile?.family_id || members.length <= 1) {
-    // Still show "switch back" if impersonating
+    // Affiche un bouton "retour" si on est en mode impersonation
     if (isImpersonating) {
       return (
         <Button variant="ghost" size="sm" className="gap-2 px-2" onClick={switchBack}>
@@ -82,15 +91,15 @@ export default function AccountSwitcher() {
     return null;
   }
 
+  /** Gère le clic sur un membre de la famille */
   const handleMemberClick = (member: FamilyMember) => {
     if (member.user_id === activeProfile?.userId) return;
 
-    // If switching back to self (the authenticated user)
+    // Retour vers son propre profil
     if (member.user_id === user?.id) {
-      // If returning to parent, require PIN
+      // Le retour vers un parent requiert le PIN
       if (member.role === "parent" && isImpersonating) {
         if (!member.has_pin) {
-          // No PIN = allow (shouldn't happen but fallback)
           switchBack();
           toast.success(t("accountSwitcher.switched", { name: member.name }));
           return;
@@ -105,7 +114,7 @@ export default function AccountSwitcher() {
       return;
     }
 
-    // Switching to a parent account always requires PIN
+    // Basculer vers un compte parent nécessite toujours le PIN
     if (member.role === "parent") {
       if (!member.has_pin) {
         toast.error(t("accountSwitcher.noPinSet"));
@@ -115,7 +124,7 @@ export default function AccountSwitcher() {
       setPin("");
       setPinDialogOpen(true);
     } else {
-      // Switching to child — no PIN needed
+      // Basculer vers un enfant : pas de PIN nécessaire
       switchTo({
         userId: member.user_id,
         name: member.name,
@@ -126,17 +135,20 @@ export default function AccountSwitcher() {
     }
   };
 
+  /** Vérifie le code PIN saisi en le comparant au hash SHA-256 stocké */
   const verifyPin = async () => {
     if (!selectedMember || pin.length !== 4) return;
 
     setVerifying(true);
     try {
+      // Hash du PIN saisi côté client
       const encoder = new TextEncoder();
       const data = encoder.encode(pin);
       const hashBuffer = await crypto.subtle.digest("SHA-256", data);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
+      // Comparaison avec le hash stocké en base
       const { data: profileData, error } = await supabase
         .from("profiles")
         .select("pin_code_hash")
@@ -173,6 +185,7 @@ export default function AccountSwitcher() {
 
   return (
     <>
+      {/* Menu déroulant de sélection de profil */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="gap-2 px-2">
@@ -185,6 +198,7 @@ export default function AccountSwitcher() {
             <span className="hidden sm:inline text-sm font-medium">
               {displayProfile?.name}
             </span>
+            {/* Indicateur d'impersonation */}
             {isImpersonating && (
               <span className="text-[10px] text-muted-foreground">(👀)</span>
             )}
@@ -214,6 +228,7 @@ export default function AccountSwitcher() {
                   <p className="text-sm font-medium">{member.name}</p>
                   <p className="text-xs text-muted-foreground">{t(`common.${member.role}`)}</p>
                 </div>
+                {/* Icône cadenas pour les comptes parent non actifs */}
                 {member.role === "parent" && !isActive && (
                   <Shield className="h-4 w-4 text-muted-foreground" />
                 )}
@@ -224,6 +239,7 @@ export default function AccountSwitcher() {
             );
           })}
           <DropdownMenuSeparator />
+          {/* Bouton pour modifier son avatar */}
           <DropdownMenuItem
             onClick={() => setAvatarEditorOpen(true)}
             className="flex items-center gap-3 cursor-pointer"
@@ -236,6 +252,7 @@ export default function AccountSwitcher() {
 
       <AvatarEditorDialog open={avatarEditorOpen} onOpenChange={setAvatarEditorOpen} />
 
+      {/* Dialog de saisie du code PIN */}
       <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

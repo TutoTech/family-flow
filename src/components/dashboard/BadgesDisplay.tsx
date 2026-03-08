@@ -1,3 +1,9 @@
+/**
+ * Affichage de la collection de badges.
+ * Montre tous les badges disponibles dans une grille,
+ * avec les badges obtenus en surbrillance et les non obtenus en grisé.
+ */
+
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

@@ -1,3 +1,9 @@
+/**
+ * Formulaire d'inscription.
+ * L'utilisateur choisit son rôle (parent ou enfant), saisit son nom,
+ * email et mot de passe. Possibilité de s'inscrire via Google OAuth.
+ */
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -22,6 +28,7 @@ export default function SignupForm() {
   const { signUp } = useAuth();
   const navigate = useNavigate();
 
+  /** Soumission du formulaire d'inscription */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -44,6 +51,7 @@ export default function SignupForm() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
+          {/* Sélection du rôle : parent ou enfant */}
           <div className="space-y-2">
             <Label>{t("auth.iAm")}</Label>
             <div className="grid grid-cols-2 gap-3">
@@ -55,6 +63,7 @@ export default function SignupForm() {
               </button>
             </div>
           </div>
+          {/* Champ prénom */}
           <div className="space-y-2">
             <Label htmlFor="name">{t("auth.firstName")}</Label>
             <div className="relative">
@@ -62,6 +71,7 @@ export default function SignupForm() {
               <Input id="name" type="text" placeholder={t("auth.firstNamePlaceholder")} value={name} onChange={(e) => setName(e.target.value)} className="pl-10" required maxLength={50} />
             </div>
           </div>
+          {/* Champ email */}
           <div className="space-y-2">
             <Label htmlFor="signup-email">{t("auth.email")}</Label>
             <div className="relative">
@@ -69,6 +79,7 @@ export default function SignupForm() {
               <Input id="signup-email" type="email" placeholder="votre@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10" required />
             </div>
           </div>
+          {/* Champ mot de passe */}
           <div className="space-y-2">
             <Label htmlFor="signup-password">{t("auth.password")}</Label>
             <div className="relative">
@@ -82,10 +93,12 @@ export default function SignupForm() {
             <UserPlus className="mr-2 h-4 w-4" />
             {isLoading ? t("auth.signingUp") : t("auth.signupButton")}
           </Button>
+          {/* Séparateur "ou" */}
           <div className="relative w-full">
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
             <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">{t("common.or")}</span></div>
           </div>
+          {/* Inscription via Google */}
           <Button type="button" variant="outline" className="w-full" onClick={async () => {
             const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
             if (error) toast({ title: t("common.error"), description: String(error), variant: "destructive" });

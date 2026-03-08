@@ -1,3 +1,9 @@
+/**
+ * Section héro de la landing page.
+ * Présente le titre principal, la description, les boutons d'action
+ * et une illustration avec des cartes flottantes animées.
+ */
+
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-illustration.png";

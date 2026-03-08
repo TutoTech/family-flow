@@ -1,3 +1,9 @@
+/**
+ * Composant de célébration de montée de niveau.
+ * Détecte les changements de niveau via le localStorage
+ * et affiche une animation de célébration lors d'un passage de palier.
+ */
+
 import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLevelBadges } from "@/hooks/useLevelBadges";

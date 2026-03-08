@@ -1,3 +1,9 @@
+/**
+ * Graphiques statistiques du tableau de bord parent.
+ * Affiche 3 onglets : vue hebdomadaire (barres), vue quotidienne (lignes),
+ * et évolution des points (aires). Filtrable par enfant.
+ */
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useWeeklyStats } from "@/hooks/useWeeklyStats";

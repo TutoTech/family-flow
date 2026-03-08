@@ -1,10 +1,19 @@
+/**
+ * Composant NavLink personnalisé.
+ * Encapsule le NavLink de React Router pour supporter
+ * les props className, activeClassName et pendingClassName
+ * de manière plus simple.
+ */
+
 import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
   className?: string;
+  /** Classe CSS appliquée quand le lien est actif */
   activeClassName?: string;
+  /** Classe CSS appliquée pendant le chargement */
   pendingClassName?: string;
 }
 

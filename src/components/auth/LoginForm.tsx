@@ -1,3 +1,9 @@
+/**
+ * Formulaire de connexion.
+ * Permet à l'utilisateur de se connecter avec email/mot de passe
+ * ou via Google OAuth. Inclut un lien vers le mot de passe oublié.
+ */
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -18,6 +24,7 @@ export default function LoginForm() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
+  /** Soumission du formulaire de connexion */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -43,6 +50,7 @@ export default function LoginForm() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
+          {/* Champ email */}
           <div className="space-y-2">
             <Label htmlFor="email">{t("auth.email")}</Label>
             <div className="relative">
@@ -50,6 +58,7 @@ export default function LoginForm() {
               <Input id="email" type="email" placeholder="parent@exemple.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10" required />
             </div>
           </div>
+          {/* Champ mot de passe */}
           <div className="space-y-2">
             <Label htmlFor="password">{t("auth.password")}</Label>
             <div className="relative">
@@ -57,6 +66,7 @@ export default function LoginForm() {
               <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10" required minLength={6} />
             </div>
           </div>
+          {/* Lien mot de passe oublié */}
           <Link to="/forgot-password" className="text-sm text-primary hover:underline inline-block">{t("auth.forgotPassword")}</Link>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
@@ -64,10 +74,12 @@ export default function LoginForm() {
             <LogIn className="mr-2 h-4 w-4" />
             {isLoading ? t("auth.loggingIn") : t("auth.loginButton")}
           </Button>
+          {/* Séparateur "ou" */}
           <div className="relative w-full">
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
             <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">{t("common.or")}</span></div>
           </div>
+          {/* Connexion via Google */}
           <Button type="button" variant="outline" className="w-full" onClick={async () => {
             const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
             if (error) toast({ title: t("common.error"), description: String(error), variant: "destructive" });

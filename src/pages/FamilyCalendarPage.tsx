@@ -1,3 +1,9 @@
+/**
+ * Page du calendrier familial.
+ * Affiche le calendrier mensuel des tâches (fonctionnalité premium).
+ * Redirige vers la bannière d'upgrade si le plan est gratuit.
+ */
+
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";

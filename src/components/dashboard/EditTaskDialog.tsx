@@ -1,3 +1,9 @@
+/**
+ * Dialog de modification d'un modèle de tâche.
+ * Permet de modifier le titre, la description, les points,
+ * l'heure limite, la récurrence, l'assignation et la photo requise.
+ */
+
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";

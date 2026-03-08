@@ -1,3 +1,9 @@
+/**
+ * Page d'accueil (landing page).
+ * Assemble toutes les sections : navigation, héro, fonctionnalités,
+ * comment ça marche, tarification et pied de page.
+ */
+
 import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";

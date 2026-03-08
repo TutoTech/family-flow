@@ -1,3 +1,10 @@
+/**
+ * Pied de page de la landing page.
+ * Contient le logo, les liens vers les pages légales
+ * (mentions légales, CGU, CGV, politique de confidentialité)
+ * et le copyright.
+ */
+
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";

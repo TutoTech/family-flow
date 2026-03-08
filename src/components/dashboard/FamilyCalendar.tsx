@@ -1,3 +1,9 @@
+/**
+ * Calendrier familial mensuel.
+ * Affiche les tâches planifiées de tous les enfants sur un calendrier,
+ * avec un code couleur par enfant et un détail au clic sur chaque jour.
+ */
+
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

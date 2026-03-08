@@ -1,3 +1,9 @@
+/**
+ * Section fonctionnalités de la landing page.
+ * Affiche une grille de 6 fonctionnalités clés de l'application
+ * avec icônes, titres et descriptions.
+ */
+
 import { useTranslation } from "react-i18next";
 import { CheckCircle, Bell, Camera, Trophy, Shield, Star } from "lucide-react";
 
