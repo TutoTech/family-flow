@@ -22,6 +22,7 @@ const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondar
 export default function ParentTaskList() {
   const { tasks, isLoading, validateTask } = useTodayTasks();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [createOpen, setCreateOpen] = useState(false);
   const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
 
