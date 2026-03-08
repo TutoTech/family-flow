@@ -434,7 +434,18 @@
     "french": "Français",
     "english": "English",
     "pinTitle": "Account Security",
-    "pinDesc": "Set a 4-digit PIN code to protect access to your parent account from the profile switcher."
+    "pinDesc": "Set a 4-digit PIN code to protect access to your parent account from the profile switcher.",
+    "dangerZone": "Danger Zone",
+    "dangerZoneDesc": "Irreversible actions on your account",
+    "deleteAccount": "Delete my account",
+    "deleteAccountDesc": "This action is irreversible. All your personal data will be permanently deleted. Family data (tasks, rewards, rules) will remain accessible to other members.",
+    "deleteAccountConfirmTitle": "Delete your account?",
+    "deleteAccountConfirmDesc": "This action is permanent and cannot be undone. Your account, profile, and all personal data will be deleted.",
+    "deleteAccountConfirmButton": "Yes, delete my account",
+    "deleteAccountSuccess": "Your account has been successfully deleted.",
+    "deleteAccountError": "Error deleting account",
+    "typeConfirm": "Type DELETE to confirm",
+    "confirmWord": "DELETE"
   },
   "level": {
     "title": "My Level",
