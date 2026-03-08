@@ -22,6 +22,9 @@ export function useActivityHistory(limit = 50) {
     queryKey: ["activity-history", familyId, user?.id, role],
     queryFn: async (): Promise<ActivityItem[]> => {
       const activities: ActivityItem[] = [];
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      const cutoff = oneMonthAgo.toISOString();
 
       // 1. Validated tasks
       const taskQuery = supabase
