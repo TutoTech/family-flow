@@ -1,17 +1,26 @@
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useActivityHistory, ActivityItem } from "@/hooks/useActivityHistory";
 import { useAuth } from "@/hooks/useAuth";
-import { History, Star } from "lucide-react";
+import { History, Star, Filter } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
-const TYPE_CONFIG: Record<ActivityItem["type"], { label: string; color: string }> = {
-  task_validated: { label: "Tâche validée", color: "text-secondary" },
-  reward_approved: { label: "Récompense", color: "text-primary" },
-  reward_rejected: { label: "Refusée", color: "text-muted-foreground" },
-  penalty: { label: "Pénalité", color: "text-destructive" },
-  reward_redeemed: { label: "Échangée", color: "text-primary" },
+const TYPE_CONFIG: Record<ActivityItem["type"], { label: string; color: string; category: string }> = {
+  task_validated: { label: "Tâche validée", color: "text-secondary", category: "tasks" },
+  reward_approved: { label: "Récompense", color: "text-primary", category: "rewards" },
+  reward_rejected: { label: "Refusée", color: "text-muted-foreground", category: "rewards" },
+  penalty: { label: "Pénalité", color: "text-destructive", category: "penalties" },
+  reward_redeemed: { label: "Échangée", color: "text-primary", category: "rewards" },
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  all: "Tout",
+  tasks: "Tâches",
+  rewards: "Récompenses",
+  penalties: "Pénalités",
 };
 
 export default function ActivityHistory() {
@@ -19,27 +28,83 @@ export default function ActivityHistory() {
   const { data: activities = [], isLoading } = useActivityHistory();
   const isParent = role === "parent";
 
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [childFilter, setChildFilter] = useState("all");
+
+  const childNames = useMemo(() => {
+    if (!isParent) return [];
+    const map = new Map<string, string>();
+    activities.forEach((a) => {
+      if (a.childId && a.childName) map.set(a.childId, a.childName);
+    });
+    return Array.from(map.entries());
+  }, [activities, isParent]);
+
+  const filtered = useMemo(() => {
+    return activities.filter((a) => {
+      if (categoryFilter !== "all" && TYPE_CONFIG[a.type].category !== categoryFilter) return false;
+      if (childFilter !== "all" && a.childId !== childFilter) return false;
+      return true;
+    });
+  }, [activities, categoryFilter, childFilter]);
+
+  const hasFilters = categoryFilter !== "all" || childFilter !== "all";
+
   return (
     <Card className="shadow-card">
-      <CardHeader>
+      <CardHeader className="space-y-3">
         <CardTitle className="text-lg flex items-center gap-2">
           <History className="h-5 w-5 text-muted-foreground" />
           Historique des activités
         </CardTitle>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="h-8 w-[140px] text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                <SelectItem key={key} value={key} className="text-xs">{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {isParent && childNames.length > 0 && (
+            <Select value={childFilter} onValueChange={setChildFilter}>
+              <SelectTrigger className="h-8 w-[140px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all" className="text-xs">Tous les enfants</SelectItem>
+                {childNames.map(([id, name]) => (
+                  <SelectItem key={id} value={id} className="text-xs">{name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {hasFilters && (
+            <button
+              onClick={() => { setCategoryFilter("all"); setChildFilter("all"); }}
+              className="text-xs text-muted-foreground hover:text-foreground underline"
+            >
+              Réinitialiser
+            </button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <div className="flex justify-center py-4">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
           </div>
-        ) : activities.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="text-center py-6 text-muted-foreground">
             <History className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">Aucune activité pour le moment</p>
+            <p className="text-sm">{hasFilters ? "Aucun résultat pour ces filtres" : "Aucune activité pour le moment"}</p>
           </div>
         ) : (
           <div className="space-y-1">
-            {activities.map((activity) => {
+            {filtered.map((activity) => {
               const config = TYPE_CONFIG[activity.type];
               const pointsPositive = activity.points > 0;
               return (
