@@ -562,5 +562,20 @@
     "activationCodeUsed": "This code has already been used.",
     "activationNoFamily": "You must first create or join a family.",
     "orActivationCode": "or use an activation code"
+  },
+  "avatar": {
+    "title": "Edit Avatar",
+    "description": "Choose an emoji or upload a photo as your avatar.",
+    "emoji": "Emoji",
+    "photo": "Photo",
+    "saveEmoji": "Save Emoji",
+    "saved": "Avatar updated!",
+    "removed": "Avatar removed.",
+    "remove": "Remove avatar",
+    "chooseFile": "Choose an image",
+    "uploadHint": "Accepted formats: JPG, PNG. Max size: 2 MB.",
+    "invalidFile": "The file is not a valid image.",
+    "fileTooLarge": "Image must be under 2 MB.",
+    "editAvatar": "Edit my avatar"
   }
 }

@@ -22,8 +22,34 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { ChevronDown, Shield, User, Users, ArrowLeft } from "lucide-react";
+import { ChevronDown, Shield, User, Users, ArrowLeft, Pencil } from "lucide-react";
 import { toast } from "sonner";
+import AvatarEditorDialog from "./AvatarEditorDialog";
+
+function MemberAvatar({ avatarUrl, name, className = "h-8 w-8", textClass = "text-xs", roleClass = "" }: {
+  avatarUrl: string | null;
+  name: string;
+  className?: string;
+  textClass?: string;
+  roleClass?: string;
+}) {
+  const isEmoji = avatarUrl && !avatarUrl.startsWith("http");
+  const getInitials = (n: string) => n.split(" ").map((p) => p[0]).join("").toUpperCase().slice(0, 2);
+  return (
+    <Avatar className={className}>
+      {isEmoji ? (
+        <AvatarFallback className={`${textClass} bg-primary/10`}>{avatarUrl}</AvatarFallback>
+      ) : (
+        <>
+          <AvatarImage src={avatarUrl ?? undefined} />
+          <AvatarFallback className={`${textClass} ${roleClass || "bg-primary/10 text-primary"}`}>
+            {getInitials(name)}
+          </AvatarFallback>
+        </>
+      )}
+    </Avatar>
+  );
+}
 
 export default function AccountSwitcher() {
   const { t } = useTranslation();
@@ -34,6 +60,7 @@ export default function AccountSwitcher() {
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
   const [pin, setPin] = useState("");
   const [verifying, setVerifying] = useState(false);
+  const [avatarEditorOpen, setAvatarEditorOpen] = useState(false);
 
   if (!profile?.family_id || members.length <= 1) {
     // Still show "switch back" if impersonating
@@ -135,9 +162,6 @@ export default function AccountSwitcher() {
     }
   };
 
-  const getInitials = (name: string) =>
-    name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
-
   const displayProfile = activeProfile;
 
   return (
@@ -145,12 +169,12 @@ export default function AccountSwitcher() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="gap-2 px-2">
-            <Avatar className="h-6 w-6">
-              <AvatarImage src={displayProfile?.avatarUrl ?? undefined} />
-              <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                {displayProfile ? getInitials(displayProfile.name) : <User className="h-3 w-3" />}
-              </AvatarFallback>
-            </Avatar>
+            <MemberAvatar
+              avatarUrl={displayProfile?.avatarUrl ?? null}
+              name={displayProfile?.name ?? "?"}
+              className="h-6 w-6"
+              textClass="text-xs"
+            />
             <span className="hidden sm:inline text-sm font-medium">
               {displayProfile?.name}
             </span>
@@ -174,14 +198,11 @@ export default function AccountSwitcher() {
                 onClick={() => handleMemberClick(member)}
                 className={`flex items-center gap-3 cursor-pointer ${isActive ? "bg-muted" : ""}`}
               >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={member.avatar_url ?? undefined} />
-                  <AvatarFallback className={`text-xs ${
-                    member.role === "parent" ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary"
-                  }`}>
-                    {getInitials(member.name)}
-                  </AvatarFallback>
-                </Avatar>
+                <MemberAvatar
+                  avatarUrl={member.avatar_url}
+                  name={member.name}
+                  roleClass={member.role === "parent" ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary"}
+                />
                 <div className="flex-1">
                   <p className="text-sm font-medium">{member.name}</p>
                   <p className="text-xs text-muted-foreground">{t(`common.${member.role}`)}</p>
@@ -195,8 +216,18 @@ export default function AccountSwitcher() {
               </DropdownMenuItem>
             );
           })}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => setAvatarEditorOpen(true)}
+            className="flex items-center gap-3 cursor-pointer"
+          >
+            <Pencil className="h-4 w-4" />
+            {t("avatar.editAvatar")}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <AvatarEditorDialog open={avatarEditorOpen} onOpenChange={setAvatarEditorOpen} />
 
       <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
         <DialogContent className="sm:max-w-md">
@@ -210,12 +241,12 @@ export default function AccountSwitcher() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center gap-6 py-4">
-            <Avatar className="h-16 w-16">
-              <AvatarImage src={selectedMember?.avatar_url ?? undefined} />
-              <AvatarFallback className="text-lg bg-primary/10 text-primary">
-                {selectedMember ? getInitials(selectedMember.name) : "?"}
-              </AvatarFallback>
-            </Avatar>
+            <MemberAvatar
+              avatarUrl={selectedMember?.avatar_url ?? null}
+              name={selectedMember?.name ?? "?"}
+              className="h-16 w-16"
+              textClass="text-lg"
+            />
             <InputOTP
               maxLength={4}
               value={pin}
