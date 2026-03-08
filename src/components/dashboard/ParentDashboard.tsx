@@ -12,6 +12,7 @@ import ParentPenaltyList from "./ParentPenaltyList";
 import ActivityHistory from "./ActivityHistory";
 import StatsCharts from "./StatsCharts";
 import UpgradeBanner from "./UpgradeBanner";
+import { PremiumGate } from "./PremiumBadge";
 
 interface Props { name: string; }
 
@@ -52,7 +53,9 @@ export default function ParentDashboard({ name }: Props) {
         <UpgradeBanner />
         {profile?.family_id && (
           <>
-            {isPaid && <StatsCharts />}
+            {isPaid ? <StatsCharts /> : (
+              <PremiumGate featureLabel={t("dashboard.statsTitle")}><StatsCharts /></PremiumGate>
+            )}
             <ParentTaskList />
             <ParentRewardList />
             <ParentPenaltyList />

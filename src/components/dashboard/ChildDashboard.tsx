@@ -10,6 +10,7 @@ import ChildTaskList from "./ChildTaskList";
 import ChildRewardShop from "./ChildRewardShop";
 import ActivityHistory from "./ActivityHistory";
 import SavingsGoalCard from "./SavingsGoalCard";
+import { PremiumGate } from "./PremiumBadge";
 import ChildPenaltyHistory from "./ChildPenaltyHistory";
 import LevelProgressCard from "./LevelProgressCard";
 import BadgesDisplay from "./BadgesDisplay";
@@ -98,7 +99,9 @@ export default function ChildDashboard({ name }: Props) {
               <BadgesDisplay />
             </div>
             <ChildTaskList />
-            {isPaid && <SavingsGoalCard />}
+            {isPaid ? <SavingsGoalCard /> : (
+              <PremiumGate featureLabel={t("savings.title")}><SavingsGoalCard /></PremiumGate>
+            )}
             <ChildRewardShop />
             <ChildPenaltyHistory />
             <ActivityHistory />
