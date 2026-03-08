@@ -373,7 +373,8 @@
     "tasks": "Tâches",
     "rewards": "Récompenses",
     "penaltiesFilter": "Pénalités",
-    "allChildren": "Tous les enfants"
+    "allChildren": "Tous les enfants",
+    "olderActivities": "Activités plus anciennes ({{count}})"
   },
   "stats": {
     "title": "Statistiques",
