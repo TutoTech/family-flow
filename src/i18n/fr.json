@@ -156,7 +156,8 @@
     "streakDays": "{{count}} jours",
     "tasks": "Tâches",
     "completed": "terminées",
-    "penalties": "Pénalités"
+    "penalties": "Pénalités",
+    "wallet": "Portefeuille"
   },
   "family": {
     "createOrJoinTitle": "Créez ou rejoignez un foyer",

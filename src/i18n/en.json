@@ -156,7 +156,8 @@
     "streakDays": "{{count}} days",
     "tasks": "Tasks",
     "completed": "completed",
-    "penalties": "Penalties"
+    "penalties": "Penalties",
+    "wallet": "Wallet"
   },
   "family": {
     "createOrJoinTitle": "Create or join a household",
