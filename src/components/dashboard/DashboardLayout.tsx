@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { LogOut, Home } from "lucide-react";
+import { LogOut, Home, Settings } from "lucide-react";
 import logo from "@/assets/logo.png";
 import NotificationBell from "@/components/dashboard/NotificationBell";
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function DashboardLayout({ children, title }: Props) {
-  const { signOut } = useAuth();
+  const { signOut, role } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -32,6 +32,11 @@ export default function DashboardLayout({ children, title }: Props) {
           </div>
           <div className="flex items-center gap-1">
             <NotificationBell />
+            {role === "parent" && (
+              <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
+                <Settings className="h-4 w-4" />
+              </Button>
+            )}
             <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
               <Home className="h-4 w-4" />
             </Button>
