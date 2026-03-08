@@ -19,7 +19,7 @@ export interface WeeklyOverview {
   pointsEarned: number;
 }
 
-export function useWeeklyStats(weeksBack = 4) {
+export function useWeeklyStats(weeksBack = 4, childId?: string | null) {
   const { profile } = useAuth();
   const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
   const [weeklyStats, setWeeklyStats] = useState<WeeklyOverview[]>([]);
@@ -29,6 +29,7 @@ export function useWeeklyStats(weeksBack = 4) {
     if (!profile?.family_id) return;
 
     const fetchStats = async () => {
+      setLoading(true);
       const now = new Date();
       const startDate = startOfWeek(subWeeks(now, weeksBack - 1), { weekStartsOn: 1 });
       const endDate = endOfWeek(now, { weekStartsOn: 1 });
@@ -37,13 +38,19 @@ export function useWeeklyStats(weeksBack = 4) {
       const endStr = format(endDate, "yyyy-MM-dd");
 
       // Fetch validated tasks
-      const { data: tasks } = await supabase
+      let tasksQuery = supabase
         .from("task_instances")
         .select("scheduled_for_date, status, task_template_id")
         .eq("family_id", profile.family_id!)
         .in("status", ["validated", "done", "awaiting_validation"])
         .gte("scheduled_for_date", startStr)
         .lte("scheduled_for_date", endStr);
+
+      if (childId) {
+        tasksQuery = tasksQuery.eq("assigned_to_user_id", childId);
+      }
+
+      const { data: tasks } = await tasksQuery;
 
       // Fetch task templates for points
       const { data: templates } = await supabase
@@ -55,12 +62,18 @@ export function useWeeklyStats(weeksBack = 4) {
       templates?.forEach((t) => pointsMap.set(t.id, t.points_reward));
 
       // Fetch penalties
-      const { data: penalties } = await supabase
+      let penaltiesQuery = supabase
         .from("penalties_log")
         .select("created_at")
         .eq("family_id", profile.family_id!)
         .gte("created_at", startDate.toISOString())
         .lte("created_at", endDate.toISOString());
+
+      if (childId) {
+        penaltiesQuery = penaltiesQuery.eq("child_id", childId);
+      }
+
+      const { data: penalties } = await penaltiesQuery;
 
       // Build daily stats
       const allDays = eachDayOfInterval({ start: startDate, end: endDate });
@@ -106,7 +119,7 @@ export function useWeeklyStats(weeksBack = 4) {
     };
 
     fetchStats();
-  }, [profile?.family_id, weeksBack]);
+  }, [profile?.family_id, weeksBack, childId]);
 
   return { dailyStats, weeklyStats, loading };
 }

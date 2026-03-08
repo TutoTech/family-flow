@@ -1,14 +1,20 @@
+import { useState } from "react";
 import { useWeeklyStats } from "@/hooks/useWeeklyStats";
+import { useFamilyChildren } from "@/hooks/useTasks";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, AreaChart, Area,
 } from "recharts";
-import { BarChart3, TrendingUp, AlertTriangle } from "lucide-react";
+import { BarChart3, TrendingUp, AlertTriangle, Users } from "lucide-react";
 
 export default function StatsCharts() {
-  const { dailyStats, weeklyStats, loading } = useWeeklyStats(4);
+  const [selectedChild, setSelectedChild] = useState<string>("all");
+  const { data: children = [] } = useFamilyChildren();
+  const childId = selectedChild === "all" ? null : selectedChild;
+  const { dailyStats, weeklyStats, loading } = useWeeklyStats(4, childId);
 
   if (loading) {
     return (
@@ -20,19 +26,41 @@ export default function StatsCharts() {
     );
   }
 
-  // Get last 14 days for daily view
   const recentDaily = dailyStats.slice(-14);
+  const childName = selectedChild === "all"
+    ? "toute la famille"
+    : children.find((c) => c.user_id === selectedChild)?.name ?? "l'enfant";
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2" style={{ fontFamily: "var(--font-display)" }}>
-          <BarChart3 className="h-5 w-5 text-primary" />
-          Statistiques
-        </CardTitle>
-        <CardDescription>
-          Évolution sur les 4 dernières semaines
-        </CardDescription>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <CardTitle className="flex items-center gap-2" style={{ fontFamily: "var(--font-display)" }}>
+              <BarChart3 className="h-5 w-5 text-primary" />
+              Statistiques
+            </CardTitle>
+            <CardDescription>
+              Évolution sur les 4 dernières semaines — {childName}
+            </CardDescription>
+          </div>
+          {children.length > 0 && (
+            <Select value={selectedChild} onValueChange={setSelectedChild}>
+              <SelectTrigger className="w-44">
+                <Users className="h-4 w-4 mr-1 text-muted-foreground" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toute la famille</SelectItem>
+                {children.map((child) => (
+                  <SelectItem key={child.user_id} value={child.user_id}>
+                    {child.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="weekly" className="space-y-4">
@@ -65,7 +93,6 @@ export default function StatsCharts() {
               </ResponsiveContainer>
             </div>
 
-            {/* Summary cards */}
             <div className="grid grid-cols-3 gap-3">
               <SummaryCard
                 label="Total tâches"
