@@ -92,7 +92,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
 
       setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
-      setRecurrence("daily"); setSelectedChildren([]); setRequiresPhoto(false);
+      setRecurrence("daily"); setWeeklyDay(String(new Date().getDay())); setSelectedChildren([]); setRequiresPhoto(false);
       onOpenChange(false);
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
