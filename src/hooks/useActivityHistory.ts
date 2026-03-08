@@ -80,6 +80,7 @@ export function useActivityHistory(limit = 50) {
         .from("penalties_log")
         .select("id, created_at, child_id, rule:house_rules(label, icon, points_penalty)")
         .eq("family_id", familyId!)
+        .gte("created_at", cutoff)
         .order("created_at", { ascending: false })
         .limit(limit);
 
