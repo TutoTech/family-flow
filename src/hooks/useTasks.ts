@@ -86,7 +86,7 @@ export function useTodayTasks() {
       const { error } = await supabase
         .from("task_instances")
         .update({
-          status: "pending" as any,
+          status: "pending",
           completed_at: null,
           validated_at: null,
           validated_by_user_id: null,

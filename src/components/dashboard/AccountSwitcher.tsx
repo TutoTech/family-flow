@@ -26,30 +26,37 @@ import { ChevronDown, Shield, User, Users, ArrowLeft, Pencil } from "lucide-reac
 import { toast } from "sonner";
 import AvatarEditorDialog from "./AvatarEditorDialog";
 
-function MemberAvatar({ avatarUrl, name, className = "h-8 w-8", textClass = "text-xs", roleClass = "" }: {
+import React from "react";
+
+interface MemberAvatarProps {
   avatarUrl: string | null;
   name: string;
   className?: string;
   textClass?: string;
   roleClass?: string;
-}) {
-  const isEmoji = avatarUrl && !avatarUrl.startsWith("http");
-  const getInitials = (n: string) => n.split(" ").map((p) => p[0]).join("").toUpperCase().slice(0, 2);
-  return (
-    <Avatar className={className}>
-      {isEmoji ? (
-        <AvatarFallback className={`${textClass} bg-primary/10`}>{avatarUrl}</AvatarFallback>
-      ) : (
-        <>
-          <AvatarImage src={avatarUrl ?? undefined} />
-          <AvatarFallback className={`${textClass} ${roleClass || "bg-primary/10 text-primary"}`}>
-            {getInitials(name)}
-          </AvatarFallback>
-        </>
-      )}
-    </Avatar>
-  );
 }
+
+const MemberAvatar = React.forwardRef<HTMLSpanElement, MemberAvatarProps>(
+  ({ avatarUrl, name, className = "h-8 w-8", textClass = "text-xs", roleClass = "" }, ref) => {
+    const isEmoji = avatarUrl && !avatarUrl.startsWith("http");
+    const getInitials = (n: string) => n.split(" ").map((p) => p[0]).join("").toUpperCase().slice(0, 2);
+    return (
+      <Avatar className={className} ref={ref}>
+        {isEmoji ? (
+          <AvatarFallback className={`${textClass} bg-primary/10`}>{avatarUrl}</AvatarFallback>
+        ) : (
+          <>
+            <AvatarImage src={avatarUrl ?? undefined} />
+            <AvatarFallback className={`${textClass} ${roleClass || "bg-primary/10 text-primary"}`}>
+              {getInitials(name)}
+            </AvatarFallback>
+          </>
+        )}
+      </Avatar>
+    );
+  }
+);
+MemberAvatar.displayName = "MemberAvatar";
 
 export default function AccountSwitcher() {
   const { t } = useTranslation();

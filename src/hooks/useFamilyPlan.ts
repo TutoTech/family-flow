@@ -26,7 +26,7 @@ export function useFamilyPlan() {
       .eq("id", profile.family_id)
       .single();
 
-    const familyPlan = (data as any)?.plan as string | undefined;
+    const familyPlan = data?.plan;
     setPlan(familyPlan === "family" ? "family" : "free");
     setLoading(false);
   }, [profile?.family_id]);
