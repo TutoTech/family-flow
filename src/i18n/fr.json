@@ -32,7 +32,8 @@
     "howItWorks": "Comment ça marche",
     "pricing": "Tarifs",
     "login": "Se connecter",
-    "signup": "S'inscrire"
+    "signup": "S'inscrire",
+    "dashboard": "Mon tableau de bord"
   },
   "pricing": {
     "title": "Un tarif simple, sans abonnement",
