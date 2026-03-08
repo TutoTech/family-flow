@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
   open: boolean;
@@ -21,6 +22,7 @@ export default function CreateRuleDialog({ open, onOpenChange }: Props) {
   const { t } = useTranslation();
   const { profile } = useAuth();
   const { toast } = useToast();
+  const { symbol: currencySymbol } = useCurrency();
   const queryClient = useQueryClient();
   const [label, setLabel] = useState("");
   const [description, setDescription] = useState("");
@@ -89,7 +91,7 @@ export default function CreateRuleDialog({ open, onOpenChange }: Props) {
               <Input id="pts-pen" type="number" min="0" value={pointsPenalty} onChange={(e) => setPointsPenalty(e.target.value)} />
             </div>
             <div>
-              <Label htmlFor="wallet-pen">{t("penalties.walletPenalty")}</Label>
+              <Label htmlFor="wallet-pen">{t("penalties.walletPenalty")} ({currencySymbol})</Label>
               <Input id="wallet-pen" type="number" min="0" step="0.1" value={walletPenalty} onChange={(e) => setWalletPenalty(e.target.value)} />
             </div>
           </div>

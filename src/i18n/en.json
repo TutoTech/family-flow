@@ -299,7 +299,7 @@
     "ruleDescription": "Description (optional)",
     "ruleDescPlaceholder": "Details...",
     "pointsPenalty": "Points penalty",
-    "walletPenalty": "Wallet penalty (€)",
+    "walletPenalty": "Wallet penalty",
     "createRule": "Create rule",
     "ruleCreated": "Rule created!",
     "applyTitle": "Apply a penalty",

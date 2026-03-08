@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, Navigate } from "react-router-dom";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,7 @@ export default function FamilySettingsPage() {
   const { t, i18n } = useTranslation();
   const { profile, role } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [settings, setSettings] = useState<FamilySettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -73,15 +75,19 @@ export default function FamilySettingsPage() {
 
     const { error } = await supabase
       .from("family_settings")
-      .update(settings)
+      .update(settings as any)
       .eq("family_id", profile.family_id!);
 
-    if (error) toast.error(t("settings.saveError"));
-    else toast.success(t("settings.saved"));
+    if (error) {
+      toast.error(t("settings.saveError"));
+    } else {
+      toast.success(t("settings.saved"));
+      queryClient.invalidateQueries({ queryKey: ["family-currency"] });
+    }
     setSaving(false);
   };
 
-  const updateField = (field: keyof FamilySettings, value: number) => {
+  const updateField = (field: keyof FamilySettings, value: number | string) => {
     setSettings((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
