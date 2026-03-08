@@ -48,6 +48,14 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/tasks"
+                element={
+                  <ProtectedRoute>
+                    <TaskTemplates />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
