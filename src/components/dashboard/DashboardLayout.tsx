@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { LogOut, Home } from "lucide-react";
 import logo from "@/assets/logo.png";
+import NotificationBell from "@/components/dashboard/NotificationBell";
 
 interface Props {
   children: ReactNode;
