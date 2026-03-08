@@ -210,7 +210,8 @@
     "myTasks": "My tasks for today",
     "done": "Done!",
     "wellDone": "Well done! 🎉",
-    "taskSent": "Your task has been sent for validation."
+    "taskSent": "Your task has been sent for validation.",
+    "retry": "Retry"
   },
   "createTask": {
     "title": "New task",
