@@ -18,6 +18,7 @@ export default function ChildDashboard({ name }: Props) {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { data: stats } = useChildStats();
+  const { symbol: currencySymbol } = useCurrency();
   const { tasks } = useTodayTasks();
   const myTasks = tasks.filter((t) => t.assigned_to_user_id === user?.id);
   const completedTasks = myTasks.filter((t) => ["validated", "awaiting_validation", "done"].includes(t.status));
