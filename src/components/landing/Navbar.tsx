@@ -1,9 +1,17 @@
 import { useTranslation } from "react-i18next";
+import { Globe } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
       <div className="container max-w-6xl mx-auto flex items-center justify-between h-16 px-6">
@@ -17,6 +25,21 @@ const Navbar = () => {
           <a href="#tarifs" className="hover:text-foreground transition-colors">{t("nav.pricing")}</a>
         </div>
         <div className="flex items-center gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label={t("settings.language")}>
+                <Globe className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => i18n.changeLanguage("fr")} className={i18n.language === "fr" ? "font-bold" : ""}>
+                🇫🇷 Français
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => i18n.changeLanguage("en")} className={i18n.language === "en" ? "font-bold" : ""}>
+                🇬🇧 English
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <ThemeToggle />
           <button className="text-sm font-medium font-body text-muted-foreground hover:text-foreground transition-colors hidden sm:block">{t("nav.login")}</button>
           <button className="gradient-hero text-primary-foreground text-sm font-bold px-5 py-2 rounded-lg shadow-soft hover:shadow-elevated transition-all duration-300">{t("nav.signup")}</button>
