@@ -4,13 +4,18 @@ import { Badge } from "@/components/ui/badge";
 import { ShieldAlert, Star, Wallet } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useChildPenalties } from "@/hooks/usePenalties";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import i18n from "@/i18n";
 
 export default function ChildPenaltyHistory() {
   const { t } = useTranslation();
-  const { data: penalties = [], isLoading } = useChildPenalties();
+  const { user } = useAuth();
+  const { activeProfile, isImpersonating } = useProfileSwitch();
+  const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
+  const { data: penalties = [], isLoading } = useChildPenalties(viewUserId ?? undefined);
   const { symbol: currencySymbol } = useCurrency();
   const dateFnsLocale = i18n.language === "fr" ? fr : enUS;
 
