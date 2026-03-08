@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Home, Settings } from "lucide-react";
 import logo from "@/assets/logo.png";
 import NotificationBell from "@/components/dashboard/NotificationBell";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface Props {
   children: ReactNode;
@@ -31,6 +32,7 @@ export default function DashboardLayout({ children, title }: Props) {
             </h1>
           </div>
           <div className="flex items-center gap-1">
+            <ThemeToggle />
             <NotificationBell />
             {role === "parent" && (
               <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
