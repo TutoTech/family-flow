@@ -10,6 +10,7 @@ import ParentRewardList from "./ParentRewardList";
 import ParentPenaltyList from "./ParentPenaltyList";
 import ActivityHistory from "./ActivityHistory";
 import StatsCharts from "./StatsCharts";
+import UpgradeBanner from "./UpgradeBanner";
 
 interface Props { name: string; }
 
