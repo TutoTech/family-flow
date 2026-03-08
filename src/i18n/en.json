@@ -308,7 +308,9 @@
     "commentPlaceholder": "Context...",
     "applying": "Applying...",
     "applyButton": "Apply penalty",
-    "penaltyApplied": "Penalty applied"
+    "penaltyApplied": "Penalty applied",
+    "myPenalties": "My penalties",
+    "noPenalties": "No penalties, well done!"
   },
   "activity": {
     "title": "Activity history",

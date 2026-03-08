@@ -72,6 +72,7 @@ export default function ChildDashboard({ name }: Props) {
           <>
             <ChildTaskList />
             <ChildRewardShop />
+            <ChildPenaltyHistory />
             <ActivityHistory />
           </>
         )}
