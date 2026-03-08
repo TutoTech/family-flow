@@ -384,7 +384,9 @@
     "language": "Langue",
     "languageDesc": "Choisissez la langue de l'interface",
     "french": "Français",
-    "english": "English"
+    "english": "English",
+    "pinTitle": "Sécurité du compte",
+    "pinDesc": "Définissez un code PIN à 4 chiffres pour protéger l'accès à votre compte parent depuis le sélecteur de profil."
   },
   "level": {
     "title": "Mon niveau",

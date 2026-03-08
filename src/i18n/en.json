@@ -384,7 +384,9 @@
     "language": "Language",
     "languageDesc": "Choose the interface language",
     "french": "Français",
-    "english": "English"
+    "english": "English",
+    "pinTitle": "Account Security",
+    "pinDesc": "Set a 4-digit PIN code to protect access to your parent account from the profile switcher."
   },
   "level": {
     "title": "My Level",
