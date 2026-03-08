@@ -257,6 +257,7 @@
     "descriptionPlaceholder": "Task details",
     "assignedTo": "Assigned to",
     "selectChild": "Choose a child",
+    "noChildren": "No children in the family",
     "recurrence": "Recurrence",
     "daily": "Every day",
     "weekdays": "Weekdays",

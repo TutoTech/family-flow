@@ -257,6 +257,7 @@
     "descriptionPlaceholder": "Détails de la tâche",
     "assignedTo": "Assigné à",
     "selectChild": "Choisir un enfant",
+    "noChildren": "Aucun enfant dans la famille",
     "recurrence": "Récurrence",
     "daily": "Tous les jours",
     "weekdays": "Jours de semaine",
