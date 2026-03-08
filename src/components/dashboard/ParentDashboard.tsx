@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import FamilyCard from "./FamilyCard";
 import ParentTaskList from "./ParentTaskList";
 import ParentRewardList from "./ParentRewardList";
+import ParentPenaltyList from "./ParentPenaltyList";
 
 interface Props {
   name: string;
@@ -31,6 +32,7 @@ export default function ParentDashboard({ name }: Props) {
           <>
             <ParentTaskList />
             <ParentRewardList />
+            <ParentPenaltyList />
           </>
         )}
       </div>

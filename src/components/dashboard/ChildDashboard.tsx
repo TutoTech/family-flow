@@ -1,11 +1,12 @@
 import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star, Flame, CheckCircle2, Gift } from "lucide-react";
+import { Star, Flame, CheckCircle2, Gift, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import FamilyCard from "./FamilyCard";
 import ChildTaskList from "./ChildTaskList";
 import ChildRewardShop from "./ChildRewardShop";
 import { useChildStats } from "@/hooks/useRewards";
+import { useChildPenalties } from "@/hooks/usePenalties";
 import { useTodayTasks } from "@/hooks/useTasks";
 
 interface Props {
@@ -66,14 +67,14 @@ export default function ChildDashboard({ name }: Props) {
             </CardContent>
           </Card>
 
-          <Card className="shadow-card">
+          <Card className="shadow-card bg-destructive/5 border-destructive/20">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Récompenses</CardTitle>
-              <Gift className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Pénalités</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">0</div>
-              <p className="text-xs text-muted-foreground">disponibles</p>
+              <div className="text-2xl font-bold text-destructive">{stats?.daily_penalties ?? 0}</div>
+              <p className="text-xs text-muted-foreground">aujourd'hui</p>
             </CardContent>
           </Card>
         </div>
