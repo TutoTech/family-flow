@@ -22,6 +22,7 @@ interface FamilyMember {
 export default function FamilyCard() {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
+  const { activeProfile } = useProfileSwitch();
   const { toast } = useToast();
   const [family, setFamily] = useState<{ id: string; name: string; invite_code: string } | null>(null);
   const [members, setMembers] = useState<FamilyMember[]>([]);
