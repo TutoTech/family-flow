@@ -34,6 +34,38 @@
     "login": "Se connecter",
     "signup": "S'inscrire"
   },
+  "pricing": {
+    "title": "Un tarif simple, sans abonnement",
+    "subtitle": "Commencez gratuitement, passez à la version famille quand vous le souhaitez.",
+    "free": {
+      "name": "Gratuit",
+      "period": "pour toujours",
+      "description": "Parfait pour découvrir Stop Repeat avec votre enfant.",
+      "features": [
+        "1 parent",
+        "1 enfant",
+        "Tâches illimitées",
+        "Récompenses & boutique",
+        "Suivi des points & séries"
+      ],
+      "cta": "Commencer gratuitement"
+    },
+    "family": {
+      "name": "Famille",
+      "period": "achat unique",
+      "badge": "Populaire",
+      "description": "Pour toute la famille, sans frais récurrents.",
+      "features": [
+        "Jusqu'à 2 parents",
+        "Enfants illimités",
+        "Toutes les fonctionnalités gratuites",
+        "Calendrier familial",
+        "Statistiques avancées",
+        "Objectifs d'épargne"
+      ],
+      "cta": "Acheter pour 10€"
+    }
+  },
   "hero": {
     "badge": "Fini les répétitions sans fin",
     "titleStart": "Dites-le",
