@@ -567,6 +567,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_daily_task_instances: {
+        Args: { _family_id: string }
+        Returns: undefined
+      }
       get_user_family_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {

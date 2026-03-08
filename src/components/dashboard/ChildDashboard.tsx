@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Star, Flame, CheckCircle2, Gift } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import FamilyCard from "./FamilyCard";
+import ChildTaskList from "./ChildTaskList";
 
 interface Props {
   name: string;
@@ -69,17 +70,7 @@ export default function ChildDashboard({ name }: Props) {
           </Card>
         </div>
 
-        {profile?.family_id && (
-          <Card className="border-dashed border-2 border-secondary/30 bg-secondary/5">
-            <CardContent className="py-8 text-center">
-              <CheckCircle2 className="h-12 w-12 mx-auto text-secondary mb-4" />
-              <h3 className="text-lg font-bold text-foreground mb-2">Pas de tâches pour le moment</h3>
-              <p className="text-muted-foreground text-sm">
-                Tes parents vont bientôt ajouter des missions !
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        {profile?.family_id && <ChildTaskList />}
       </div>
     </DashboardLayout>
   );
