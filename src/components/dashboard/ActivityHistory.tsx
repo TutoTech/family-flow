@@ -22,7 +22,7 @@ function ActivityRow({
   activity: ActivityItem;
   config: { label: string; color: string };
   isParent: boolean;
-  dateFnsLocale: Locale;
+  dateFnsLocale: typeof fr;
 }) {
   const pointsPositive = activity.points > 0;
   return (
