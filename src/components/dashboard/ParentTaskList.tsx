@@ -109,6 +109,17 @@ export default function ParentTaskList() {
                           </Button>
                         </>
                       )}
+                      {["validated", "rejected", "awaiting_validation", "done", "late"].includes(task.status) && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-primary"
+                          onClick={() => handleReset(task.id)}
+                          title={t("taskList.resetTask")}
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 );
