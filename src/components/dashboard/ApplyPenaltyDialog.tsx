@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFamilyRules, useFamilyChildren } from "@/hooks/usePenalties";
 import { Star, Wallet } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
   open: boolean;
