@@ -82,6 +82,10 @@ export default function ChildDashboard({ name }: Props) {
         </div>
         {profile?.family_id && (
           <>
+            <div className="grid md:grid-cols-2 gap-4">
+              <LevelProgressCard />
+              <BadgesDisplay />
+            </div>
             <ChildTaskList />
             <ChildRewardShop />
             <ChildPenaltyHistory />
