@@ -429,5 +429,17 @@
       "points_1000": "1000 points cumulés",
       "zero_penalty_day": "Une journée sans pénalité"
     }
+  },
+  "calendar": {
+    "title": "Calendrier familial",
+    "noTasks": "Aucune tâche ce jour",
+    "status": {
+      "pending": "À faire",
+      "awaiting_validation": "En attente",
+      "validated": "Validée",
+      "rejected": "Refusée",
+      "late": "En retard",
+      "done": "Terminée"
+    }
   }
 }

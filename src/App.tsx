@@ -14,6 +14,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import FamilySettings from "./pages/FamilySettings";
 import TaskTemplates from "./pages/TaskTemplates";
+import FamilyCalendarPage from "./pages/FamilyCalendarPage";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGU from "./pages/CGU";
 import CGV from "./pages/CGV";
@@ -61,6 +62,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <TaskTemplates />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/calendar"
+                element={
+                  <ProtectedRoute>
+                    <FamilyCalendarPage />
                   </ProtectedRoute>
                 }
               />

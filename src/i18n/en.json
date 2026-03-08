@@ -429,5 +429,17 @@
       "points_1000": "1000 total points",
       "zero_penalty_day": "A day without penalty"
     }
+  },
+  "calendar": {
+    "title": "Family Calendar",
+    "noTasks": "No tasks this day",
+    "status": {
+      "pending": "To do",
+      "awaiting_validation": "Awaiting",
+      "validated": "Validated",
+      "rejected": "Rejected",
+      "late": "Late",
+      "done": "Done"
+    }
   }
 }
