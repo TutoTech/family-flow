@@ -78,8 +78,12 @@ export default function FamilySettingsPage() {
       .update(settings as any)
       .eq("family_id", profile.family_id!);
 
-    if (error) toast.error(t("settings.saveError"));
-    else toast.success(t("settings.saved"));
+    if (error) {
+      toast.error(t("settings.saveError"));
+    } else {
+      toast.success(t("settings.saved"));
+      queryClient.invalidateQueries({ queryKey: ["family-currency"] });
+    }
     setSaving(false);
   };
 
