@@ -22,6 +22,9 @@ const Footer = () => {
             <Link to="/cgv" className="text-muted-foreground hover:text-foreground transition-colors">
               {t("footer.cgv")}
             </Link>
+            <Link to="/confidentialite" className="text-muted-foreground hover:text-foreground transition-colors">
+              {t("footer.privacy")}
+            </Link>
           </nav>
           <p className="text-sm text-muted-foreground font-body">
             © {new Date().getFullYear()} Stop Repeat. {t("footer.tagline")}
