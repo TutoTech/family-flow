@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTodayTasks } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw } from "lucide-react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,9 +17,14 @@ export default function ParentTaskList() {
   const { t } = useTranslation();
   const { tasks, isLoading, validateTask, resetTask } = useTodayTasks();
   const { toast } = useToast();
+  const { role: realRole } = useAuth();
+  const { isImpersonating } = useProfileSwitch();
   const navigate = useNavigate();
   const [createOpen, setCreateOpen] = useState(false);
   const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
+
+  // A child impersonating a parent cannot perform write operations
+  const isReadOnly = isImpersonating && realRole === "child";
 
   const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
     pending: { label: t("taskList.pending"), variant: "outline" },
@@ -57,10 +64,10 @@ export default function ParentTaskList() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">{t("taskList.todayTasks")}</CardTitle>
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" onClick={() => navigate("/tasks")} className="gap-1">
+            <Button size="sm" variant="outline" onClick={() => navigate("/tasks")} className="gap-1" disabled={isReadOnly}>
               <Settings2 className="h-4 w-4" />{t("common.manage")}
             </Button>
-            <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1">
+            <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isReadOnly}>
               <Plus className="h-4 w-4" />{t("taskList.newTask")}
             </Button>
           </div>
@@ -99,7 +106,7 @@ export default function ParentTaskList() {
                           <Eye className="h-4 w-4" />
                         </Button>
                       )}
-                      {task.status === "awaiting_validation" && (
+                      {task.status === "awaiting_validation" && !isReadOnly && (
                         <>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-success hover:text-success" onClick={() => handleValidate(task.id, true)}>
                             <CheckCircle2 className="h-5 w-5" />
@@ -109,7 +116,7 @@ export default function ParentTaskList() {
                           </Button>
                         </>
                       )}
-                      {["validated", "rejected", "awaiting_validation", "done", "late"].includes(task.status) && (
+                      {["validated", "rejected", "awaiting_validation", "done", "late"].includes(task.status) && !isReadOnly && (
                         <Button
                           variant="ghost"
                           size="icon"
