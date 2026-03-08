@@ -28,7 +28,7 @@ interface FamilySettings {
 
 export default function FamilySettingsPage() {
   const { t, i18n } = useTranslation();
-  const { profile, role } = useAuth();
+  const { profile, role, user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [settings, setSettings] = useState<FamilySettings | null>(null);
