@@ -1,3 +1,9 @@
+/**
+ * Section tarification de la landing page.
+ * Compare le plan gratuit et le plan famille (premium)
+ * avec leurs fonctionnalités respectives et boutons d'action.
+ */
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";

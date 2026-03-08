@@ -1,3 +1,9 @@
+/**
+ * Page de gestion des modèles de tâches.
+ * Permet aux parents de visualiser, créer, modifier, supprimer
+ * et activer/désactiver les modèles de tâches récurrentes.
+ */
+
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";

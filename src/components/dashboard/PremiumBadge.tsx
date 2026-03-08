@@ -1,3 +1,10 @@
+/**
+ * Composant PremiumGate.
+ * Bloque l'accès à une fonctionnalité premium en affichant
+ * un placeholder avec icône cadenas et message explicatif.
+ * Affiche le contenu enfant si le plan est "family".
+ */
+
 import { useTranslation } from "react-i18next";
 import { Lock, Crown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";

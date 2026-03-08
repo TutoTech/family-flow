@@ -1,3 +1,9 @@
+/**
+ * Section "Comment ça marche" de la landing page.
+ * Présente les 3 étapes pour démarrer avec l'application
+ * sous forme de timeline visuelle.
+ */
+
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";

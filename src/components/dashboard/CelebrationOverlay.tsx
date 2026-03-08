@@ -1,3 +1,9 @@
+/**
+ * Overlay de célébration réutilisable.
+ * Affiche une animation plein écran avec confettis, icône,
+ * titre et description. Se ferme au clic ou automatiquement.
+ */
+
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 

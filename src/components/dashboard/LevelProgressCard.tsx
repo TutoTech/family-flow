@@ -1,3 +1,9 @@
+/**
+ * Carte de progression de niveau.
+ * Affiche le niveau actuel de l'enfant, une barre de progression
+ * vers le prochain niveau et un aperçu visuel de l'échelle complète.
+ */
+
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";

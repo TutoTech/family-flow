@@ -1,3 +1,10 @@
+/**
+ * Carte des objectifs d'épargne.
+ * Affiche la progression de chaque objectif par rapport au solde
+ * du portefeuille, permet de réclamer un objectif atteint
+ * et de supprimer ou créer de nouveaux objectifs.
+ */
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

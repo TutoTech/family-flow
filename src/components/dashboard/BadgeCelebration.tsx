@@ -1,3 +1,9 @@
+/**
+ * Composant de célébration de badge.
+ * Détecte les nouveaux badges obtenus par l'enfant en comparant
+ * avec le localStorage, et affiche une animation de célébration.
+ */
+
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLevelBadges, BADGES, BadgeKey } from "@/hooks/useLevelBadges";
@@ -6,6 +12,7 @@ import CelebrationOverlay from "./CelebrationOverlay";
 
 const SEEN_BADGES_KEY = "seen_badges";
 
+/** Récupère la liste des badges déjà vus depuis le localStorage */
 function getSeenBadges(userId: string): string[] {
   try {
     const raw = localStorage.getItem(`${SEEN_BADGES_KEY}_${userId}`);
@@ -15,6 +22,7 @@ function getSeenBadges(userId: string): string[] {
   }
 }
 
+/** Marque un badge comme vu dans le localStorage */
 function markBadgeSeen(userId: string, key: string) {
   const seen = getSeenBadges(userId);
   if (!seen.includes(key)) {

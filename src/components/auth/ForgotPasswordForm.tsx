@@ -1,3 +1,9 @@
+/**
+ * Formulaire "Mot de passe oublié".
+ * Envoie un email de réinitialisation via l'API d'authentification.
+ * Affiche un message de confirmation une fois l'email envoyé.
+ */
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -16,6 +22,7 @@ export default function ForgotPasswordForm() {
   const [sent, setSent] = useState(false);
   const { resetPassword } = useAuth();
 
+  /** Envoie l'email de réinitialisation */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -30,6 +37,7 @@ export default function ForgotPasswordForm() {
     }
   };
 
+  // Écran de confirmation après envoi
   if (sent) {
     return (
       <Card className="w-full max-w-md shadow-elevated border-border/50">

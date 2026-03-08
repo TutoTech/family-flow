@@ -1,3 +1,9 @@
+/**
+ * Dialog d'édition d'avatar.
+ * Permet de choisir un emoji comme avatar ou d'uploader
+ * une photo de profil. Offre aussi la possibilité de supprimer l'avatar.
+ */
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";

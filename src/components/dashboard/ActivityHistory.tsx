@@ -1,3 +1,10 @@
+/**
+ * Composant d'historique d'activité.
+ * Affiche un flux chronologique des tâches validées, récompenses
+ * et pénalités avec filtres par catégorie et par enfant.
+ * Les activités les plus anciennes sont masquées dans un collapsible.
+ */
+
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

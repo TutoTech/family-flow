@@ -1,3 +1,9 @@
+/**
+ * Barre de navigation de la landing page.
+ * Contient le logo, les liens d'ancrage vers les sections,
+ * le sélecteur de langue, le thème et les boutons de connexion/inscription.
+ */
+
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Globe } from "lucide-react";

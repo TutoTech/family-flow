@@ -1,3 +1,9 @@
+/**
+ * Page de confirmation de paiement réussi.
+ * Vérifie automatiquement le paiement Stripe au chargement
+ * et redirige l'utilisateur vers le tableau de bord.
+ */
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -11,6 +17,7 @@ export default function PaymentSuccess() {
   const { verifyPayment } = useFamilyPlan();
   const [verified, setVerified] = useState(false);
 
+  // Lance la vérification du paiement au montage de la page
   useEffect(() => {
     verifyPayment().then(() => setVerified(true));
   }, [verifyPayment]);
