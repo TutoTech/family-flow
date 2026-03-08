@@ -459,5 +459,20 @@
       "late": "En retard",
       "done": "Terminée"
     }
+  },
+  "accountSwitcher": {
+    "title": "Changer de profil",
+    "pinRequired": "Code PIN requis",
+    "enterPin": "Entrez le code PIN de {{name}} pour accéder à ce compte.",
+    "wrongPin": "Code PIN incorrect",
+    "noPinSet": "Ce parent n'a pas encore configuré de code PIN. Allez dans les paramètres pour en définir un.",
+    "switched": "Profil changé : {{name}}",
+    "unlock": "Déverrouiller",
+    "setPin": "Définir un code PIN",
+    "changePin": "Changer le code PIN",
+    "enterNewPin": "Entrez un code PIN à 4 chiffres pour protéger l'accès à votre compte.",
+    "confirmNewPin": "Confirmez votre code PIN.",
+    "pinMismatch": "Les codes PIN ne correspondent pas.",
+    "pinSet": "Code PIN défini avec succès !"
   }
 }
