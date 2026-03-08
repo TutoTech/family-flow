@@ -50,7 +50,7 @@ export default function ParentRewardList() {
             <Gift className="h-5 w-5 text-primary" />
             {t("rewards.title")}
           </CardTitle>
-          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1">
+          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isImpersonating}>
             <Plus className="h-4 w-4" />
             {t("common.add")}
           </Button>
