@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTodayTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Camera, Clock, Star } from "lucide-react";
 
 export default function ChildTaskList() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { activeProfile, isImpersonating } = useProfileSwitch();
+  const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
   const { tasks, isLoading, completeTask } = useTodayTasks();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,7 +27,7 @@ export default function ChildTaskList() {
     late: { label: t("taskList.late"), variant: "destructive" },
   };
 
-  const myTasks = tasks.filter((tk) => tk.assigned_to_user_id === user?.id);
+  const myTasks = tasks.filter((tk) => tk.assigned_to_user_id === viewUserId);
 
   const handleComplete = (taskId: string, requiresPhoto: boolean) => {
     if (requiresPhoto) {
