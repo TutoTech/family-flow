@@ -16,7 +16,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2 } from "lucide-react";
+import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2, KeyRound } from "lucide-react";
 import SetPinDialog from "@/components/dashboard/SetPinDialog";
 import { CURRENCIES, CurrencyCode } from "@/hooks/useCurrency";
 
@@ -42,6 +42,10 @@ export default function FamilySettingsPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -319,6 +323,52 @@ export default function FamilySettingsPage() {
           </CardHeader>
           <CardContent>
             <SetPinDialog hasExistingPin={hasPin} onPinSet={() => setHasPin(true)} />
+          </CardContent>
+        </Card>
+
+        {/* Change Password */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <KeyRound className="h-5 w-5 text-primary" />
+              {t("settings.changePasswordTitle")}
+            </CardTitle>
+            <CardDescription>{t("settings.changePasswordDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-pwd">{t("auth.newPassword")}</Label>
+              <Input id="new-pwd" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" minLength={6} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-new-pwd">{t("auth.confirmPassword")}</Label>
+              <Input id="confirm-new-pwd" type="password" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} placeholder="••••••••" minLength={6} />
+            </div>
+            <Button
+              disabled={changingPassword || !newPassword || newPassword.length < 6}
+              onClick={async () => {
+                if (newPassword !== confirmNewPassword) {
+                  toast.error(t("auth.passwordMismatch"));
+                  return;
+                }
+                setChangingPassword(true);
+                try {
+                  const { error } = await supabase.auth.updateUser({ password: newPassword });
+                  if (error) throw error;
+                  toast.success(t("auth.passwordUpdated"));
+                  setNewPassword("");
+                  setConfirmNewPassword("");
+                } catch (err: any) {
+                  toast.error(err.message);
+                } finally {
+                  setChangingPassword(false);
+                }
+              }}
+              className="gap-2"
+            >
+              <KeyRound className="h-4 w-4" />
+              {changingPassword ? t("auth.updating") : t("settings.changePasswordButton")}
+            </Button>
           </CardContent>
         </Card>
 
