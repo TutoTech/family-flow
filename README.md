@@ -655,7 +655,29 @@ npm uninstall @lovable.dev/cloud-auth-js
 
 #### 6.3 — OAuth Apple (optionnel)
 
-Même procédure que Google, mais avec un [Apple Developer Account](https://developer.apple.com). Configurez le provider Apple dans Supabase → Authentication → Providers → Apple.
+La connexion via Apple nécessite un [Apple Developer Account](https://developer.apple.com) (99$/an).
+
+**A. Configurer Apple Developer :**
+
+1. Connectez-vous sur [developer.apple.com](https://developer.apple.com) → **Certificates, Identifiers & Profiles**
+2. Créez un **App ID** (si pas déjà fait) avec le capability **Sign In with Apple**
+3. Créez un **Services ID** :
+   - Identifier : `com.votre-domaine.stoprepeat` (exemple)
+   - Activez **Sign In with Apple**
+   - Dans la configuration, ajoutez :
+     - **Domains** : `VOTRE_PROJET.supabase.co`
+     - **Return URLs** : `https://VOTRE_PROJET.supabase.co/auth/v1/callback`
+4. Créez une **Key** avec la capability **Sign In with Apple**
+5. Téléchargez le fichier `.p8` et notez le **Key ID**
+
+**B. Configurer Apple dans Supabase :**
+
+1. Dashboard Supabase → **Authentication → Providers → Apple**
+2. Activez Apple
+3. Renseignez : **Services ID**, **Team ID**, **Key ID**, et le contenu du fichier `.p8**
+4. Sauvegardez
+
+> **💡** : Si vous ne prévoyez pas de support Apple, vous pouvez simplement retirer le bouton « Continuer avec Apple » des composants `LoginForm.tsx` et `SignupForm.tsx`.
 
 ---
 
