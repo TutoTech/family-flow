@@ -91,12 +91,14 @@ export default function ChildTaskList() {
             const tmpl = task.task_template as any;
             const status = STATUS_CHILD[task.status] ?? STATUS_CHILD.pending;
             const isPending = task.status === "pending";
+            const isRejected = task.status === "rejected";
+            const canAct = isPending || isRejected;
 
             return (
               <div
                 key={task.id}
                 className={`flex items-center gap-3 p-3 rounded-lg border ${
-                  isPending ? "bg-card border-primary/20" : "bg-muted/30"
+                  canAct ? "bg-card border-primary/20" : "bg-muted/30"
                 }`}
               >
                 <div className="flex-1 min-w-0">
