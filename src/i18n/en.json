@@ -198,7 +198,9 @@
     "late": "Late",
     "photoProof": "Photo proof",
     "taskValidated": "Task validated!",
-    "taskRejected": "Task rejected"
+    "taskRejected": "Task rejected",
+    "taskReset": "Task reset!",
+    "resetTask": "Reset task"
   },
   "childTasks": {
     "toDo": "To do",

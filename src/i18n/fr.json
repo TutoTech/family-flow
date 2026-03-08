@@ -198,7 +198,9 @@
     "late": "En retard",
     "photoProof": "Preuve photo",
     "taskValidated": "Tâche validée !",
-    "taskRejected": "Tâche refusée"
+    "taskRejected": "Tâche refusée",
+    "taskReset": "Tâche réinitialisée !",
+    "resetTask": "Réinitialiser la tâche"
   },
   "childTasks": {
     "toDo": "À faire",
