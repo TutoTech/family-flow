@@ -21,6 +21,7 @@ interface FamilySettings {
   tts_delay_minutes: number;
   parent_alert_delay_minutes: number;
   photo_retention_days: number;
+  currency: string;
 }
 
 export default function FamilySettingsPage() {
