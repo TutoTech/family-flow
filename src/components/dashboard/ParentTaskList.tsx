@@ -106,7 +106,7 @@ export default function ParentTaskList() {
                           <Eye className="h-4 w-4" />
                         </Button>
                       )}
-                      {task.status === "awaiting_validation" && (
+                      {task.status === "awaiting_validation" && !isReadOnly && (
                         <>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-success hover:text-success" onClick={() => handleValidate(task.id, true)}>
                             <CheckCircle2 className="h-5 w-5" />
@@ -116,7 +116,7 @@ export default function ParentTaskList() {
                           </Button>
                         </>
                       )}
-                      {["validated", "rejected", "awaiting_validation", "done", "late"].includes(task.status) && (
+                      {["validated", "rejected", "awaiting_validation", "done", "late"].includes(task.status) && !isReadOnly && (
                         <Button
                           variant="ghost"
                           size="icon"
