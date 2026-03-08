@@ -19,7 +19,7 @@ const HeroSection = () => {
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display text-foreground leading-tight animate-fade-up" style={{ animationDelay: "100ms" }}>
               {t("hero.titleStart")}{" "}
-              <span className="bg-clip-text text-transparent gradient-hero">{t("hero.titleHighlight")}</span>
+              <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, hsl(16 85% 55%), hsl(0 72% 55%), hsl(340 70% 50%))" }}>{t("hero.titleHighlight")}</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-body leading-relaxed max-w-lg animate-fade-up" style={{ animationDelay: "200ms" }}>
               {t("hero.description")}
