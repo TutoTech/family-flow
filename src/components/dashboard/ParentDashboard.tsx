@@ -2,6 +2,7 @@ import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { ClipboardList, Trophy, AlertTriangle, Users } from "lucide-react";
+import FamilyCard from "./FamilyCard";
 
 interface Props {
   name: string;
@@ -24,17 +25,7 @@ export default function ParentDashboard({ name }: Props) {
           </p>
         </div>
 
-        {!profile?.family_id && (
-          <Card className="border-dashed border-2 border-primary/30 bg-primary/5">
-            <CardContent className="py-8 text-center">
-              <Users className="h-12 w-12 mx-auto text-primary mb-4" />
-              <h3 className="text-lg font-bold text-foreground mb-2">Créez votre foyer</h3>
-              <p className="text-muted-foreground text-sm">
-                La gestion des foyers sera disponible dans l'étape suivante.
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        <FamilyCard />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="shadow-card">
