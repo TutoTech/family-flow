@@ -10,7 +10,9 @@ export const LEVELS = [
   { level: 4, name: "Expert", icon: "🌟", minPoints: 400, color: "text-purple-500" },
   { level: 5, name: "Champion", icon: "🏆", minPoints: 800, color: "text-amber-500" },
   { level: 6, name: "Légende", icon: "👑", minPoints: 1500, color: "text-rose-500" },
-] as const;
+];
+
+export type Level = (typeof LEVELS)[number];
 
 export const BADGES = {
   streak_7: { name: "Semaine parfaite", icon: "🔥", description: "7 jours de série" },
