@@ -22,6 +22,7 @@ export default function CreateRuleDialog({ open, onOpenChange }: Props) {
   const { t } = useTranslation();
   const { profile } = useAuth();
   const { toast } = useToast();
+  const { symbol: currencySymbol } = useCurrency();
   const queryClient = useQueryClient();
   const [label, setLabel] = useState("");
   const [description, setDescription] = useState("");
