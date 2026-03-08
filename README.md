@@ -1135,15 +1135,150 @@ Committez et pushez ce fichier — Azure le détectera automatiquement.
 
 ---
 
-### 📝 Étape 15 — Configurer le CRON pour le reset quotidien des tâches
+### 📝 Étape 15 — Créer les triggers de base de données
 
-L'application a besoin d'un job CRON quotidien pour générer les instances de tâches (`daily-task-reset`). Sur Supabase Cloud, vous pouvez utiliser l'extension `pg_cron` :
+> **⚠️ Étape critique !** Les migrations SQL créent les **fonctions** mais pas toujours les **triggers** qui les appellent. Sans triggers, les automatismes (notifications, badges, points, etc.) ne fonctionneront pas.
+
+Exécutez ces commandes SQL dans le SQL Editor de votre Supabase pour créer tous les triggers nécessaires :
+
+```sql
+-- 1. Trigger : Créer un profil et un rôle automatiquement quand un utilisateur s'inscrit
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_user();
+
+-- 2. Trigger : Initialiser child_stats quand un rôle "child" est assigné
+CREATE OR REPLACE TRIGGER on_child_role_assigned
+  AFTER INSERT ON public.user_roles
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_child_role_assigned();
+
+-- 3. Trigger : Créer les settings, règles et récompenses par défaut quand une famille est créée
+CREATE OR REPLACE TRIGGER on_new_family_created
+  AFTER INSERT ON public.families
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_family();
+
+-- 4. Trigger : Générer les tâches exemple quand un enfant rejoint une famille
+CREATE OR REPLACE TRIGGER on_child_joined_family
+  AFTER UPDATE OF family_id ON public.profiles
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_seed_example_tasks();
+
+-- 5. Trigger : Quand une tâche est validée → ajouter points + wallet
+CREATE OR REPLACE TRIGGER on_task_validated
+  AFTER UPDATE ON public.task_instances
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_task_validated();
+
+-- 6. Trigger : Notification aux parents quand un enfant complète une tâche
+CREATE OR REPLACE TRIGGER on_task_completed_notification
+  AFTER UPDATE ON public.task_instances
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_task_completed_notification();
+
+-- 7. Trigger : Notification à l'enfant quand une tâche lui est assignée
+CREATE OR REPLACE TRIGGER on_task_created_notification
+  AFTER INSERT ON public.task_templates
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_task_created_notification();
+
+-- 8. Trigger : Notification quand une récompense est approuvée
+CREATE OR REPLACE TRIGGER on_reward_approved_notification
+  AFTER UPDATE ON public.reward_redemptions
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_reward_approved_notification();
+
+-- 9. Trigger : Déduire les points quand une récompense est approuvée
+CREATE OR REPLACE TRIGGER on_redemption_approved
+  AFTER UPDATE ON public.reward_redemptions
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_redemption_approved();
+
+-- 10. Trigger : Notification aux parents quand un enfant demande une récompense
+CREATE OR REPLACE TRIGGER on_redemption_requested_notification
+  AFTER INSERT ON public.reward_redemptions
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_redemption_requested_notification();
+
+-- 11. Trigger : Quand une pénalité est enregistrée → déduire points/wallet
+CREATE OR REPLACE TRIGGER on_penalty_logged
+  AFTER INSERT ON public.penalties_log
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_penalty_logged();
+
+-- 12. Trigger : Notification à l'enfant quand il reçoit une pénalité
+CREATE OR REPLACE TRIGGER on_penalty_notification
+  AFTER INSERT ON public.penalties_log
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_penalty_notification();
+
+-- 13. Trigger : Vérifier et attribuer les badges après mise à jour des stats
+CREATE OR REPLACE TRIGGER on_check_badges
+  AFTER UPDATE ON public.child_stats
+  FOR EACH ROW
+  EXECUTE FUNCTION public.check_and_award_badges();
+
+-- 14. Trigger : Envoyer une notification push quand une notification est insérée
+CREATE OR REPLACE TRIGGER on_send_push_notification
+  AFTER INSERT ON public.notifications
+  FOR EACH ROW
+  EXECUTE FUNCTION public.send_push_on_notification();
+
+-- 15. Trigger : Limiter le nombre de membres par famille selon le plan
+CREATE OR REPLACE TRIGGER on_enforce_family_limits
+  BEFORE UPDATE OF family_id ON public.profiles
+  FOR EACH ROW
+  EXECUTE FUNCTION public.enforce_family_member_limits();
+
+-- 16. Trigger : Mettre à jour updated_at automatiquement
+CREATE OR REPLACE TRIGGER set_updated_at ON public.profiles
+  BEFORE UPDATE ON public.profiles
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
+CREATE OR REPLACE TRIGGER set_updated_at ON public.families
+  BEFORE UPDATE ON public.families
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
+CREATE OR REPLACE TRIGGER set_updated_at ON public.task_instances
+  BEFORE UPDATE ON public.task_instances
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
+CREATE OR REPLACE TRIGGER set_updated_at ON public.rewards
+  BEFORE UPDATE ON public.rewards
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
+CREATE OR REPLACE TRIGGER set_updated_at ON public.reward_redemptions
+  BEFORE UPDATE ON public.reward_redemptions
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+```
+
+> **💡 Important** : Si les migrations SQL (`supabase db push`) ont déjà créé ces triggers, les commandes `CREATE OR REPLACE TRIGGER` les mettront simplement à jour sans erreur. Vous pouvez les exécuter sans risque.
+
+---
+
+### 📝 Étape 16 — Configurer les CRON jobs (tâches planifiées)
+
+L'application a besoin de **deux jobs CRON** quotidiens :
+
+| Job | Fonction appelée | Heure recommandée | Rôle |
+|---|---|---|---|
+| Génération des tâches | `daily-task-reset` | 05:00 UTC | Crée les instances de tâches du jour pour chaque famille |
+| Rappels de tâches | `task-reminders` | Toutes les 15 min | Envoie des rappels avant l'heure limite des tâches |
+
+#### Option A : Avec `pg_cron` (Supabase Cloud ou auto-hébergé)
 
 ```sql
 -- Activer l'extension pg_cron (dans le SQL Editor Supabase)
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 
--- Exécuter la génération des tâches tous les jours à 5h du matin (UTC)
+-- Job 1 : Génération des tâches tous les jours à 5h du matin (UTC)
 SELECT cron.schedule(
   'daily-task-generation',
   '0 5 * * *',
@@ -1153,66 +1288,117 @@ SELECT cron.schedule(
   WHERE id IN (SELECT DISTINCT family_id FROM public.profiles WHERE family_id IS NOT NULL);
   $$
 );
+
+-- Job 2 : Rappels de tâches toutes les 15 minutes (appelle l'Edge Function task-reminders)
+SELECT cron.schedule(
+  'task-reminders',
+  '*/15 * * * *',
+  $$
+  SELECT net.http_post(
+    url := 'https://VOTRE_SUPABASE_URL/functions/v1/task-reminders',
+    headers := '{"Content-Type": "application/json", "Authorization": "Bearer VOTRE_ANON_KEY"}'::jsonb
+  );
+  $$
+);
+
+-- Vérifier que les jobs sont bien créés
+SELECT * FROM cron.job;
 ```
 
-> **Alternative Azure (sans pg_cron)** : Si vous utilisez l'Option B (auto-hébergé) et que `pg_cron` n'est pas disponible, ou si vous préférez une solution externe, créez une **Azure Function** avec un timer trigger :
->
-> 1. Dans le portail Azure → **Créer une ressource** → **Function App**
-> 2. Runtime : **Node.js 18**, Plan : **Consumption** (gratuit jusqu'à 1M exécutions/mois)
-> 3. Créez une nouvelle fonction avec un **Timer trigger** :
->    - Schedule (CRON) : `0 0 5 * * *` (tous les jours à 5h UTC)
-> 4. Code de la fonction :
->    ```javascript
->    const https = require('https');
->    
->    module.exports = async function (context, myTimer) {
->      const options = {
->        hostname: 'VOTRE_PROJET.supabase.co',
->        path: '/functions/v1/daily-task-reset',
->        method: 'POST',
->        headers: {
->          'Content-Type': 'application/json',
->          'Authorization': 'Bearer VOTRE_ANON_KEY',
->        },
->      };
->      
->      return new Promise((resolve, reject) => {
->        const req = https.request(options, (res) => {
->          context.log(`Daily task reset: ${res.statusCode}`);
->          resolve();
->        });
->        req.on('error', reject);
->        req.end();
->      });
->    };
->    ```
->
-> **Alternative simple (crontab Linux)** : Si vous avez une VM (Option B), ajoutez simplement un cron job :
-> ```bash
-> crontab -e
-> # Ajouter :
-> 0 5 * * * curl -X POST https://VOTRE_SUPABASE_URL/functions/v1/daily-task-reset -H "Authorization: Bearer VOTRE_ANON_KEY" -H "Content-Type: application/json"
-> ```
+#### Option B : Avec `crontab` Linux (si vous avez un VPS — Option B)
+
+```bash
+crontab -e
+# Ajouter ces lignes :
+
+# Génération des tâches tous les jours à 5h UTC
+0 5 * * * curl -s -X POST https://VOTRE_SUPABASE_URL/functions/v1/daily-task-reset -H "Authorization: Bearer VOTRE_ANON_KEY" -H "Content-Type: application/json" >> /var/log/cron-tasks.log 2>&1
+
+# Rappels de tâches toutes les 15 minutes
+*/15 * * * * curl -s -X POST https://VOTRE_SUPABASE_URL/functions/v1/task-reminders -H "Authorization: Bearer VOTRE_ANON_KEY" -H "Content-Type: application/json" >> /var/log/cron-reminders.log 2>&1
+```
+
+#### Option C : Avec une Azure Function Timer Trigger
+
+1. Dans le portail Azure → **Créer une ressource** → **Function App**
+2. Runtime : **Node.js 18**, Plan : **Consumption** (gratuit jusqu'à 1M exécutions/mois)
+3. Créez deux fonctions avec des **Timer triggers** :
+
+**Fonction 1 — daily-task-reset (tous les jours à 5h UTC) :**
+- Schedule (CRON) : `0 0 5 * * *`
+
+**Fonction 2 — task-reminders (toutes les 15 min) :**
+- Schedule (CRON) : `0 */15 * * * *`
+
+Code commun :
+```javascript
+const https = require('https');
+
+module.exports = async function (context, myTimer) {
+  // Remplacez par le chemin de la fonction correspondante
+  const functionPath = context.functionName === 'daily-task-reset'
+    ? '/functions/v1/daily-task-reset'
+    : '/functions/v1/task-reminders';
+
+  const options = {
+    hostname: 'VOTRE_PROJET.supabase.co',
+    path: functionPath,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer VOTRE_ANON_KEY',
+    },
+  };
+
+  return new Promise((resolve, reject) => {
+    const req = https.request(options, (res) => {
+      context.log(`${context.functionName}: ${res.statusCode}`);
+      resolve();
+    });
+    req.on('error', reject);
+    req.end();
+  });
+};
+```
 
 ---
 
-### 📝 Étape 16 — Vérification finale
+### 📝 Étape 17 — Activer le Realtime (si nécessaire)
+
+Si l'application utilise les abonnements temps réel Supabase (pour les notifications en direct), activez le realtime sur les tables concernées :
+
+```sql
+-- Activer le realtime pour la table notifications
+ALTER PUBLICATION supabase_realtime ADD TABLE public.notifications;
+
+-- Optionnel : activer pour d'autres tables si besoin
+ALTER PUBLICATION supabase_realtime ADD TABLE public.task_instances;
+```
+
+---
+
+### 📝 Étape 18 — Vérification finale
 
 Utilisez cette checklist pour vérifier que tout fonctionne :
 
 - [ ] **Frontend** : L'application se charge sur l'URL Azure Static Web Apps
 - [ ] **Inscription** : Un utilisateur peut s'inscrire par email
-- [ ] **Connexion** : Un utilisateur peut se connecter
+- [ ] **Email de confirmation** : L'email de confirmation arrive bien (vérifiez les spams)
+- [ ] **Connexion** : Un utilisateur peut se connecter après confirmation
 - [ ] **OAuth Google** : Le bouton « Continuer avec Google » fonctionne
-- [ ] **Création de famille** : Un parent peut créer une famille
+- [ ] **Création de famille** : Un parent peut créer une famille (les règles et récompenses par défaut apparaissent)
 - [ ] **Rejoindre une famille** : Un enfant peut rejoindre avec le code d'invitation
-- [ ] **Tâches** : Les tâches apparaissent dans le tableau de bord
-- [ ] **Récompenses** : La boutique de récompenses fonctionne
-- [ ] **Paiement Stripe** : Le paiement du plan Famille fonctionne
+- [ ] **Tâches** : Les tâches apparaissent dans le tableau de bord enfant
+- [ ] **Validation** : Un parent peut valider une tâche → les points sont ajoutés
+- [ ] **Récompenses** : L'enfant peut demander une récompense → le parent l'approuve
+- [ ] **Pénalités** : Un parent peut appliquer une pénalité → les points sont déduits
+- [ ] **Paiement Stripe** : Le paiement du plan Famille fonctionne (testez en mode test Stripe)
 - [ ] **Notifications push** : Les notifications arrivent dans le navigateur
-- [ ] **Upload photo** : L'upload de preuve photo fonctionne
+- [ ] **Upload photo** : L'upload de preuve photo fonctionne (vérifiez le bucket Storage)
+- [ ] **CRON** : Le lendemain, vérifiez que les tâches du jour ont été générées automatiquement
 - [ ] **Thème sombre** : Le toggle clair/sombre fonctionne
 - [ ] **i18n** : Le changement de langue FR/EN fonctionne
+- [ ] **Reset mot de passe** : La fonctionnalité « Mot de passe oublié » envoie bien l'email
 
 ---
 
@@ -1226,6 +1412,7 @@ Utilisez cette checklist pour vérifier que tout fonctionne :
 | `staticwebapp.config.json` | Créer ce fichier (routing SPA) | Nécessaire pour Azure Static Web Apps |
 | Fonction SQL `send_push_on_notification` | Mettre à jour l'URL et la clé | Pointe vers votre projet Supabase |
 | `package.json` | Retirer `@lovable.dev/cloud-auth-js` | Dépendance spécifique à Lovable |
+| `vite.config.ts` | Retirer `lovable-tagger` (optionnel) | Dépendance spécifique à Lovable |
 
 ---
 
@@ -1241,7 +1428,7 @@ Si vous obtenez des erreurs CORS, vérifiez que l'URL de votre frontend Azure es
 Le fichier `public/sw-push.js` doit être servi depuis la racine du domaine. Azure Static Web Apps le fait automatiquement si le fichier est dans `dist/`. Vérifiez que l'URL `https://votre-app.azurestaticapps.net/sw-push.js` est accessible.
 
 #### 4. Supabase Edge Functions vs Azure Functions
-Les Edge Functions dans `supabase/functions/` sont déployées **sur Supabase**, pas sur Azure. Si vous souhaitez tout héberger sur Azure, vous devrez réécrire ces fonctions en **Azure Functions** (Node.js), ce qui est un travail conséquent.
+Les Edge Functions dans `supabase/functions/` sont déployées **sur Supabase**, pas sur Azure. Si vous souhaitez tout héberger sur Azure, vous devrez réécrire ces fonctions en **Azure Functions** (Node.js), ce qui est un travail conséquent. Le plus simple est de garder Supabase (Cloud ou auto-hébergé) pour les Edge Functions.
 
 #### 5. Le package `lovable-tagger`
 Le package `lovable-tagger` (devDependency) ajoute un badge "Edit in Lovable" en développement. Il est inoffensif en production (il n'est chargé qu'en mode `development`), mais vous pouvez le supprimer :
@@ -1257,10 +1444,19 @@ plugins: [react()],
 ```
 
 #### 6. Extension `pg_net` pour les notifications push
-La fonction SQL `send_push_on_notification` utilise `net.http_post()` qui nécessite l'extension PostgreSQL `pg_net`. Cette extension est **pré-installée sur Supabase Cloud** mais devra être installée manuellement si vous auto-hébergez PostgreSQL.
+La fonction SQL `send_push_on_notification` utilise `net.http_post()` qui nécessite l'extension PostgreSQL `pg_net`. Cette extension est **pré-installée sur Supabase Cloud** mais devra être installée manuellement si vous auto-hébergez PostgreSQL (voir étape B.7).
 
 #### 7. Limites du plan gratuit Azure Static Web Apps
 Le plan **Free** offre : 100 Go de bande passante/mois, 2 environnements de staging, 0.5 Go de stockage. Pour un usage familial, c'est largement suffisant.
+
+#### 8. Emails en spam
+Si les emails de confirmation arrivent en spam, c'est souvent parce que votre domaine d'envoi n'a pas les enregistrements DNS corrects (SPF, DKIM, DMARC). Utilisez un service SMTP réputé comme Resend ou Brevo qui gère cela automatiquement.
+
+#### 9. Le fichier `src/integrations/supabase/client.ts`
+Ce fichier lit les variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_PUBLISHABLE_KEY` au build time. Assurez-vous que votre `.env` est correctement configuré **avant** de lancer `npm run build`.
+
+#### 10. Mode test Stripe
+Pour tester le paiement sans carte réelle, utilisez les clés **test** de Stripe (commencent par `sk_test_` et `pk_test_`). Stripe fournit des numéros de carte de test comme `4242 4242 4242 4242` (date future, CVC quelconque).
 
 ---
 
