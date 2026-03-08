@@ -64,10 +64,10 @@ export default function ParentTaskList() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">{t("taskList.todayTasks")}</CardTitle>
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" onClick={() => navigate("/tasks")} className="gap-1">
+            <Button size="sm" variant="outline" onClick={() => navigate("/tasks")} className="gap-1" disabled={isReadOnly}>
               <Settings2 className="h-4 w-4" />{t("common.manage")}
             </Button>
-            <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1">
+            <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isReadOnly}>
               <Plus className="h-4 w-4" />{t("taskList.newTask")}
             </Button>
           </div>
