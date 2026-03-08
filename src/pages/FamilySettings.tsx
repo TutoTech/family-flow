@@ -16,7 +16,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2 } from "lucide-react";
+import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2, KeyRound } from "lucide-react";
 import SetPinDialog from "@/components/dashboard/SetPinDialog";
 import { CURRENCIES, CurrencyCode } from "@/hooks/useCurrency";
 
