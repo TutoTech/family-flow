@@ -541,6 +541,15 @@
     "familyPlan": "Famille",
     "limitReached": "Limite atteinte",
     "limitReachedDesc": "Votre plan gratuit est limité à 1 parent et 1 enfant. Passez au Plan Famille pour ajouter plus de membres.",
-    "upgradeNow": "Passer au Plan Famille — 10€"
+    "upgradeNow": "Passer au Plan Famille — 10€",
+    "activationCode": "Code d'activation",
+    "activationCodePlaceholder": "Entrez votre code",
+    "activateButton": "Activer",
+    "activating": "Activation…",
+    "activationSuccess": "Plan Famille activé avec succès !",
+    "activationCodeNotFound": "Code d'activation introuvable.",
+    "activationCodeUsed": "Ce code a déjà été utilisé.",
+    "activationNoFamily": "Vous devez d'abord créer ou rejoindre une famille.",
+    "orActivationCode": "ou utiliser un code d'activation"
   }
 }
