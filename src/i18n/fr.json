@@ -210,7 +210,8 @@
     "myTasks": "Mes tâches du jour",
     "done": "Fait !",
     "wellDone": "Bien joué ! 🎉",
-    "taskSent": "Ta tâche a été envoyée pour validation."
+    "taskSent": "Ta tâche a été envoyée pour validation.",
+    "retry": "Renvoyer"
   },
   "createTask": {
     "title": "Nouvelle tâche",

@@ -91,17 +91,19 @@ export default function ChildTaskList() {
             const tmpl = task.task_template as any;
             const status = STATUS_CHILD[task.status] ?? STATUS_CHILD.pending;
             const isPending = task.status === "pending";
+            const isRejected = task.status === "rejected";
+            const canAct = isPending || isRejected;
 
             return (
               <div
                 key={task.id}
                 className={`flex items-center gap-3 p-3 rounded-lg border ${
-                  isPending ? "bg-card border-primary/20" : "bg-muted/30"
+                  canAct ? "bg-card border-primary/20" : "bg-muted/30"
                 }`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className={`font-medium text-sm ${isPending ? "text-foreground" : "text-muted-foreground"}`}>
+                    <span className={`font-medium text-sm ${canAct ? "text-foreground" : "text-muted-foreground"}`}>
                       {tmpl?.title}
                     </span>
                     {tmpl?.requires_photo && <Camera className="h-3 w-3 text-muted-foreground" />}
@@ -122,16 +124,16 @@ export default function ChildTaskList() {
                   </div>
                 </div>
 
-                {isPending && (
+                {canAct && (
                   <Button
                     size="sm"
-                    variant="default"
+                    variant={isRejected ? "outline" : "default"}
                     className="gap-1 flex-shrink-0"
                     onClick={() => handleComplete(task.id, tmpl?.requires_photo)}
                     disabled={completeTask.isPending}
                   >
                     {tmpl?.requires_photo ? <Camera className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                    {t("childTasks.done")}
+                    {isRejected ? t("childTasks.retry") : t("childTasks.done")}
                   </Button>
                 )}
               </div>
