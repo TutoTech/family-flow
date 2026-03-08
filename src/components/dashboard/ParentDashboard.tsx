@@ -39,6 +39,7 @@ export default function ParentDashboard({ name }: Props) {
           )}
         </div>
         <FamilyCard />
+        <UpgradeBanner />
         {profile?.family_id && (
           <>
             <StatsCharts />
