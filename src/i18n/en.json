@@ -401,6 +401,20 @@
       "Légende": "Legend"
     }
   },
+  "levels": {
+    "names": {
+      "1": "Beginner",
+      "2": "Apprentice",
+      "3": "Skilled",
+      "4": "Expert",
+      "5": "Champion",
+      "6": "Legend"
+    },
+    "celebration": {
+      "levelUp": "🚀 Level Up!",
+      "reached": "You've reached level {{level}}!"
+    }
+  },
   "badges": {
     "title": "My Badges",
     "earnedAgo": "Earned {{time}} ago",
