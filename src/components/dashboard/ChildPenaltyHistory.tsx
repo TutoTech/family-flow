@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ShieldAlert, Star, Wallet } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 import { useChildPenalties } from "@/hooks/usePenalties";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";

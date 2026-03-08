@@ -92,7 +92,7 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
               <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1"><Star className="h-3 w-3" />-{selectedRule.points_penalty} {t("common.pts")}</span>
                 {selectedRule.wallet_penalty > 0 && (
-                  <span className="flex items-center gap-1"><Wallet className="h-3 w-3" />-{selectedRule.wallet_penalty}€</span>
+                  <span className="flex items-center gap-1"><Wallet className="h-3 w-3" />-{selectedRule.wallet_penalty}{currencySymbol}</span>
                 )}
               </div>
             )}
