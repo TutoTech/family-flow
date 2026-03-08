@@ -1,9 +1,11 @@
 import { useAuth } from "@/hooks/useAuth";
+import { usePushSubscription } from "@/hooks/usePushSubscription";
 import ParentDashboard from "@/components/dashboard/ParentDashboard";
 import ChildDashboard from "@/components/dashboard/ChildDashboard";
 
 export default function Dashboard() {
   const { role, profile, loading } = useAuth();
+  usePushSubscription();
 
   if (loading) {
     return (
