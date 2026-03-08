@@ -4,6 +4,7 @@ import FamilyCard from "./FamilyCard";
 import ParentTaskList from "./ParentTaskList";
 import ParentRewardList from "./ParentRewardList";
 import ParentPenaltyList from "./ParentPenaltyList";
+import ActivityHistory from "./ActivityHistory";
 
 interface Props {
   name: string;
