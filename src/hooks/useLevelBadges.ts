@@ -1,8 +1,15 @@
+/**
+ * Système de niveaux et badges pour les enfants.
+ * Définit les paliers de niveaux (Débutant → Légende),
+ * les badges disponibles et le hook useLevelBadges
+ * pour récupérer la progression d'un enfant.
+ */
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-// 6 niveaux classiques avec seuils de points cumulés
+/** Définition des 6 niveaux avec leurs seuils de points cumulés */
 export const LEVELS = [
   { level: 1, name: "Débutant", icon: "🌱", minPoints: 0, color: "text-slate-500" },
   { level: 2, name: "Apprenti", icon: "🌿", minPoints: 50, color: "text-green-500" },
@@ -14,6 +21,7 @@ export const LEVELS = [
 
 export type Level = (typeof LEVELS)[number];
 
+/** Catalogue de tous les badges débloquables */
 export const BADGES = {
   streak_7: { name: "Semaine parfaite", icon: "🔥", description: "7 jours de série" },
   streak_30: { name: "Mois parfait", icon: "💎", description: "30 jours de série" },
@@ -29,6 +37,11 @@ export const BADGES = {
 
 export type BadgeKey = keyof typeof BADGES;
 
+/**
+ * Calcule le niveau actuel d'un enfant à partir de ses points totaux.
+ * Retourne le niveau courant, le prochain niveau, la progression en %
+ * et les points restants pour atteindre le niveau suivant.
+ */
 export function computeLevel(totalPointsEarned: number) {
   let currentLevel = LEVELS[0];
   for (const lvl of LEVELS) {
@@ -53,10 +66,15 @@ export function computeLevel(totalPointsEarned: number) {
   };
 }
 
+/**
+ * Hook principal pour récupérer le niveau, les badges gagnés
+ * et le catalogue complet des badges d'un enfant.
+ */
 export function useLevelBadges(childId?: string) {
   const { user, role } = useAuth();
   const id = childId ?? (role === "child" ? user?.id : undefined);
 
+  // Récupère les points totaux et la série depuis child_stats
   const { data: stats } = useQuery({
     queryKey: ["child-stats-level", id],
     queryFn: async () => {
@@ -71,6 +89,7 @@ export function useLevelBadges(childId?: string) {
     enabled: !!id,
   });
 
+  // Récupère les badges déjà obtenus par l'enfant
   const { data: earnedBadges = [] } = useQuery({
     queryKey: ["child-badges", id],
     queryFn: async () => {
@@ -88,12 +107,14 @@ export function useLevelBadges(childId?: string) {
   const totalPoints = (stats as any)?.total_points_earned ?? 0;
   const levelInfo = computeLevel(totalPoints);
 
+  // Liste des badges gagnés avec leurs détails
   const badges = earnedBadges.map((b) => ({
     ...BADGES[b.badge_key],
     key: b.badge_key,
     earnedAt: b.earned_at,
   }));
 
+  // Catalogue complet avec indicateur "earned" pour chaque badge
   const allBadges = Object.entries(BADGES).map(([key, badge]) => ({
     ...badge,
     key: key as BadgeKey,

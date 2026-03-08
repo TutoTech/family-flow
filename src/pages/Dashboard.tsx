@@ -1,3 +1,9 @@
+/**
+ * Page principale du tableau de bord.
+ * Affiche le dashboard parent ou enfant selon le rôle effectif
+ * (tenant compte de l'éventuelle impersonation par un parent).
+ */
+
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { usePushSubscription } from "@/hooks/usePushSubscription";
@@ -7,8 +13,11 @@ import ChildDashboard from "@/components/dashboard/ChildDashboard";
 export default function Dashboard() {
   const { role, profile, loading } = useAuth();
   const { activeProfile, isImpersonating } = useProfileSwitch();
+
+  // Active l'abonnement aux notifications push
   usePushSubscription();
 
+  // Écran de chargement pendant la récupération de la session
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -17,7 +26,7 @@ export default function Dashboard() {
     );
   }
 
-  // Use the active (possibly impersonated) profile to determine which dashboard to show
+  // Détermine le rôle et le nom à afficher (impersoné ou réel)
   const effectiveRole = isImpersonating ? activeProfile?.role : role;
   const effectiveName = isImpersonating ? activeProfile?.name : profile?.name;
 

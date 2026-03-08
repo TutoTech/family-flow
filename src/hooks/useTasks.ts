@@ -1,3 +1,9 @@
+/**
+ * Hooks de gestion des tâches quotidiennes.
+ * - useTodayTasks : récupère, complète, valide et réinitialise les tâches du jour.
+ * - useFamilyChildren : liste les enfants d'une famille.
+ */
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,13 +14,14 @@ export function useTodayTasks() {
   const queryClient = useQueryClient();
   const familyId = profile?.family_id;
 
-  // Generate today's instances on load
+  // Génère les instances de tâches du jour au chargement (via fonction RPC)
   useEffect(() => {
     if (familyId) {
       supabase.rpc("generate_daily_task_instances", { _family_id: familyId });
     }
   }, [familyId]);
 
+  /** Requête des tâches du jour avec les détails du template et les photos de preuve */
   const tasksQuery = useQuery({
     queryKey: ["today-tasks", familyId],
     queryFn: async () => {
@@ -36,9 +43,10 @@ export function useTodayTasks() {
     enabled: !!familyId,
   });
 
+  /** Mutation pour marquer une tâche comme terminée (avec upload de photo optionnel) */
   const completeTask = useMutation({
     mutationFn: async ({ instanceId, photoFile }: { instanceId: string; photoFile?: File }) => {
-      // Upload photo if provided
+      // Upload de la photo de preuve si fournie
       if (photoFile) {
         const filePath = `${familyId}/${instanceId}/${Date.now()}.jpg`;
         const { error: uploadError } = await supabase.storage
@@ -46,6 +54,7 @@ export function useTodayTasks() {
           .upload(filePath, photoFile, { contentType: photoFile.type });
         if (uploadError) throw uploadError;
 
+        // Enregistrement des métadonnées de la photo en base
         await supabase.from("task_evidence_photos").insert({
           task_instance_id: instanceId,
           storage_key: filePath,
@@ -54,6 +63,7 @@ export function useTodayTasks() {
         });
       }
 
+      // Passage du statut à "en attente de validation"
       const { error } = await supabase
         .from("task_instances")
         .update({
@@ -66,6 +76,7 @@ export function useTodayTasks() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["today-tasks"] }),
   });
 
+  /** Mutation pour valider ou rejeter une tâche (côté parent) */
   const validateTask = useMutation({
     mutationFn: async ({ instanceId, approved }: { instanceId: string; approved: boolean }) => {
       const { error } = await supabase
@@ -81,6 +92,7 @@ export function useTodayTasks() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["today-tasks"] }),
   });
 
+  /** Mutation pour réinitialiser une tâche au statut "en attente" */
   const resetTask = useMutation({
     mutationFn: async (instanceId: string) => {
       const { error } = await supabase
@@ -100,6 +112,7 @@ export function useTodayTasks() {
   return { tasks: tasksQuery.data ?? [], isLoading: tasksQuery.isLoading, completeTask, validateTask, resetTask };
 }
 
+/** Récupère la liste des enfants d'une famille (en croisant profils et rôles) */
 export function useFamilyChildren() {
   const { profile } = useAuth();
   const familyId = profile?.family_id;
@@ -107,6 +120,7 @@ export function useFamilyChildren() {
   return useQuery({
     queryKey: ["family-children", familyId],
     queryFn: async () => {
+      // Récupère tous les membres de la famille
       const { data: members } = await supabase
         .from("profiles")
         .select("user_id, name")
@@ -114,6 +128,7 @@ export function useFamilyChildren() {
 
       if (!members) return [];
 
+      // Filtre pour ne garder que les enfants via la table user_roles
       const { data: roles } = await supabase
         .from("user_roles")
         .select("user_id, role")

@@ -1,9 +1,19 @@
+/**
+ * Hooks de gestion des récompenses et des statistiques enfant.
+ * - useChildStats : statistiques d'un enfant (points, wallet, série).
+ * - useFamilyRewards : liste des récompenses actives de la famille.
+ * - useMyRedemptions : historique des demandes de récompenses de l'enfant connecté.
+ * - usePendingRedemptions : demandes en attente d'approbation (côté parent).
+ */
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+/** Récupère les statistiques d'un enfant (points, wallet, série, pénalités du jour) */
 export function useChildStats(childId?: string) {
   const { user, role } = useAuth();
+  // Utilise le childId passé en paramètre, ou l'id de l'utilisateur courant si c'est un enfant
   const id = childId ?? (role === "child" ? user?.id : undefined);
 
   return useQuery({
@@ -21,6 +31,7 @@ export function useChildStats(childId?: string) {
   });
 }
 
+/** Liste les récompenses actives de la famille, triées par coût croissant */
 export function useFamilyRewards() {
   const { profile } = useAuth();
   const familyId = profile?.family_id;
@@ -41,6 +52,7 @@ export function useFamilyRewards() {
   });
 }
 
+/** Historique des 20 dernières demandes de récompenses de l'enfant connecté */
 export function useMyRedemptions() {
   const { user } = useAuth();
 
@@ -60,6 +72,7 @@ export function useMyRedemptions() {
   });
 }
 
+/** Demandes de récompenses en attente d'approbation par un parent */
 export function usePendingRedemptions() {
   const { profile } = useAuth();
   const familyId = profile?.family_id;
@@ -73,7 +86,7 @@ export function usePendingRedemptions() {
         .eq("status", "requested")
         .order("created_at", { ascending: true });
       if (error) throw error;
-      // Filter by family (RLS handles it but be safe)
+      // Filtre côté client par famille (sécurité supplémentaire, RLS gère déjà)
       return data?.filter((r: any) => r.reward?.family_id === familyId) ?? [];
     },
     enabled: !!familyId,

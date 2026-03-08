@@ -1,7 +1,14 @@
+/**
+ * Hook de gestion de la devise familiale.
+ * Récupère la devise configurée dans les paramètres de la famille
+ * et fournit le symbole correspondant.
+ */
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+/** Liste des devises supportées par l'application */
 export const CURRENCIES = [
   { code: "EUR", symbol: "€", label: "Euro (€)" },
   { code: "USD", symbol: "$", label: "Dollar US ($)" },
@@ -19,6 +26,7 @@ export function useCurrency() {
   const { profile } = useAuth();
   const familyId = profile?.family_id;
 
+  /** Récupère le code devise depuis family_settings (cache 5 min) */
   const { data: currencyCode = "EUR" } = useQuery({
     queryKey: ["family-currency", familyId],
     queryFn: async () => {
@@ -31,7 +39,7 @@ export function useCurrency() {
       return (data?.currency as CurrencyCode) ?? "EUR";
     },
     enabled: !!familyId,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000, // 5 minutes de cache
   });
 
   const currency = CURRENCIES.find((c) => c.code === currencyCode) ?? CURRENCIES[0];
