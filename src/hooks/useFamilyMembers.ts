@@ -1,3 +1,9 @@
+/**
+ * Hook pour récupérer les membres d'une famille.
+ * Croise les tables `profiles` et `user_roles` pour déterminer
+ * le rôle (parent/enfant) et la présence d'un code PIN.
+ */
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,6 +13,7 @@ export interface FamilyMember {
   name: string;
   avatar_url: string | null;
   role: "parent" | "child";
+  /** Indique si le membre a défini un code PIN de sécurité */
   has_pin: boolean;
 }
 
@@ -18,6 +25,7 @@ export function useFamilyMembers() {
     queryFn: async () => {
       if (!currentProfile?.family_id) return [];
 
+      // Récupère les profils actifs de la famille
       const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
         .select("user_id, name, avatar_url, pin_code_hash")
@@ -27,6 +35,7 @@ export function useFamilyMembers() {
       if (profilesError) throw profilesError;
       if (!profiles) return [];
 
+      // Récupère les rôles correspondants
       const { data: roles, error: rolesError } = await supabase
         .from("user_roles")
         .select("user_id, role")
@@ -34,6 +43,7 @@ export function useFamilyMembers() {
 
       if (rolesError) throw rolesError;
 
+      // Construit une map userId → rôle pour un accès rapide
       const roleMap = new Map(roles?.map((r) => [r.user_id, r.role as "parent" | "child"]) ?? []);
 
       return profiles.map((p) => ({

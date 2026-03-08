@@ -1,3 +1,9 @@
+/**
+ * Hook de gestion des objectifs d'épargne des enfants.
+ * Permet de créer, modifier, supprimer et lister les objectifs
+ * d'épargne associés à un enfant dans une famille.
+ */
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,8 +26,10 @@ export function useSavingsGoals() {
   const { activeProfile, isImpersonating } = useProfileSwitch();
   const queryClient = useQueryClient();
   const familyId = profile?.family_id;
+  // Affiche les objectifs de l'enfant impersoné ou de l'utilisateur courant
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
 
+  /** Récupère les objectifs d'épargne (non complétés en premier) */
   const goalsQuery = useQuery({
     queryKey: ["savings-goals", familyId, viewUserId],
     queryFn: async () => {
@@ -38,6 +46,7 @@ export function useSavingsGoals() {
     enabled: !!familyId && !!viewUserId,
   });
 
+  /** Crée un nouvel objectif d'épargne */
   const createGoal = useMutation({
     mutationFn: async ({ title, icon, targetAmount }: { title: string; icon: string; targetAmount: number }) => {
       const { error } = await supabase.from("savings_goals").insert({
@@ -52,6 +61,7 @@ export function useSavingsGoals() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["savings-goals"] }),
   });
 
+  /** Met à jour un objectif existant (titre, montant, statut complété) */
   const updateGoal = useMutation({
     mutationFn: async ({ id, ...updates }: { id: string; title?: string; icon?: string; target_amount?: number; is_completed?: boolean; completed_at?: string | null }) => {
       const { error } = await supabase
@@ -63,6 +73,7 @@ export function useSavingsGoals() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["savings-goals"] }),
   });
 
+  /** Supprime un objectif d'épargne */
   const deleteGoal = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("savings_goals").delete().eq("id", id);

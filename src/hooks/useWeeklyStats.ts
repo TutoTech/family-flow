@@ -1,9 +1,16 @@
+/**
+ * Hook de statistiques hebdomadaires.
+ * Calcule les tâches complétées, pénalités et points gagnés
+ * jour par jour et semaine par semaine, sur les N dernières semaines.
+ */
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { startOfWeek, endOfWeek, subWeeks, format, eachDayOfInterval } from "date-fns";
 import { fr } from "date-fns/locale";
 
+/** Statistiques d'une journée */
 export interface DailyStats {
   date: string;
   label: string;
@@ -12,6 +19,7 @@ export interface DailyStats {
   pointsEarned: number;
 }
 
+/** Vue d'ensemble d'une semaine */
 export interface WeeklyOverview {
   weekLabel: string;
   tasksCompleted: number;
@@ -19,6 +27,10 @@ export interface WeeklyOverview {
   pointsEarned: number;
 }
 
+/**
+ * @param weeksBack - Nombre de semaines à remonter (défaut : 4)
+ * @param childId - Filtre optionnel sur un enfant spécifique
+ */
 export function useWeeklyStats(weeksBack = 4, childId?: string | null) {
   const { profile } = useAuth();
   const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
@@ -31,13 +43,14 @@ export function useWeeklyStats(weeksBack = 4, childId?: string | null) {
     const fetchStats = async () => {
       setLoading(true);
       const now = new Date();
+      // Calcul de la plage de dates couverte
       const startDate = startOfWeek(subWeeks(now, weeksBack - 1), { weekStartsOn: 1 });
       const endDate = endOfWeek(now, { weekStartsOn: 1 });
 
       const startStr = format(startDate, "yyyy-MM-dd");
       const endStr = format(endDate, "yyyy-MM-dd");
 
-      // Fetch validated tasks
+      // Récupère les tâches complétées/validées sur la période
       let tasksQuery = supabase
         .from("task_instances")
         .select("scheduled_for_date, status, task_template_id")
@@ -52,7 +65,7 @@ export function useWeeklyStats(weeksBack = 4, childId?: string | null) {
 
       const { data: tasks } = await tasksQuery;
 
-      // Fetch task templates for points
+      // Construit une map template_id → points pour le calcul
       const { data: templates } = await supabase
         .from("task_templates")
         .select("id, points_reward")
@@ -61,7 +74,7 @@ export function useWeeklyStats(weeksBack = 4, childId?: string | null) {
       const pointsMap = new Map<string, number>();
       templates?.forEach((t) => pointsMap.set(t.id, t.points_reward));
 
-      // Fetch penalties
+      // Récupère les pénalités sur la période
       let penaltiesQuery = supabase
         .from("penalties_log")
         .select("created_at")
@@ -75,12 +88,13 @@ export function useWeeklyStats(weeksBack = 4, childId?: string | null) {
 
       const { data: penalties } = await penaltiesQuery;
 
-      // Build daily stats
+      // Construction des statistiques jour par jour
       const allDays = eachDayOfInterval({ start: startDate, end: endDate });
       const daily: DailyStats[] = allDays.map((day) => {
         const dateStr = format(day, "yyyy-MM-dd");
         const dayTasks = tasks?.filter((t) => t.scheduled_for_date === dateStr) || [];
         const dayPenalties = penalties?.filter((p) => p.created_at.startsWith(dateStr)) || [];
+        // Seules les tâches validées comptent pour les points
         const points = dayTasks.reduce((sum, t) => {
           if (t.status === "validated") return sum + (pointsMap.get(t.task_template_id) || 0);
           return sum;
@@ -97,7 +111,7 @@ export function useWeeklyStats(weeksBack = 4, childId?: string | null) {
 
       setDailyStats(daily);
 
-      // Build weekly aggregates
+      // Agrégation par semaine
       const weekly: WeeklyOverview[] = [];
       for (let i = 0; i < weeksBack; i++) {
         const wStart = startOfWeek(subWeeks(now, weeksBack - 1 - i), { weekStartsOn: 1 });

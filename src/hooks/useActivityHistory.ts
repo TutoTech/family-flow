@@ -1,3 +1,9 @@
+/**
+ * Hook d'historique d'activité.
+ * Agrège les tâches validées, les récompenses échangées
+ * et les pénalités du dernier mois dans un flux chronologique unifié.
+ */
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,7 +32,7 @@ export function useActivityHistory(limit = 50) {
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
       const cutoff = oneMonthAgo.toISOString();
 
-      // 1. Validated tasks
+      // 1. Tâches validées dans le dernier mois
       const taskQuery = supabase
         .from("task_instances")
         .select("id, status, validated_at, assigned_to_user_id, task_template:task_templates(title, icon, points_reward)")
@@ -36,6 +42,7 @@ export function useActivityHistory(limit = 50) {
         .order("validated_at", { ascending: false })
         .limit(limit);
 
+      // Les enfants ne voient que leurs propres activités
       if (!isParent) taskQuery.eq("assigned_to_user_id", user!.id);
 
       const { data: tasks } = await taskQuery;
@@ -51,7 +58,7 @@ export function useActivityHistory(limit = 50) {
         });
       });
 
-      // 2. Reward redemptions (approved/rejected)
+      // 2. Récompenses approuvées ou rejetées
       const rewardQuery = supabase
         .from("reward_redemptions")
         .select("id, status, updated_at, child_id, reward:rewards(title, icon, cost_points)")
@@ -75,7 +82,7 @@ export function useActivityHistory(limit = 50) {
         });
       });
 
-      // 3. Penalties
+      // 3. Pénalités appliquées
       const penaltyQuery = supabase
         .from("penalties_log")
         .select("id, created_at, child_id, rule:house_rules(label, icon, points_penalty)")
@@ -99,7 +106,7 @@ export function useActivityHistory(limit = 50) {
         });
       });
 
-      // Fetch child names for parent view
+      // Récupère les noms des enfants pour l'affichage parent
       if (isParent && activities.length > 0) {
         const childIds = [...new Set(activities.map((a) => a.childId).filter(Boolean))];
         if (childIds.length > 0) {
@@ -114,7 +121,7 @@ export function useActivityHistory(limit = 50) {
         }
       }
 
-      // Sort by timestamp descending
+      // Tri final par date décroissante et limitation
       activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
       return activities.slice(0, limit);
     },

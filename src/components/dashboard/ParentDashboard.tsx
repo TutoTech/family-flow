@@ -1,3 +1,9 @@
+/**
+ * Tableau de bord du parent.
+ * Affiche un résumé de la famille, les statistiques (premium),
+ * les tâches du jour, les récompenses, les pénalités et l'historique.
+ */
+
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
@@ -26,6 +32,7 @@ export default function ParentDashboard({ name }: Props) {
   return (
     <DashboardLayout title={t("dashboard.parentTitle")}>
       <div className="space-y-6">
+        {/* En-tête avec salutation et bouton calendrier */}
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-3xl font-bold text-foreground" style={{ fontFamily: "var(--font-display)" }}>
@@ -35,6 +42,7 @@ export default function ParentDashboard({ name }: Props) {
               {profile?.family_id ? t("dashboard.familySummary") : t("dashboard.createOrJoin")}
             </p>
           </div>
+          {/* Bouton calendrier : verrouillé pour les plans gratuits */}
           {profile?.family_id && (
             <Button
               variant="outline"
@@ -49,16 +57,26 @@ export default function ParentDashboard({ name }: Props) {
             </Button>
           )}
         </div>
+
+        {/* Carte famille (créer/rejoindre ou afficher les membres) */}
         <FamilyCard />
+
+        {/* Bannière d'upgrade vers le plan premium */}
         <UpgradeBanner />
+
         {profile?.family_id && (
           <>
+            {/* Statistiques : accessibles directement en premium, sinon derrière un PremiumGate */}
             {isPaid ? <StatsCharts /> : (
               <PremiumGate featureLabel={t("stats.title")}><StatsCharts /></PremiumGate>
             )}
+
+            {/* Listes de gestion : tâches, récompenses, pénalités */}
             <ParentTaskList />
             <ParentRewardList />
             <ParentPenaltyList />
+
+            {/* Historique d'activité récent */}
             <ActivityHistory />
           </>
         )}

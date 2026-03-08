@@ -1,3 +1,9 @@
+/**
+ * Hook de gestion des modèles de tâches (task templates).
+ * Permet de lister, modifier, supprimer et activer/désactiver
+ * les modèles de tâches récurrentes d'une famille.
+ */
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,6 +27,7 @@ export function useTaskTemplates() {
   const queryClient = useQueryClient();
   const familyId = profile?.family_id;
 
+  /** Liste tous les modèles de tâches de la famille */
   const templatesQuery = useQuery({
     queryKey: ["task-templates", familyId],
     queryFn: async () => {
@@ -35,6 +42,7 @@ export function useTaskTemplates() {
     enabled: !!familyId,
   });
 
+  /** Met à jour un modèle de tâche existant */
   const updateTemplate = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Record<string, unknown> }) => {
       const { error } = await supabase
@@ -49,6 +57,7 @@ export function useTaskTemplates() {
     },
   });
 
+  /** Supprime un modèle de tâche et ses instances associées */
   const deleteTemplate = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
@@ -63,6 +72,7 @@ export function useTaskTemplates() {
     },
   });
 
+  /** Active ou désactive un modèle de tâche (sans le supprimer) */
   const toggleActive = useMutation({
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
       const { error } = await supabase

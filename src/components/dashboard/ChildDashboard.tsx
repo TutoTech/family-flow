@@ -1,3 +1,10 @@
+/**
+ * Tableau de bord de l'enfant.
+ * Affiche les statistiques personnelles (wallet, points, série, tâches, pénalités),
+ * la progression de niveau, les badges, les tâches du jour,
+ * les objectifs d'épargne, la boutique de récompenses et l'historique.
+ */
+
 import { useTranslation } from "react-i18next";
 import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,16 +35,21 @@ export default function ChildDashboard({ name }: Props) {
   const { activeProfile, isImpersonating } = useProfileSwitch();
   const { plan } = useFamilyPlan();
   const isPaid = plan === "family";
+
+  // Détermine l'ID de l'enfant affiché (impersoné ou réel)
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
   const { data: stats } = useChildStats(isImpersonating ? viewUserId : undefined);
   const { symbol: currencySymbol } = useCurrency();
   const { tasks } = useTodayTasks();
+
+  // Filtre les tâches assignées à cet enfant
   const myTasks = tasks.filter((t) => t.assigned_to_user_id === viewUserId);
   const completedTasks = myTasks.filter((t) => ["validated", "awaiting_validation", "done"].includes(t.status));
 
   return (
     <DashboardLayout title={t("dashboard.childTitle")}>
       <div className="space-y-6">
+        {/* Salutation personnalisée */}
         <div>
           <h2 className="text-3xl font-bold text-foreground" style={{ fontFamily: "var(--font-display)" }}>
             {t("dashboard.hiChild", { name })}
@@ -46,8 +58,13 @@ export default function ChildDashboard({ name }: Props) {
             {profile?.family_id ? t("dashboard.childProgress") : t("dashboard.joinFamily")}
           </p>
         </div>
+
+        {/* Carte de famille si l'enfant n'a pas encore rejoint de foyer */}
         {!profile?.family_id && <FamilyCard />}
+
+        {/* Cartes de statistiques rapides */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          {/* Solde du portefeuille */}
           <Card className="shadow-card bg-emerald-500/5 border-emerald-500/20">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.wallet")}</CardTitle>
@@ -55,6 +72,8 @@ export default function ChildDashboard({ name }: Props) {
             </CardHeader>
             <CardContent><div className="text-2xl font-bold text-emerald-600">{(stats?.wallet_balance ?? 0).toFixed(2)}{currencySymbol}</div></CardContent>
           </Card>
+
+          {/* Points actuels */}
           <Card className="shadow-card bg-primary/5 border-primary/20">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("common.points")}</CardTitle>
@@ -62,6 +81,8 @@ export default function ChildDashboard({ name }: Props) {
             </CardHeader>
             <CardContent><div className="text-2xl font-bold text-primary">{stats?.current_points ?? 0}</div></CardContent>
           </Card>
+
+          {/* Série de jours consécutifs */}
           <Card className="shadow-card bg-accent/10 border-accent/20">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.streak")}</CardTitle>
@@ -69,6 +90,8 @@ export default function ChildDashboard({ name }: Props) {
             </CardHeader>
             <CardContent><div className="text-2xl font-bold text-accent-foreground">{t("dashboard.streakDays", { count: stats?.streak_days ?? 0 })}</div></CardContent>
           </Card>
+
+          {/* Tâches complétées aujourd'hui */}
           <Card className="shadow-card">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.tasks")}</CardTitle>
@@ -79,6 +102,8 @@ export default function ChildDashboard({ name }: Props) {
               <p className="text-xs text-muted-foreground">{t("dashboard.completed")}</p>
             </CardContent>
           </Card>
+
+          {/* Pénalités du jour */}
           <Card className="shadow-card bg-destructive/5 border-destructive/20">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.penalties")}</CardTitle>
@@ -90,18 +115,28 @@ export default function ChildDashboard({ name }: Props) {
             </CardContent>
           </Card>
         </div>
+
         {profile?.family_id && (
           <>
+            {/* Animations de célébration (badges et niveaux) */}
             <BadgeCelebration />
             <LevelCelebration />
+
+            {/* Progression de niveau et badges */}
             <div className="grid md:grid-cols-2 gap-4">
               <LevelProgressCard />
               <BadgesDisplay />
             </div>
+
+            {/* Liste des tâches du jour */}
             <ChildTaskList />
+
+            {/* Objectifs d'épargne : premium uniquement */}
             {isPaid ? <SavingsGoalCard /> : (
               <PremiumGate featureLabel={t("savingsGoals.title")}><SavingsGoalCard /></PremiumGate>
             )}
+
+            {/* Boutique de récompenses et historique */}
             <ChildRewardShop />
             <ChildPenaltyHistory />
             <ActivityHistory />

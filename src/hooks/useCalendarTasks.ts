@@ -1,3 +1,9 @@
+/**
+ * Hook pour le calendrier familial.
+ * Récupère les tâches planifiées pour un mois donné
+ * ainsi que la liste des enfants de la famille.
+ */
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,9 +13,11 @@ export function useCalendarTasks(currentMonth: Date) {
   const { profile } = useAuth();
   const familyId = profile?.family_id;
 
+  // Bornes du mois en cours
   const start = format(startOfMonth(currentMonth), "yyyy-MM-dd");
   const end = format(endOfMonth(currentMonth), "yyyy-MM-dd");
 
+  /** Récupère toutes les instances de tâches du mois avec leurs détails */
   const tasksQuery = useQuery({
     queryKey: ["calendar-tasks", familyId, start, end],
     queryFn: async () => {
@@ -30,6 +38,7 @@ export function useCalendarTasks(currentMonth: Date) {
     enabled: !!familyId,
   });
 
+  /** Liste des enfants pour l'affichage des noms sur le calendrier */
   const childrenQuery = useQuery({
     queryKey: ["family-children-calendar", familyId],
     queryFn: async () => {

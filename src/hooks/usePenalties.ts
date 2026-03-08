@@ -1,7 +1,16 @@
+/**
+ * Hooks de gestion des pénalités et règles de la maison.
+ * - useFamilyRules : règles actives de la famille.
+ * - useFamilyChildren : enfants de la famille (avec avatar).
+ * - useRecentPenalties : dernières pénalités appliquées.
+ * - useChildPenalties : pénalités d'un enfant spécifique.
+ */
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+/** Récupère les règles de la maison actives, triées par label */
 export function useFamilyRules() {
   const { profile } = useAuth();
   const familyId = profile?.family_id;
@@ -22,6 +31,7 @@ export function useFamilyRules() {
   });
 }
 
+/** Liste les enfants de la famille avec leur avatar (croisement profils + rôles) */
 export function useFamilyChildren() {
   const { profile } = useAuth();
   const familyId = profile?.family_id;
@@ -36,6 +46,7 @@ export function useFamilyChildren() {
       if (pErr) throw pErr;
       if (!profiles || profiles.length === 0) return [];
 
+      // Récupère uniquement les rôles des membres de la famille
       const memberIds = profiles.map((p) => p.user_id);
       const { data: roles, error: rErr } = await supabase
         .from("user_roles")
@@ -43,6 +54,7 @@ export function useFamilyChildren() {
         .in("user_id", memberIds);
       if (rErr) throw rErr;
 
+      // Ne garde que les profils ayant le rôle "child"
       const childIds = new Set(roles?.filter((r) => r.role === "child").map((r) => r.user_id));
       return profiles.filter((p) => childIds.has(p.user_id));
     },
@@ -50,6 +62,7 @@ export function useFamilyChildren() {
   });
 }
 
+/** Récupère les dernières pénalités appliquées dans la famille */
 export function useRecentPenalties(limit = 10) {
   const { profile } = useAuth();
   const familyId = profile?.family_id;
@@ -70,6 +83,7 @@ export function useRecentPenalties(limit = 10) {
   });
 }
 
+/** Récupère les 20 dernières pénalités d'un enfant spécifique */
 export function useChildPenalties(childId?: string) {
   const { user, role } = useAuth();
   const id = childId ?? (role === "child" ? user?.id : undefined);
