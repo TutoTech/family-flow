@@ -45,10 +45,16 @@ export default function ParentTaskList() {
       <Card className="shadow-card">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">Tâches du jour</CardTitle>
-          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1">
-            <Plus className="h-4 w-4" />
-            Nouvelle tâche
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => navigate("/tasks")} className="gap-1">
+              <Settings2 className="h-4 w-4" />
+              Gérer
+            </Button>
+            <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1">
+              <Plus className="h-4 w-4" />
+              Nouvelle tâche
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
