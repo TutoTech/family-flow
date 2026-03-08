@@ -87,8 +87,7 @@ export default function FamilySettingsPage() {
   };
 
   if (role !== "parent") {
-    navigate("/dashboard");
-    return null;
+    return <Navigate to="/dashboard" replace />;
   }
 
   if (loading || !settings) {

@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { Globe } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -41,8 +42,8 @@ const Navbar = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <ThemeToggle />
-          <button className="text-sm font-medium font-body text-muted-foreground hover:text-foreground transition-colors hidden sm:block">{t("nav.login")}</button>
-          <button className="gradient-hero text-primary-foreground text-sm font-bold px-5 py-2 rounded-lg shadow-soft hover:shadow-elevated transition-all duration-300">{t("nav.signup")}</button>
+          <Link to="/login" className="text-sm font-medium font-body text-muted-foreground hover:text-foreground transition-colors hidden sm:block">{t("nav.login")}</Link>
+          <Link to="/signup" className="gradient-hero text-primary-foreground text-sm font-bold px-5 py-2 rounded-lg shadow-soft hover:shadow-elevated transition-all duration-300">{t("nav.signup")}</Link>
         </div>
       </div>
     </nav>
