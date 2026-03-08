@@ -20,7 +20,8 @@ serve(async (req) => {
 
     const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY");
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
-    const vapidEmail = Deno.env.get("VAPID_EMAIL") || "mailto:noreply@stoprepeat.app";
+    const rawEmail = Deno.env.get("VAPID_EMAIL") || "noreply@stoprepeat.app";
+    const vapidEmail = rawEmail.startsWith("mailto:") ? rawEmail : `mailto:${rawEmail}`;
 
     if (!vapidPublicKey || !vapidPrivateKey) {
       return new Response(JSON.stringify({ error: "VAPID keys not configured" }), {
