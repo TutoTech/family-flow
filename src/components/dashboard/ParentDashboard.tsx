@@ -1,8 +1,7 @@
 import DashboardLayout from "./DashboardLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { ClipboardList, Trophy, AlertTriangle, Users } from "lucide-react";
 import FamilyCard from "./FamilyCard";
+import ParentTaskList from "./ParentTaskList";
 
 interface Props {
   name: string;
