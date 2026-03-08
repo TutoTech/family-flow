@@ -72,9 +72,9 @@ const FaqSection = () => {
     },
     {
       q: "faq.q11",
-      defaultQ: "Quelle est la différence entre la version gratuite et Premium ?",
+      defaultQ: "Quelle est la différence entre la version gratuite et Famille ?",
       a: "faq.a11",
-      defaultA: "La version gratuite permet de gérer 1 enfant avec 1 parent et donne accès aux fonctionnalités de base (tâches, points, récompenses). La version Premium (10€/an) déverrouille la gestion illimitée d'enfants et de parents, les objectifs d'épargne, le calendrier familial, les statistiques avancées, et bien plus encore."
+      defaultA: "La version gratuite permet de gérer 1 enfant avec 1 parent et donne accès aux fonctionnalités de base (tâches, points, récompenses). La version Famille (10€ en achat unique) déverrouille la gestion d'enfants illimités et jusqu'à 2 parents, les objectifs d'épargne, le calendrier familial, les statistiques avancées, et les futures fonctionnalités."
     },
     {
       q: "faq.q12",
