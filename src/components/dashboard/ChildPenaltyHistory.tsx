@@ -11,6 +11,7 @@ import i18n from "@/i18n";
 export default function ChildPenaltyHistory() {
   const { t } = useTranslation();
   const { data: penalties = [], isLoading } = useChildPenalties();
+  const { symbol: currencySymbol } = useCurrency();
   const dateFnsLocale = i18n.language === "fr" ? fr : enUS;
 
   return (
