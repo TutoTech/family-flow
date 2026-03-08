@@ -32,11 +32,22 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
     { value: "weekly", label: t("createTask.weekly") },
   ] as const;
 
+  const DAY_OPTIONS = [
+    { value: "1", label: t("createTask.monday") },
+    { value: "2", label: t("createTask.tuesday") },
+    { value: "3", label: t("createTask.wednesday") },
+    { value: "4", label: t("createTask.thursday") },
+    { value: "5", label: t("createTask.friday") },
+    { value: "6", label: t("createTask.saturday") },
+    { value: "0", label: t("createTask.sunday") },
+  ];
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [points, setPoints] = useState("1");
   const [dueTime, setDueTime] = useState("18:00");
   const [recurrence, setRecurrence] = useState("daily");
+  const [weeklyDay, setWeeklyDay] = useState(String(new Date().getDay()));
   const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
   const [requiresPhoto, setRequiresPhoto] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -65,6 +76,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
         points_reward: parseInt(points) || 1,
         due_time: dueTime,
         recurrence_type: recurrence as any,
+        recurrence_config: recurrence === "weekly" ? { day_of_week: parseInt(weeklyDay) } : {},
         assigned_to_user_id: childId,
         family_id: profile.family_id,
         created_by_user_id: user.id,
@@ -80,7 +92,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
 
       setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
-      setRecurrence("daily"); setSelectedChildren([]); setRequiresPhoto(false);
+      setRecurrence("daily"); setWeeklyDay(String(new Date().getDay())); setSelectedChildren([]); setRequiresPhoto(false);
       onOpenChange(false);
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
@@ -148,6 +160,19 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
               </Select>
             </div>
           </div>
+          {recurrence === "weekly" && (
+            <div className="space-y-2">
+              <Label>{t("createTask.weeklyDay")}</Label>
+              <Select value={weeklyDay} onValueChange={setWeeklyDay}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {DAY_OPTIONS.map((d) => (
+                    <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="task-points">{t("createTask.pointsLabel")}</Label>
