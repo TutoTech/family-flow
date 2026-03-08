@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
@@ -30,9 +31,11 @@ const HowItWorksSection = () => {
           ))}
         </div>
         <div className="text-center mt-16">
-          <Button variant="hero" size="lg" className="text-base px-8 py-6 rounded-xl">
-            {t("howItWorks.cta")}
-            <ArrowRight className="w-5 h-5 ml-1" />
+          <Button variant="hero" size="lg" className="text-base px-8 py-6 rounded-xl" asChild>
+            <Link to="/signup">
+              {t("howItWorks.cta")}
+              <ArrowRight className="w-5 h-5 ml-1" />
+            </Link>
           </Button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-illustration.png";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
@@ -24,12 +25,16 @@ const HeroSection = () => {
               {t("hero.description")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-up" style={{ animationDelay: "300ms" }}>
-              <Button variant="hero" size="lg" className="text-base px-8 py-6 rounded-xl">
-                {t("hero.cta")}
-                <ArrowRight className="w-5 h-5 ml-1" />
+              <Button variant="hero" size="lg" className="text-base px-8 py-6 rounded-xl" asChild>
+                <Link to="/signup">
+                  {t("hero.cta")}
+                  <ArrowRight className="w-5 h-5 ml-1" />
+                </Link>
               </Button>
-              <Button variant="heroOutline" size="lg" className="text-base px-8 py-6 rounded-xl">
-                {t("hero.demo")}
+              <Button variant="heroOutline" size="lg" className="text-base px-8 py-6 rounded-xl" asChild>
+                <a href="#comment-ca-marche">
+                  {t("hero.demo")}
+                </a>
               </Button>
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground font-body animate-fade-up" style={{ animationDelay: "400ms" }}>
