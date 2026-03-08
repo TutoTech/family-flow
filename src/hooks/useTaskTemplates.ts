@@ -43,8 +43,6 @@ export function useTaskTemplates() {
         .eq("id", id);
       if (error) throw error;
     },
-      if (error) throw error;
-    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["task-templates"] });
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
