@@ -6,9 +6,8 @@ import { Crown } from "lucide-react";
 
 export default function UpgradeBanner() {
   const { t } = useTranslation();
-  const { plan, loading } = useFamilyPlan();
+  const { plan, loading, startPayment } = useFamilyPlan();
   const [upgrading, setUpgrading] = useState(false);
-  const { startPayment } = useFamilyPlan();
 
   if (loading || plan === "family") return null;
 
@@ -17,7 +16,7 @@ export default function UpgradeBanner() {
     try {
       await startPayment();
     } catch {
-      // toast handled elsewhere
+      // silent
     } finally {
       setUpgrading(false);
     }

@@ -27,7 +27,7 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
     try {
       const { data: family, error: findError } = await supabase
         .from("families")
-        .select("id, name, plan")
+        .select("*")
         .eq("invite_code", code.trim().toLowerCase())
         .single();
 
