@@ -13,7 +13,7 @@ export interface ActivityItem {
   timestamp: string;
 }
 
-export function useActivityHistory(limit = 20) {
+export function useActivityHistory(limit = 50) {
   const { profile, role, user } = useAuth();
   const familyId = profile?.family_id;
   const isParent = role === "parent";
