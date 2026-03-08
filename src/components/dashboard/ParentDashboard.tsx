@@ -5,6 +5,7 @@ import ParentTaskList from "./ParentTaskList";
 import ParentRewardList from "./ParentRewardList";
 import ParentPenaltyList from "./ParentPenaltyList";
 import ActivityHistory from "./ActivityHistory";
+import StatsCharts from "./StatsCharts";
 
 interface Props {
   name: string;
