@@ -64,23 +64,19 @@ export default function SavingsGoalCard() {
             <PiggyBank className="h-5 w-5 text-primary" />
             {t("savingsGoals.title")}
           </CardTitle>
-          {!isImpersonating && (
-            <Button size="sm" variant="outline" className="gap-1" onClick={() => setCreateOpen(true)}>
-              <Plus className="h-4 w-4" />
-              {t("savingsGoals.add")}
-            </Button>
-          )}
+          <Button size="sm" variant="outline" className="gap-1" onClick={() => setCreateOpen(true)}>
+            <Plus className="h-4 w-4" />
+            {t("savingsGoals.add")}
+          </Button>
         </CardHeader>
         <CardContent className="space-y-4">
           {activeGoals.length === 0 && completedGoals.length === 0 && (
             <div className="text-center py-6">
               <Target className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
               <p className="text-sm text-muted-foreground">{t("savingsGoals.empty")}</p>
-              {!isImpersonating && (
-                <Button size="sm" variant="link" onClick={() => setCreateOpen(true)} className="mt-2">
-                  {t("savingsGoals.addFirst")}
-                </Button>
-              )}
+              <Button size="sm" variant="link" onClick={() => setCreateOpen(true)} className="mt-2">
+                {t("savingsGoals.addFirst")}
+              </Button>
             </div>
           )}
 
