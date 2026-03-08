@@ -326,6 +326,52 @@ export default function FamilySettingsPage() {
           </CardContent>
         </Card>
 
+        {/* Change Password */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <KeyRound className="h-5 w-5 text-primary" />
+              {t("settings.changePasswordTitle")}
+            </CardTitle>
+            <CardDescription>{t("settings.changePasswordDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-pwd">{t("auth.newPassword")}</Label>
+              <Input id="new-pwd" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" minLength={6} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-new-pwd">{t("auth.confirmPassword")}</Label>
+              <Input id="confirm-new-pwd" type="password" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} placeholder="••••••••" minLength={6} />
+            </div>
+            <Button
+              disabled={changingPassword || !newPassword || newPassword.length < 6}
+              onClick={async () => {
+                if (newPassword !== confirmNewPassword) {
+                  toast.error(t("auth.passwordMismatch"));
+                  return;
+                }
+                setChangingPassword(true);
+                try {
+                  const { error } = await supabase.auth.updateUser({ password: newPassword });
+                  if (error) throw error;
+                  toast.success(t("auth.passwordUpdated"));
+                  setNewPassword("");
+                  setConfirmNewPassword("");
+                } catch (err: any) {
+                  toast.error(err.message);
+                } finally {
+                  setChangingPassword(false);
+                }
+              }}
+              className="gap-2"
+            >
+              <KeyRound className="h-4 w-4" />
+              {changingPassword ? t("auth.updating") : t("settings.changePasswordButton")}
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Danger Zone */}
         <Card className="border-destructive/50">
           <CardHeader>
