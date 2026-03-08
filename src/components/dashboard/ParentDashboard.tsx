@@ -27,6 +27,7 @@ export default function ParentDashboard({ name }: Props) {
         <FamilyCard />
 
         {profile?.family_id && <ParentTaskList />}
+      </div>
     </DashboardLayout>
   );
 }
