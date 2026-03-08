@@ -31,7 +31,7 @@ export default function ChildRewardShop() {
 
     try {
       const { error } = await supabase.from("reward_redemptions").insert({
-        child_id: user!.id,
+        child_id: viewUserId!,
         reward_id: rewardId,
       });
       if (error) throw error;
