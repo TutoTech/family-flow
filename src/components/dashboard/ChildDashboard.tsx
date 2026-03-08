@@ -10,6 +10,7 @@ import ActivityHistory from "./ActivityHistory";
 import ChildPenaltyHistory from "./ChildPenaltyHistory";
 import { useChildStats } from "@/hooks/useRewards";
 import { useTodayTasks } from "@/hooks/useTasks";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props { name: string; }
 
