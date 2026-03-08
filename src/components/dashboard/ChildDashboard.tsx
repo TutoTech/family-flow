@@ -1,6 +1,6 @@
 import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star, Flame, CheckCircle2, Gift } from "lucide-react";
+import { Star, Flame, CheckCircle2, Gift, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import FamilyCard from "./FamilyCard";
 import ChildTaskList from "./ChildTaskList";
