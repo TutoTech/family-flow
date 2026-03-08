@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function DashboardLayout({ children, title }: Props) {
-  const { signOut } = useAuth();
+  const { signOut, role } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
