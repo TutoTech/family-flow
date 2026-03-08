@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTodayTasks } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye } from "lucide-react";
+import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2 } from "lucide-react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
