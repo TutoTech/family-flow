@@ -4,63 +4,101 @@
  * avec le localStorage, et affiche une animation de célébration.
  */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { useLevelBadges, BADGES, BadgeKey } from "@/hooks/useLevelBadges";
 import { useAuth } from "@/hooks/useAuth";
-import { useBadges } from "@/hooks/useBadges";
 import CelebrationOverlay from "./CelebrationOverlay";
 
+const SEEN_BADGES_KEY = "seen_badges";
+
+/** Récupère la liste des badges déjà vus depuis le localStorage */
+function getSeenBadges(userId: string): string[] {
+  try {
+    const raw = localStorage.getItem(`${SEEN_BADGES_KEY}_${userId}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Marque un badge comme vu dans le localStorage */
+function markBadgeSeen(userId: string, key: string) {
+  const seen = getSeenBadges(userId);
+  if (!seen.includes(key)) {
+    seen.push(key);
+    localStorage.setItem(`${SEEN_BADGES_KEY}_${userId}`, JSON.stringify(seen));
+  }
+}
+
 export default function BadgeCelebration() {
-  const { profile } = useAuth();
-  const { data: badges } = useBadges();
-  const [newBadge, setNewBadge] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const { badges } = useLevelBadges();
+  const [celebrating, setCelebrating] = useState<{
+    key: BadgeKey;
+    icon: string;
+    name: string;
+  } | null>(null);
+  const initialLoadRef = useRef(true);
+  const processedRef = useRef<Set<string>>(new Set());
 
-  useEffect(() => {
-    if (!profile || !badges) return;
+  const checkNewBadges = useCallback(() => {
+    if (!user?.id || badges.length === 0) return;
 
-    const localStorageKey = `badges-${profile.userId}`;
-    const storedBadges = localStorage.getItem(localStorageKey);
-    const awardedBadges = profile.badges || [];
+    if (initialLoadRef.current) {
+      initialLoadRef.current = false;
+      const seen = getSeenBadges(user.id);
+      const allCurrentKeys = badges.map((b) => b.key);
+      const newOnes = allCurrentKeys.filter((k) => !seen.includes(k));
 
-    // Détermine les nouveaux badges non présents dans le localStorage
-    if (storedBadges) {
-      const parsedStoredBadges = JSON.parse(storedBadges) as string[];
-      const newlyAwardedBadges = awardedBadges.filter((badgeId) => !parsedStoredBadges.includes(badgeId));
-
-      if (newlyAwardedBadges.length > 0) {
-        setNewBadge(newlyAwardedBadges[0]); // Prend le premier nouveau badge
-        setOpen(true);
-        localStorage.setItem(localStorageKey, JSON.stringify(awardedBadges));
+      if (newOnes.length > 0) {
+        const badgeKey = newOnes[newOnes.length - 1];
+        const badgeInfo = BADGES[badgeKey];
+        setCelebrating({
+          key: badgeKey,
+          icon: badgeInfo.icon,
+          name: t(`badges.names.${badgeKey}`),
+        });
+        newOnes.forEach((k) => markBadgeSeen(user.id, k));
       }
-    } else {
-      // Si aucun badge stocké, considère tous les badges actuels comme nouveaux
-      if (awardedBadges.length > 0) {
-        setNewBadge(awardedBadges[0]); // Prend le premier badge
-        setOpen(true);
-        localStorage.setItem(localStorageKey, JSON.stringify(awardedBadges));
+      return;
+    }
+
+    const seen = getSeenBadges(user.id);
+    for (const badge of badges) {
+      if (!seen.includes(badge.key) && !processedRef.current.has(badge.key)) {
+        processedRef.current.add(badge.key);
+        markBadgeSeen(user.id, badge.key);
+        setCelebrating({
+          key: badge.key,
+          icon: BADGES[badge.key].icon,
+          name: t(`badges.names.${badge.key}`),
+        });
+        break;
       }
     }
-  }, [profile, badges]);
+  }, [user?.id, badges, t]);
 
-  // Réinitialise l'état et ferme l'overlay
-  const handleClose = () => {
-    setOpen(false);
-    setNewBadge(null);
-  };
+  useEffect(() => {
+    checkNewBadges();
+  }, [checkNewBadges]);
 
-  if (!newBadge || !badges) return null;
+  useEffect(() => {
+    if (!celebrating) return;
+    const timer = setTimeout(() => setCelebrating(null), 4000);
+    return () => clearTimeout(timer);
+  }, [celebrating]);
 
-  const badge = badges.find((b) => b.id === newBadge);
-
-  if (!badge) return null;
+  if (!celebrating) return null;
 
   return (
     <CelebrationOverlay
-      open={open}
-      onClose={handleClose}
-      imageUrl={badge.image_url}
-      title={`Nouveau badge !`}
-      description={`Tu as débloqué le badge "${badge.name}" !`}
+      icon={celebrating.icon}
+      subtitle={t("badges.celebration.unlocked")}
+      title={celebrating.name}
+      description={t(`badges.descriptions.${celebrating.key}`)}
+      onDismiss={() => setCelebrating(null)}
     />
   );
 }
