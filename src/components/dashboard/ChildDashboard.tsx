@@ -25,6 +25,8 @@ export default function ChildDashboard({ name }: Props) {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { activeProfile, isImpersonating } = useProfileSwitch();
+  const { plan } = useFamilyPlan();
+  const isPaid = plan === "family";
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
   const { data: stats } = useChildStats(isImpersonating ? viewUserId : undefined);
   const { symbol: currencySymbol } = useCurrency();
