@@ -153,7 +153,7 @@ export default function FamilyCard() {
                 <Badge variant={member.role === "parent" ? "default" : "secondary"} className="text-xs">
                   {member.role === "parent" ? t("common.parent") : t("common.child")}
                 </Badge>
-                {member.user_id === user?.id && (
+                {member.user_id === activeProfile?.userId && (
                   <Badge variant="outline" className="text-xs">{t("common.you")}</Badge>
                 )}
               </div>
