@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFamilyRewards, useMyRedemptions, useChildStats } from "@/hooks/useRewards";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,8 +13,10 @@ import { Gift, Star, ShoppingCart, Clock, CheckCircle2, XCircle } from "lucide-r
 export default function ChildRewardShop() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { activeProfile, isImpersonating } = useProfileSwitch();
+  const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
   const { data: rewards = [], isLoading } = useFamilyRewards();
-  const { data: stats } = useChildStats();
+  const { data: stats } = useChildStats(viewUserId ?? undefined);
   const { data: redemptions = [] } = useMyRedemptions();
   const { toast } = useToast();
   const queryClient = useQueryClient();
