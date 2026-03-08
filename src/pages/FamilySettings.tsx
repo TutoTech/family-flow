@@ -34,6 +34,19 @@ export default function FamilySettingsPage() {
   const [settings, setSettings] = useState<FamilySettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [hasPin, setHasPin] = useState(false);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    supabase
+      .from("profiles")
+      .select("pin_code_hash")
+      .eq("user_id", user.id)
+      .single()
+      .then(({ data }) => {
+        setHasPin(!!data?.pin_code_hash);
+      });
+  }, [user?.id]);
 
   useEffect(() => {
     if (!profile?.family_id) return;
