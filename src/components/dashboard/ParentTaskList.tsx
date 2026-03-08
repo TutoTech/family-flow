@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 export default function ParentTaskList() {
   const { t } = useTranslation();
-  const { tasks, isLoading, validateTask } = useTodayTasks();
+  const { tasks, isLoading, validateTask, resetTask } = useTodayTasks();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [createOpen, setCreateOpen] = useState(false);
