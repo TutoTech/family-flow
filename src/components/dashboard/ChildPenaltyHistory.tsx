@@ -50,7 +50,7 @@ export default function ChildPenaltyHistory() {
                   </Badge>
                   {p.rule?.wallet_penalty > 0 && (
                     <Badge variant="outline" className="text-xs text-destructive border-destructive/30">
-                      <Wallet className="h-3 w-3 mr-1" />-{p.rule?.wallet_penalty}€
+                      <Wallet className="h-3 w-3 mr-1" />-{p.rule?.wallet_penalty}{currencySymbol}
                     </Badge>
                   )}
                 </div>
