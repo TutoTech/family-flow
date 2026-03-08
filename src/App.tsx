@@ -65,6 +65,14 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/calendar"
+                element={
+                  <ProtectedRoute>
+                    <FamilyCalendarPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
