@@ -920,7 +920,44 @@ SELECT cron.schedule(
 );
 ```
 
-> **Alternative Azure** : Si vous n'utilisez pas Supabase Cloud, créez une **Azure Function** avec un timer trigger qui appelle l'Edge Function `daily-task-reset`.
+> **Alternative Azure (sans pg_cron)** : Si vous utilisez l'Option B (auto-hébergé) et que `pg_cron` n'est pas disponible, ou si vous préférez une solution externe, créez une **Azure Function** avec un timer trigger :
+>
+> 1. Dans le portail Azure → **Créer une ressource** → **Function App**
+> 2. Runtime : **Node.js 18**, Plan : **Consumption** (gratuit jusqu'à 1M exécutions/mois)
+> 3. Créez une nouvelle fonction avec un **Timer trigger** :
+>    - Schedule (CRON) : `0 0 5 * * *` (tous les jours à 5h UTC)
+> 4. Code de la fonction :
+>    ```javascript
+>    const https = require('https');
+>    
+>    module.exports = async function (context, myTimer) {
+>      const options = {
+>        hostname: 'VOTRE_PROJET.supabase.co',
+>        path: '/functions/v1/daily-task-reset',
+>        method: 'POST',
+>        headers: {
+>          'Content-Type': 'application/json',
+>          'Authorization': 'Bearer VOTRE_ANON_KEY',
+>        },
+>      };
+>      
+>      return new Promise((resolve, reject) => {
+>        const req = https.request(options, (res) => {
+>          context.log(`Daily task reset: ${res.statusCode}`);
+>          resolve();
+>        });
+>        req.on('error', reject);
+>        req.end();
+>      });
+>    };
+>    ```
+>
+> **Alternative simple (crontab Linux)** : Si vous avez une VM (Option B), ajoutez simplement un cron job :
+> ```bash
+> crontab -e
+> # Ajouter :
+> 0 5 * * * curl -X POST https://VOTRE_SUPABASE_URL/functions/v1/daily-task-reset -H "Authorization: Bearer VOTRE_ANON_KEY" -H "Content-Type: application/json"
+> ```
 
 ---
 
