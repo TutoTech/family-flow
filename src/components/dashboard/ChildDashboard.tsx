@@ -8,6 +8,7 @@ import FamilyCard from "./FamilyCard";
 import ChildTaskList from "./ChildTaskList";
 import ChildRewardShop from "./ChildRewardShop";
 import ActivityHistory from "./ActivityHistory";
+import SavingsGoalCard from "./SavingsGoalCard";
 import ChildPenaltyHistory from "./ChildPenaltyHistory";
 import LevelProgressCard from "./LevelProgressCard";
 import BadgesDisplay from "./BadgesDisplay";
@@ -94,6 +95,7 @@ export default function ChildDashboard({ name }: Props) {
               <BadgesDisplay />
             </div>
             <ChildTaskList />
+            <SavingsGoalCard />
             <ChildRewardShop />
             <ChildPenaltyHistory />
             <ActivityHistory />

@@ -441,6 +441,53 @@ export type Database = {
           },
         ]
       }
+      savings_goals: {
+        Row: {
+          child_id: string
+          completed_at: string | null
+          created_at: string
+          family_id: string
+          icon: string | null
+          id: string
+          is_completed: boolean
+          target_amount: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          child_id: string
+          completed_at?: string | null
+          created_at?: string
+          family_id: string
+          icon?: string | null
+          id?: string
+          is_completed?: boolean
+          target_amount?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          child_id?: string
+          completed_at?: string | null
+          created_at?: string
+          family_id?: string
+          icon?: string | null
+          id?: string
+          is_completed?: boolean
+          target_amount?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "savings_goals_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_evidence_photos: {
         Row: {
           deleted_at: string | null

@@ -477,5 +477,21 @@
     "confirmNewPin": "Confirmez votre code PIN.",
     "pinMismatch": "Les codes PIN ne correspondent pas.",
     "pinSet": "Code PIN défini avec succès !"
+  },
+  "savingsGoals": {
+    "title": "Mes objectifs d'épargne",
+    "add": "Nouvel objectif",
+    "addFirst": "Créer mon premier objectif",
+    "empty": "Aucun objectif d'épargne pour le moment.",
+    "createTitle": "Nouvel objectif d'épargne",
+    "goalName": "Nom de l'objectif",
+    "goalNamePlaceholder": "Ex : Nouvelle manette, Livre...",
+    "chooseIcon": "Icône",
+    "targetAmount": "Montant cible",
+    "remaining": "Il te reste {{amount}}{{symbol}} à économiser",
+    "claim": "Réclamer",
+    "completed": "Objectif atteint ! Bravo ! 🎉",
+    "created": "Objectif créé !",
+    "completedSection": "Objectifs atteints"
   }
 }
