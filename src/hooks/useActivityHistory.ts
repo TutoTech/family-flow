@@ -32,6 +32,7 @@ export function useActivityHistory(limit = 50) {
         .select("id, status, validated_at, assigned_to_user_id, task_template:task_templates(title, icon, points_reward)")
         .eq("family_id", familyId!)
         .eq("status", "validated")
+        .gte("validated_at", cutoff)
         .order("validated_at", { ascending: false })
         .limit(limit);
 
