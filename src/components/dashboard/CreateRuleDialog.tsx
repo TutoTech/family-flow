@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ interface Props {
 const ICONS = ["🚫", "📵", "🗣️", "🧹", "🔇", "⚠️", "🛑", "💤"];
 
 export default function CreateRuleDialog({ open, onOpenChange }: Props) {
+  const { t } = useTranslation();
   const { profile } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -40,16 +42,12 @@ export default function CreateRuleDialog({ open, onOpenChange }: Props) {
         wallet_penalty: parseFloat(walletPenalty) || 0,
       });
       if (error) throw error;
-      toast({ title: "Règle créée !" });
+      toast({ title: t("penalties.ruleCreated") });
       queryClient.invalidateQueries({ queryKey: ["house-rules"] });
       onOpenChange(false);
-      setLabel("");
-      setDescription("");
-      setIcon("🚫");
-      setPointsPenalty("5");
-      setWalletPenalty("0");
+      setLabel(""); setDescription(""); setIcon("🚫"); setPointsPenalty("5"); setWalletPenalty("0");
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -59,11 +57,11 @@ export default function CreateRuleDialog({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Nouvelle règle de la maison</DialogTitle>
+          <DialogTitle>{t("penalties.createRuleTitle")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label>Icône</Label>
+            <Label>{t("penalties.ruleIcon")}</Label>
             <div className="flex gap-2 mt-1 flex-wrap">
               {ICONS.map((i) => (
                 <button
@@ -78,25 +76,25 @@ export default function CreateRuleDialog({ open, onOpenChange }: Props) {
             </div>
           </div>
           <div>
-            <Label htmlFor="rule-label">Nom de la règle</Label>
-            <Input id="rule-label" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Ex: Pas de cris" />
+            <Label htmlFor="rule-label">{t("penalties.ruleName")}</Label>
+            <Input id="rule-label" value={label} onChange={(e) => setLabel(e.target.value)} placeholder={t("penalties.ruleNamePlaceholder")} />
           </div>
           <div>
-            <Label htmlFor="rule-desc">Description (optionnel)</Label>
-            <Textarea id="rule-desc" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Détails..." rows={2} />
+            <Label htmlFor="rule-desc">{t("penalties.ruleDescription")}</Label>
+            <Textarea id="rule-desc" value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("penalties.ruleDescPlaceholder")} rows={2} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="pts-pen">Pénalité points</Label>
+              <Label htmlFor="pts-pen">{t("penalties.pointsPenalty")}</Label>
               <Input id="pts-pen" type="number" min="0" value={pointsPenalty} onChange={(e) => setPointsPenalty(e.target.value)} />
             </div>
             <div>
-              <Label htmlFor="wallet-pen">Pénalité portefeuille (€)</Label>
+              <Label htmlFor="wallet-pen">{t("penalties.walletPenalty")}</Label>
               <Input id="wallet-pen" type="number" min="0" step="0.1" value={walletPenalty} onChange={(e) => setWalletPenalty(e.target.value)} />
             </div>
           </div>
           <Button onClick={handleSubmit} disabled={!label.trim() || loading} className="w-full">
-            {loading ? "Création..." : "Créer la règle"}
+            {loading ? t("common.creating") : t("penalties.createRule")}
           </Button>
         </div>
       </DialogContent>

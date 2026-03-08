@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,18 +17,19 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
-const RECURRENCE_OPTIONS = [
-  { value: "daily", label: "Tous les jours" },
-  { value: "weekdays", label: "Jours de semaine" },
-  { value: "weekends", label: "Week-ends" },
-  { value: "weekly", label: "Hebdomadaire" },
-] as const;
-
 export default function CreateTaskDialog({ open, onOpenChange }: Props) {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: children = [] } = useFamilyChildren();
+
+  const RECURRENCE_OPTIONS = [
+    { value: "daily", label: t("createTask.daily") },
+    { value: "weekdays", label: t("createTask.weekdays") },
+    { value: "weekends", label: t("createTask.weekends") },
+    { value: "weekly", label: t("createTask.weekly") },
+  ] as const;
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -56,23 +58,16 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
 
       if (error) throw error;
 
-      // Generate today's instances immediately
       await supabase.rpc("generate_daily_task_instances", { _family_id: profile.family_id });
 
-      toast({ title: "Tâche créée !", description: `"${title}" a été ajoutée.` });
+      toast({ title: t("createTask.taskCreated"), description: t("createTask.taskCreatedDesc", { title }) });
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
 
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setPoints("1");
-      setDueTime("18:00");
-      setRecurrence("daily");
-      setAssignedTo("");
-      setRequiresPhoto(false);
+      setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
+      setRecurrence("daily"); setAssignedTo(""); setRequiresPhoto(false);
       onOpenChange(false);
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -82,80 +77,66 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nouvelle tâche</DialogTitle>
-          <DialogDescription>Créez une tâche récurrente pour un enfant.</DialogDescription>
+          <DialogTitle>{t("createTask.title")}</DialogTitle>
+          <DialogDescription>{t("createTask.subtitle")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label htmlFor="task-title">Titre</Label>
-            <Input id="task-title" placeholder="Ex: Ranger sa chambre" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <Label htmlFor="task-title">{t("createTask.taskTitle")}</Label>
+            <Input id="task-title" placeholder={t("createTask.taskTitlePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="task-desc">Description (optionnelle)</Label>
-            <Input id="task-desc" placeholder="Détails de la tâche" value={description} onChange={(e) => setDescription(e.target.value)} />
+            <Label htmlFor="task-desc">{t("createTask.description")}</Label>
+            <Input id="task-desc" placeholder={t("createTask.descriptionPlaceholder")} value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Assigné à</Label>
+              <Label>{t("createTask.assignedTo")}</Label>
               <Select value={assignedTo} onValueChange={setAssignedTo}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choisir un enfant" />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("createTask.selectChild")} /></SelectTrigger>
                 <SelectContent>
                   {children.map((child) => (
-                    <SelectItem key={child.user_id} value={child.user_id}>
-                      {child.name}
-                    </SelectItem>
+                    <SelectItem key={child.user_id} value={child.user_id}>{child.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
-              <Label>Récurrence</Label>
+              <Label>{t("createTask.recurrence")}</Label>
               <Select value={recurrence} onValueChange={setRecurrence}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {RECURRENCE_OPTIONS.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="task-points">Points</Label>
+              <Label htmlFor="task-points">{t("createTask.pointsLabel")}</Label>
               <Input id="task-points" type="number" min="1" max="100" value={points} onChange={(e) => setPoints(e.target.value)} />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="task-time">Heure limite</Label>
+              <Label htmlFor="task-time">{t("createTask.deadline")}</Label>
               <Input id="task-time" type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} />
             </div>
           </div>
-
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
-              <Label>Preuve photo requise</Label>
-              <p className="text-xs text-muted-foreground">L'enfant devra joindre une photo</p>
+              <Label>{t("createTask.photoRequired")}</Label>
+              <p className="text-xs text-muted-foreground">{t("createTask.photoRequiredHint")}</p>
             </div>
             <Switch checked={requiresPhoto} onCheckedChange={setRequiresPhoto} />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button onClick={handleCreate} disabled={!title.trim() || !assignedTo || loading}>
-            {loading ? "Création…" : "Créer la tâche"}
+            {loading ? t("createTask.creating") : t("createTask.createButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -39,7 +39,7 @@ export default function DashboardLayout({ children, title }: Props) {
                 <Settings className="h-4 w-4" />
               </Button>
             )}
-            <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
               <Home className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="icon" onClick={handleSignOut}>

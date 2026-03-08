@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera } from "lucide-react";
+import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe } from "lucide-react";
 
 interface FamilySettings {
   points_to_money_rate: number;
@@ -21,6 +23,7 @@ interface FamilySettings {
 }
 
 export default function FamilySettingsPage() {
+  const { t, i18n } = useTranslation();
   const { profile, role } = useAuth();
   const navigate = useNavigate();
   const [settings, setSettings] = useState<FamilySettings | null>(null);
@@ -45,7 +48,7 @@ export default function FamilySettingsPage() {
           photo_retention_days: data.photo_retention_days,
         });
       }
-      if (error) toast.error("Erreur lors du chargement des paramètres");
+      if (error) toast.error(t("settings.loadError"));
       setLoading(false);
     };
     fetchSettings();
@@ -55,21 +58,14 @@ export default function FamilySettingsPage() {
     if (!profile?.family_id || !settings) return;
     setSaving(true);
 
-    // Validation
     if (settings.points_to_money_rate < 0 || settings.points_to_money_rate > 100) {
-      toast.error("Le taux de conversion doit être entre 0 et 100");
-      setSaving(false);
-      return;
+      toast.error(t("settings.validationRate")); setSaving(false); return;
     }
     if (settings.streak_bonus_percent < 0 || settings.streak_bonus_percent > 100) {
-      toast.error("Le bonus de série doit être entre 0 et 100%");
-      setSaving(false);
-      return;
+      toast.error(t("settings.validationStreak")); setSaving(false); return;
     }
     if (settings.penalty_threshold_per_day < 1 || settings.penalty_threshold_per_day > 50) {
-      toast.error("Le seuil de pénalités doit être entre 1 et 50");
-      setSaving(false);
-      return;
+      toast.error(t("settings.validationPenalty")); setSaving(false); return;
     }
 
     const { error } = await supabase
@@ -77,16 +73,17 @@ export default function FamilySettingsPage() {
       .update(settings)
       .eq("family_id", profile.family_id!);
 
-    if (error) {
-      toast.error("Erreur lors de la sauvegarde");
-    } else {
-      toast.success("Paramètres sauvegardés !");
-    }
+    if (error) toast.error(t("settings.saveError"));
+    else toast.success(t("settings.saved"));
     setSaving(false);
   };
 
   const updateField = (field: keyof FamilySettings, value: number) => {
     setSettings((prev) => (prev ? { ...prev, [field]: value } : prev));
+  };
+
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
   };
 
   if (role !== "parent") {
@@ -96,7 +93,7 @@ export default function FamilySettingsPage() {
 
   if (loading || !settings) {
     return (
-      <DashboardLayout title="Paramètres">
+      <DashboardLayout title={t("settings.pageTitle")}>
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
         </div>
@@ -105,7 +102,7 @@ export default function FamilySettingsPage() {
   }
 
   return (
-    <DashboardLayout title="Paramètres du foyer">
+    <DashboardLayout title={t("settings.pageTitle")}>
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
@@ -113,44 +110,51 @@ export default function FamilySettingsPage() {
           </Button>
           <div>
             <h2 className="text-2xl font-bold text-foreground" style={{ fontFamily: "var(--font-display)" }}>
-              Paramètres du foyer
+              {t("settings.pageTitle")}
             </h2>
-            <p className="text-sm text-muted-foreground">
-              Configurez les règles et paramètres de votre famille
-            </p>
+            <p className="text-sm text-muted-foreground">{t("settings.subtitle")}</p>
           </div>
         </div>
+
+        {/* Language */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Globe className="h-5 w-5 text-primary" />
+              {t("settings.language")}
+            </CardTitle>
+            <CardDescription>{t("settings.languageDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select value={i18n.language} onValueChange={handleLanguageChange}>
+              <SelectTrigger className="max-w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="fr">{t("settings.french")}</SelectItem>
+                <SelectItem value="en">{t("settings.english")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
 
         {/* Points & Argent */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <DollarSign className="h-5 w-5 text-primary" />
-              Points & Argent
+              {t("settings.pointsMoney")}
             </CardTitle>
-            <CardDescription>
-              Définissez le taux de conversion entre les points gagnés et l'argent réel
-            </CardDescription>
+            <CardDescription>{t("settings.pointsMoneyDesc")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="points_to_money_rate">Taux de conversion (€ par point)</Label>
+              <Label htmlFor="points_to_money_rate">{t("settings.conversionRate")}</Label>
               <div className="flex items-center gap-2">
-                <Input
-                  id="points_to_money_rate"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={settings.points_to_money_rate}
-                  onChange={(e) => updateField("points_to_money_rate", parseFloat(e.target.value) || 0)}
-                  className="max-w-32"
-                />
-                <span className="text-sm text-muted-foreground">€ / point</span>
+                <Input id="points_to_money_rate" type="number" step="0.01" min="0" max="100" value={settings.points_to_money_rate} onChange={(e) => updateField("points_to_money_rate", parseFloat(e.target.value) || 0)} className="max-w-32" />
+                <span className="text-sm text-muted-foreground">{t("settings.perPoint")}</span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Exemple : avec 0.10€/pt, 100 points = 10.00€
-              </p>
+              <p className="text-xs text-muted-foreground">{t("settings.conversionExample")}</p>
             </div>
           </CardContent>
         </Card>
@@ -160,30 +164,18 @@ export default function FamilySettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Flame className="h-5 w-5 text-orange-500" />
-              Séries & Bonus
+              {t("settings.streaksBonus")}
             </CardTitle>
-            <CardDescription>
-              Récompensez la régularité avec un bonus sur les points gagnés
-            </CardDescription>
+            <CardDescription>{t("settings.streaksBonusDesc")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="streak_bonus_percent">Bonus de série (%)</Label>
+              <Label htmlFor="streak_bonus_percent">{t("settings.streakPercent")}</Label>
               <div className="flex items-center gap-2">
-                <Input
-                  id="streak_bonus_percent"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={settings.streak_bonus_percent}
-                  onChange={(e) => updateField("streak_bonus_percent", parseInt(e.target.value) || 0)}
-                  className="max-w-32"
-                />
+                <Input id="streak_bonus_percent" type="number" min="0" max="100" value={settings.streak_bonus_percent} onChange={(e) => updateField("streak_bonus_percent", parseInt(e.target.value) || 0)} className="max-w-32" />
                 <span className="text-sm text-muted-foreground">%</span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Bonus ajouté aux points quand l'enfant maintient une série de jours consécutifs
-              </p>
+              <p className="text-xs text-muted-foreground">{t("settings.streakHint")}</p>
             </div>
           </CardContent>
         </Card>
@@ -193,26 +185,16 @@ export default function FamilySettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <AlertTriangle className="h-5 w-5 text-destructive" />
-              Pénalités
+              {t("settings.penaltiesTitle")}
             </CardTitle>
-            <CardDescription>
-              Nombre maximum de pénalités par jour avant alerte
-            </CardDescription>
+            <CardDescription>{t("settings.penaltiesDesc")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="penalty_threshold_per_day">Seuil de pénalités par jour</Label>
+              <Label htmlFor="penalty_threshold_per_day">{t("settings.penaltyThreshold")}</Label>
               <div className="flex items-center gap-2">
-                <Input
-                  id="penalty_threshold_per_day"
-                  type="number"
-                  min="1"
-                  max="50"
-                  value={settings.penalty_threshold_per_day}
-                  onChange={(e) => updateField("penalty_threshold_per_day", parseInt(e.target.value) || 1)}
-                  className="max-w-32"
-                />
-                <span className="text-sm text-muted-foreground">pénalités / jour</span>
+                <Input id="penalty_threshold_per_day" type="number" min="1" max="50" value={settings.penalty_threshold_per_day} onChange={(e) => updateField("penalty_threshold_per_day", parseInt(e.target.value) || 1)} className="max-w-32" />
+                <span className="text-sm text-muted-foreground">{t("settings.penaltiesPerDay")}</span>
               </div>
             </div>
           </CardContent>
@@ -223,49 +205,27 @@ export default function FamilySettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Clock className="h-5 w-5 text-blue-500" />
-              Délais & Alertes
+              {t("settings.delaysTitle")}
             </CardTitle>
-            <CardDescription>
-              Configurez les délais pour les rappels et notifications
-            </CardDescription>
+            <CardDescription>{t("settings.delaysDesc")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="tts_delay_minutes">Rappel automatique avant l'heure limite (minutes)</Label>
+              <Label htmlFor="tts_delay_minutes">{t("settings.reminderDelay")}</Label>
               <div className="flex items-center gap-2">
-                <Input
-                  id="tts_delay_minutes"
-                  type="number"
-                  min="1"
-                  max="120"
-                  value={settings.tts_delay_minutes}
-                  onChange={(e) => updateField("tts_delay_minutes", parseInt(e.target.value) || 5)}
-                  className="max-w-32"
-                />
-                <span className="text-sm text-muted-foreground">min</span>
+                <Input id="tts_delay_minutes" type="number" min="1" max="120" value={settings.tts_delay_minutes} onChange={(e) => updateField("tts_delay_minutes", parseInt(e.target.value) || 5)} className="max-w-32" />
+                <span className="text-sm text-muted-foreground">{t("common.min")}</span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Une notification de rappel sera envoyée à l'enfant X minutes avant l'heure limite de chaque tâche
-              </p>
+              <p className="text-xs text-muted-foreground">{t("settings.reminderHint")}</p>
             </div>
             <Separator />
             <div className="space-y-2">
-              <Label htmlFor="parent_alert_delay_minutes">Délai d'alerte parent (minutes)</Label>
+              <Label htmlFor="parent_alert_delay_minutes">{t("settings.parentAlertDelay")}</Label>
               <div className="flex items-center gap-2">
-                <Input
-                  id="parent_alert_delay_minutes"
-                  type="number"
-                  min="1"
-                  max="120"
-                  value={settings.parent_alert_delay_minutes}
-                  onChange={(e) => updateField("parent_alert_delay_minutes", parseInt(e.target.value) || 15)}
-                  className="max-w-32"
-                />
-                <span className="text-sm text-muted-foreground">min</span>
+                <Input id="parent_alert_delay_minutes" type="number" min="1" max="120" value={settings.parent_alert_delay_minutes} onChange={(e) => updateField("parent_alert_delay_minutes", parseInt(e.target.value) || 15)} className="max-w-32" />
+                <span className="text-sm text-muted-foreground">{t("common.min")}</span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Temps avant de notifier le parent si une tâche n'est pas complétée
-              </p>
+              <p className="text-xs text-muted-foreground">{t("settings.parentAlertHint")}</p>
             </div>
           </CardContent>
         </Card>
@@ -275,26 +235,16 @@ export default function FamilySettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Camera className="h-5 w-5 text-violet-500" />
-              Photos de preuve
+              {t("settings.photosTitle")}
             </CardTitle>
-            <CardDescription>
-              Durée de conservation des photos de preuve des tâches
-            </CardDescription>
+            <CardDescription>{t("settings.photosDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="photo_retention_days">Durée de rétention (jours)</Label>
+              <Label htmlFor="photo_retention_days">{t("settings.retentionDays")}</Label>
               <div className="flex items-center gap-2">
-                <Input
-                  id="photo_retention_days"
-                  type="number"
-                  min="1"
-                  max="365"
-                  value={settings.photo_retention_days}
-                  onChange={(e) => updateField("photo_retention_days", parseInt(e.target.value) || 30)}
-                  className="max-w-32"
-                />
-                <span className="text-sm text-muted-foreground">jours</span>
+                <Input id="photo_retention_days" type="number" min="1" max="365" value={settings.photo_retention_days} onChange={(e) => updateField("photo_retention_days", parseInt(e.target.value) || 30)} className="max-w-32" />
+                <span className="text-sm text-muted-foreground">{t("common.days")}</span>
               </div>
             </div>
           </CardContent>
@@ -304,7 +254,7 @@ export default function FamilySettingsPage() {
         <div className="flex justify-end pb-8">
           <Button onClick={handleSave} disabled={saving} className="gap-2">
             <Save className="h-4 w-4" />
-            {saving ? "Sauvegarde..." : "Sauvegarder les paramètres"}
+            {saving ? t("common.saving") : t("settings.saveButton")}
           </Button>
         </div>
       </div>

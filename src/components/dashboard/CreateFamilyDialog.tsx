@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function CreateFamilyDialog({ open, onOpenChange, onCreated }: Props) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
@@ -23,7 +25,6 @@ export default function CreateFamilyDialog({ open, onOpenChange, onCreated }: Pr
     if (!name.trim() || !user) return;
     setLoading(true);
     try {
-      // Create family
       const { data: family, error: familyError } = await supabase
         .from("families")
         .insert({ name: name.trim() })
@@ -32,7 +33,6 @@ export default function CreateFamilyDialog({ open, onOpenChange, onCreated }: Pr
 
       if (familyError) throw familyError;
 
-      // Link user to family
       const { error: profileError } = await supabase
         .from("profiles")
         .update({ family_id: family.id })
@@ -40,12 +40,12 @@ export default function CreateFamilyDialog({ open, onOpenChange, onCreated }: Pr
 
       if (profileError) throw profileError;
 
-      toast({ title: "Foyer créé !", description: `"${name}" est prêt. Partagez le code d'invitation.` });
+      toast({ title: t("family.familyCreated"), description: t("family.familyCreatedDesc", { name }) });
       setName("");
       onOpenChange(false);
       onCreated();
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -55,17 +55,15 @@ export default function CreateFamilyDialog({ open, onOpenChange, onCreated }: Pr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Créer un foyer</DialogTitle>
-          <DialogDescription>
-            Donnez un nom à votre foyer familial. Vous pourrez ensuite inviter des membres.
-          </DialogDescription>
+          <DialogTitle>{t("family.createTitle")}</DialogTitle>
+          <DialogDescription>{t("family.createDesc")}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="family-name">Nom du foyer</Label>
+            <Label htmlFor="family-name">{t("family.familyName")}</Label>
             <Input
               id="family-name"
-              placeholder="Ex: Famille Dupont"
+              placeholder={t("family.familyNamePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
@@ -73,9 +71,9 @@ export default function CreateFamilyDialog({ open, onOpenChange, onCreated }: Pr
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button onClick={handleCreate} disabled={!name.trim() || loading}>
-            {loading ? "Création…" : "Créer"}
+            {loading ? t("common.creating") : t("common.create")}
           </Button>
         </DialogFooter>
       </DialogContent>

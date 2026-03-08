@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { data: rules = [] } = useFamilyRules();
   const { data: children = [] } = useFamilyChildren();
@@ -41,16 +43,14 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
         comment: comment.trim() || null,
       });
       if (error) throw error;
-      toast({ title: "Pénalité appliquée" });
+      toast({ title: t("penalties.penaltyApplied") });
       queryClient.invalidateQueries({ queryKey: ["recent-penalties"] });
       queryClient.invalidateQueries({ queryKey: ["child-stats"] });
       queryClient.invalidateQueries({ queryKey: ["child-penalties"] });
       onOpenChange(false);
-      setChildId("");
-      setRuleId("");
-      setComment("");
+      setChildId(""); setRuleId(""); setComment("");
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -60,13 +60,13 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Appliquer une pénalité</DialogTitle>
+          <DialogTitle>{t("penalties.applyTitle")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label>Enfant</Label>
+            <Label>{t("common.child")}</Label>
             <Select value={childId} onValueChange={setChildId}>
-              <SelectTrigger><SelectValue placeholder="Choisir un enfant" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("createTask.selectChild")} /></SelectTrigger>
               <SelectContent>
                 {children.map((c) => (
                   <SelectItem key={c.user_id} value={c.user_id}>{c.name}</SelectItem>
@@ -75,9 +75,9 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
             </Select>
           </div>
           <div>
-            <Label>Règle enfreinte</Label>
+            <Label>{t("penalties.brokenRule")}</Label>
             <Select value={ruleId} onValueChange={setRuleId}>
-              <SelectTrigger><SelectValue placeholder="Choisir une règle" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("penalties.selectRule")} /></SelectTrigger>
               <SelectContent>
                 {rules.map((r) => (
                   <SelectItem key={r.id} value={r.id}>
@@ -88,7 +88,7 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
             </Select>
             {selectedRule && (
               <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><Star className="h-3 w-3" />-{selectedRule.points_penalty} pts</span>
+                <span className="flex items-center gap-1"><Star className="h-3 w-3" />-{selectedRule.points_penalty} {t("common.pts")}</span>
                 {selectedRule.wallet_penalty > 0 && (
                   <span className="flex items-center gap-1"><Wallet className="h-3 w-3" />-{selectedRule.wallet_penalty}€</span>
                 )}
@@ -96,11 +96,11 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
             )}
           </div>
           <div>
-            <Label>Commentaire (optionnel)</Label>
-            <Textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Contexte..." rows={2} />
+            <Label>{t("penalties.commentOptional")}</Label>
+            <Textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder={t("penalties.commentPlaceholder")} rows={2} />
           </div>
           <Button onClick={handleSubmit} disabled={!childId || !ruleId || loading} variant="destructive" className="w-full">
-            {loading ? "Application..." : "Appliquer la pénalité"}
+            {loading ? t("penalties.applying") : t("penalties.applyButton")}
           </Button>
         </div>
       </DialogContent>

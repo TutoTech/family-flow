@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import { Plus, Gift, CheckCircle2, XCircle, Star } from "lucide-react";
 import CreateRewardDialog from "./CreateRewardDialog";
 
 export default function ParentRewardList() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: pendingRedemptions = [] } = usePendingRedemptions();
@@ -30,11 +32,11 @@ export default function ParentRewardList() {
         .eq("id", redemptionId);
       if (error) throw error;
 
-      toast({ title: approved ? "Récompense approuvée !" : "Demande refusée" });
+      toast({ title: approved ? t("rewards.rewardApproved") : t("rewards.requestRejected") });
       queryClient.invalidateQueries({ queryKey: ["pending-redemptions"] });
       queryClient.invalidateQueries({ queryKey: ["child-stats"] });
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -44,18 +46,17 @@ export default function ParentRewardList() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
             <Gift className="h-5 w-5 text-primary" />
-            Récompenses
+            {t("rewards.title")}
           </CardTitle>
           <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1">
             <Plus className="h-4 w-4" />
-            Ajouter
+            {t("common.add")}
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Pending redemptions */}
           {pendingRedemptions.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-medium text-foreground">Demandes en attente</p>
+              <p className="text-sm font-medium text-foreground">{t("rewards.pendingRequests")}</p>
               {pendingRedemptions.map((r: any) => (
                 <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5">
                   <span className="text-xl">{r.reward?.icon ?? "🎁"}</span>
@@ -63,7 +64,7 @@ export default function ParentRewardList() {
                     <span className="text-sm font-medium text-foreground">{r.reward?.title}</span>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Star className="h-3 w-3" />
-                      {r.reward?.cost_points} pts
+                      {r.reward?.cost_points} {t("common.pts")}
                     </div>
                   </div>
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={() => handleRedemption(r.id, true)}>
@@ -77,7 +78,6 @@ export default function ParentRewardList() {
             </div>
           )}
 
-          {/* Reward catalog */}
           {isLoading ? (
             <div className="flex justify-center py-4">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
@@ -85,7 +85,7 @@ export default function ParentRewardList() {
           ) : rewards.length === 0 ? (
             <div className="text-center py-4 text-muted-foreground">
               <Gift className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Aucune récompense créée</p>
+              <p className="text-sm">{t("rewards.noRewards")}</p>
             </div>
           ) : (
             <div className="grid gap-2">

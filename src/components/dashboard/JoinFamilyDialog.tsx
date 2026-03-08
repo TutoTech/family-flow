@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props) {
+  const { t } = useTranslation();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
@@ -23,7 +25,6 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
     if (!code.trim() || !user) return;
     setLoading(true);
     try {
-      // Find family by invite code
       const { data: family, error: findError } = await supabase
         .from("families")
         .select("id, name")
@@ -31,11 +32,10 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
         .single();
 
       if (findError || !family) {
-        toast({ title: "Code invalide", description: "Aucun foyer trouvé avec ce code.", variant: "destructive" });
+        toast({ title: t("family.invalidCode"), description: t("family.invalidCodeDesc"), variant: "destructive" });
         return;
       }
 
-      // Link user to family
       const { error: profileError } = await supabase
         .from("profiles")
         .update({ family_id: family.id })
@@ -43,12 +43,12 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
 
       if (profileError) throw profileError;
 
-      toast({ title: "Bienvenue !", description: `Vous avez rejoint "${family.name}".` });
+      toast({ title: t("family.welcomeJoined"), description: t("family.joinedDesc", { name: family.name }) });
       setCode("");
       onOpenChange(false);
       onJoined();
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -58,17 +58,15 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Rejoindre un foyer</DialogTitle>
-          <DialogDescription>
-            Entrez le code d'invitation partagé par un parent du foyer.
-          </DialogDescription>
+          <DialogTitle>{t("family.joinTitle")}</DialogTitle>
+          <DialogDescription>{t("family.joinDesc")}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="invite-code">Code d'invitation</Label>
+            <Label htmlFor="invite-code">{t("family.inviteCode")}</Label>
             <Input
               id="invite-code"
-              placeholder="Ex: a1b2c3d4"
+              placeholder={t("family.inviteCodePlaceholder")}
               value={code}
               onChange={(e) => setCode(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleJoin()}
@@ -77,9 +75,9 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button onClick={handleJoin} disabled={!code.trim() || loading}>
-            {loading ? "Recherche…" : "Rejoindre"}
+            {loading ? t("family.searching") : t("family.join")}
           </Button>
         </DialogFooter>
       </DialogContent>

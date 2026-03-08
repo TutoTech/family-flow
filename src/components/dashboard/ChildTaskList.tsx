@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,22 +8,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Camera, Clock, Star } from "lucide-react";
 
-const STATUS_CHILD: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  pending: { label: "À faire", variant: "outline" },
-  awaiting_validation: { label: "En attente", variant: "default" },
-  validated: { label: "Validé ✓", variant: "secondary" },
-  rejected: { label: "Refusé", variant: "destructive" },
-  late: { label: "En retard", variant: "destructive" },
-};
-
 export default function ChildTaskList() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { tasks, isLoading, completeTask } = useTodayTasks();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingTaskIdRef = useRef<string | null>(null);
 
-  const myTasks = tasks.filter((t) => t.assigned_to_user_id === user?.id);
+  const STATUS_CHILD: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+    pending: { label: t("childTasks.toDo"), variant: "outline" },
+    awaiting_validation: { label: t("childTasks.awaiting"), variant: "default" },
+    validated: { label: t("taskList.validated"), variant: "secondary" },
+    rejected: { label: t("taskList.rejected"), variant: "destructive" },
+    late: { label: t("taskList.late"), variant: "destructive" },
+  };
+
+  const myTasks = tasks.filter((tk) => tk.assigned_to_user_id === user?.id);
 
   const handleComplete = (taskId: string, requiresPhoto: boolean) => {
     if (requiresPhoto) {
@@ -36,9 +38,9 @@ export default function ChildTaskList() {
   const submitTask = async (taskId: string, photo?: File) => {
     try {
       await completeTask.mutateAsync({ instanceId: taskId, photoFile: photo });
-      toast({ title: "Bien joué ! 🎉", description: "Ta tâche a été envoyée pour validation." });
+      toast({ title: t("childTasks.wellDone"), description: t("childTasks.taskSent") });
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -66,8 +68,8 @@ export default function ChildTaskList() {
       <Card className="border-dashed border-2 border-secondary/30 bg-secondary/5">
         <CardContent className="py-8 text-center">
           <CheckCircle2 className="h-12 w-12 mx-auto text-secondary mb-4" />
-          <h3 className="text-lg font-bold text-foreground mb-2">Pas de tâches pour le moment</h3>
-          <p className="text-muted-foreground text-sm">Tes parents vont bientôt ajouter des missions !</p>
+          <h3 className="text-lg font-bold text-foreground mb-2">{t("childTasks.noTasks")}</h3>
+          <p className="text-muted-foreground text-sm">{t("childTasks.noTasksHint")}</p>
         </CardContent>
       </Card>
     );
@@ -79,7 +81,7 @@ export default function ChildTaskList() {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle className="text-lg">Mes tâches du jour</CardTitle>
+          <CardTitle className="text-lg">{t("childTasks.myTasks")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {myTasks.map((task) => {
@@ -112,7 +114,7 @@ export default function ChildTaskList() {
                     </span>
                     <span className="text-xs text-muted-foreground flex items-center gap-0.5">
                       <Clock className="h-3 w-3" />
-                      {new Date(task.due_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                      {new Date(task.due_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </div>
                 </div>
@@ -126,7 +128,7 @@ export default function ChildTaskList() {
                     disabled={completeTask.isPending}
                   >
                     {tmpl?.requires_photo ? <Camera className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                    Fait !
+                    {t("childTasks.done")}
                   </Button>
                 )}
               </div>

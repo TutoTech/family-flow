@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,17 +16,18 @@ interface Props {
   template: TaskTemplate | null;
 }
 
-const RECURRENCE_OPTIONS = [
-  { value: "daily", label: "Tous les jours" },
-  { value: "weekdays", label: "Jours de semaine" },
-  { value: "weekends", label: "Week-ends" },
-  { value: "weekly", label: "Hebdomadaire" },
-] as const;
-
 export default function EditTaskDialog({ open, onOpenChange, template }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { data: children = [] } = useFamilyChildren();
   const { updateTemplate } = useTaskTemplates();
+
+  const RECURRENCE_OPTIONS = [
+    { value: "daily", label: t("createTask.daily") },
+    { value: "weekdays", label: t("createTask.weekdays") },
+    { value: "weekends", label: t("createTask.weekends") },
+    { value: "weekly", label: t("createTask.weekly") },
+  ] as const;
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -62,10 +64,10 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
           requires_photo: requiresPhoto,
         },
       });
-      toast({ title: "Tâche modifiée", description: `"${title}" a été mise à jour.` });
+      toast({ title: t("editTask.taskUpdated"), description: t("editTask.taskUpdatedDesc", { title }) });
       onOpenChange(false);
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -73,79 +75,66 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Modifier la tâche</DialogTitle>
-          <DialogDescription>Modifiez les détails de cette tâche récurrente.</DialogDescription>
+          <DialogTitle>{t("editTask.title")}</DialogTitle>
+          <DialogDescription>{t("editTask.subtitle")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label htmlFor="edit-title">Titre</Label>
+            <Label htmlFor="edit-title">{t("createTask.taskTitle")}</Label>
             <Input id="edit-title" value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="edit-desc">Description (optionnelle)</Label>
+            <Label htmlFor="edit-desc">{t("createTask.description")}</Label>
             <Input id="edit-desc" value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Assigné à</Label>
+              <Label>{t("createTask.assignedTo")}</Label>
               <Select value={assignedTo} onValueChange={setAssignedTo}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choisir un enfant" />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("createTask.selectChild")} /></SelectTrigger>
                 <SelectContent>
                   {children.map((child) => (
-                    <SelectItem key={child.user_id} value={child.user_id}>
-                      {child.name}
-                    </SelectItem>
+                    <SelectItem key={child.user_id} value={child.user_id}>{child.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
-              <Label>Récurrence</Label>
+              <Label>{t("createTask.recurrence")}</Label>
               <Select value={recurrence} onValueChange={setRecurrence}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {RECURRENCE_OPTIONS.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-points">Points</Label>
+              <Label htmlFor="edit-points">{t("createTask.pointsLabel")}</Label>
               <Input id="edit-points" type="number" min="1" max="100" value={points} onChange={(e) => setPoints(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-time">Heure limite</Label>
+              <Label htmlFor="edit-time">{t("createTask.deadline")}</Label>
               <Input id="edit-time" type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} />
             </div>
           </div>
-
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
-              <Label>Preuve photo requise</Label>
-              <p className="text-xs text-muted-foreground">L'enfant devra joindre une photo</p>
+              <Label>{t("createTask.photoRequired")}</Label>
+              <p className="text-xs text-muted-foreground">{t("createTask.photoRequiredHint")}</p>
             </div>
             <Switch checked={requiresPhoto} onCheckedChange={setRequiresPhoto} />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button onClick={handleSave} disabled={!title.trim() || !assignedTo || updateTemplate.isPending}>
-            {updateTemplate.isPending ? "Sauvegarde…" : "Sauvegarder"}
+            {updateTemplate.isPending ? t("common.saving") : t("editTask.saveButton")}
           </Button>
         </DialogFooter>
       </DialogContent>
