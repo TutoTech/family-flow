@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      child_badges: {
+        Row: {
+          badge_key: string
+          child_id: string
+          earned_at: string
+          id: string
+        }
+        Insert: {
+          badge_key: string
+          child_id: string
+          earned_at?: string
+          id?: string
+        }
+        Update: {
+          badge_key?: string
+          child_id?: string
+          earned_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       child_stats: {
         Row: {
           child_id: string
@@ -21,6 +42,7 @@ export type Database = {
           daily_penalties: number
           id: string
           streak_days: number
+          total_points_earned: number
           updated_at: string
           wallet_balance: number
         }
@@ -30,6 +52,7 @@ export type Database = {
           daily_penalties?: number
           id?: string
           streak_days?: number
+          total_points_earned?: number
           updated_at?: string
           wallet_balance?: number
         }
@@ -39,6 +62,7 @@ export type Database = {
           daily_penalties?: number
           id?: string
           streak_days?: number
+          total_points_earned?: number
           updated_at?: string
           wallet_balance?: number
         }

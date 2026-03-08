@@ -384,5 +384,50 @@
     "languageDesc": "Choose the interface language",
     "french": "Français",
     "english": "English"
+  },
+  "level": {
+    "title": "My Level",
+    "levelN": "Level {{n}}",
+    "totalPoints": "total points",
+    "nextLevel": "Next level",
+    "pointsToGo": "{{points}} pts to go!",
+    "maxReached": "🎉 Max level reached!",
+    "levels": {
+      "Débutant": "Beginner",
+      "Apprenti": "Apprentice",
+      "Confirmé": "Skilled",
+      "Expert": "Expert",
+      "Champion": "Champion",
+      "Légende": "Legend"
+    }
+  },
+  "badges": {
+    "title": "My Badges",
+    "earnedAgo": "Earned {{time}} ago",
+    "notEarned": "Not earned yet",
+    "names": {
+      "streak_7": "Perfect Week",
+      "streak_30": "Perfect Month",
+      "tasks_10": "First Steps",
+      "tasks_50": "On Track",
+      "tasks_100": "Centurion",
+      "tasks_500": "Machine",
+      "points_100": "Point Hunter",
+      "points_500": "Collector",
+      "points_1000": "Millionaire",
+      "zero_penalty_day": "Perfect Day"
+    },
+    "descriptions": {
+      "streak_7": "7 day streak",
+      "streak_30": "30 day streak",
+      "tasks_10": "10 tasks validated",
+      "tasks_50": "50 tasks validated",
+      "tasks_100": "100 tasks validated",
+      "tasks_500": "500 tasks validated",
+      "points_100": "100 total points",
+      "points_500": "500 total points",
+      "points_1000": "1000 total points",
+      "zero_penalty_day": "A day without penalty"
+    }
   }
 }

@@ -8,6 +8,8 @@ import ChildTaskList from "./ChildTaskList";
 import ChildRewardShop from "./ChildRewardShop";
 import ActivityHistory from "./ActivityHistory";
 import ChildPenaltyHistory from "./ChildPenaltyHistory";
+import LevelProgressCard from "./LevelProgressCard";
+import BadgesDisplay from "./BadgesDisplay";
 import { useChildStats } from "@/hooks/useRewards";
 import { useTodayTasks } from "@/hooks/useTasks";
 import { useCurrency } from "@/hooks/useCurrency";
@@ -80,6 +82,10 @@ export default function ChildDashboard({ name }: Props) {
         </div>
         {profile?.family_id && (
           <>
+            <div className="grid md:grid-cols-2 gap-4">
+              <LevelProgressCard />
+              <BadgesDisplay />
+            </div>
             <ChildTaskList />
             <ChildRewardShop />
             <ChildPenaltyHistory />
