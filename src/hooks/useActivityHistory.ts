@@ -56,6 +56,7 @@ export function useActivityHistory(limit = 50) {
         .from("reward_redemptions")
         .select("id, status, updated_at, child_id, reward:rewards(title, icon, cost_points)")
         .in("status", ["approved", "rejected"])
+        .gte("updated_at", cutoff)
         .order("updated_at", { ascending: false })
         .limit(limit);
 
