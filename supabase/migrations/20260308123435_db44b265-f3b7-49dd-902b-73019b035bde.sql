@@ -1,0 +1,2 @@
+INSERT INTO public.profiles (user_id, name) VALUES ('297caf8a-2fff-40c8-a5a7-181ec4ccce60', 'Parent Test') ON CONFLICT DO NOTHING;
+INSERT INTO public.user_roles (user_id, role) VALUES ('297caf8a-2fff-40c8-a5a7-181ec4ccce60', 'parent') ON CONFLICT DO NOTHING;
