@@ -301,6 +301,20 @@ export default function FamilySettingsPage() {
           </CardContent>
         </Card>
 
+        {/* PIN Code Security */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Shield className="h-5 w-5 text-primary" />
+              {t("settings.pinTitle")}
+            </CardTitle>
+            <CardDescription>{t("settings.pinDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SetPinDialog hasExistingPin={hasPin} onPinSet={() => setHasPin(true)} />
+          </CardContent>
+        </Card>
+
         {/* Save Button */}
         <div className="flex justify-end pb-8">
           <Button onClick={handleSave} disabled={saving} className="gap-2">
