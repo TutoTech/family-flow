@@ -22,10 +22,12 @@ interface Props { name: string; }
 export default function ChildDashboard({ name }: Props) {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
-  const { data: stats } = useChildStats();
+  const { activeProfile, isImpersonating } = useProfileSwitch();
+  const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
+  const { data: stats } = useChildStats(isImpersonating ? viewUserId : undefined);
   const { symbol: currencySymbol } = useCurrency();
   const { tasks } = useTodayTasks();
-  const myTasks = tasks.filter((t) => t.assigned_to_user_id === user?.id);
+  const myTasks = tasks.filter((t) => t.assigned_to_user_id === viewUserId);
   const completedTasks = myTasks.filter((t) => ["validated", "awaiting_validation", "done"].includes(t.status));
 
   return (
