@@ -231,7 +231,7 @@ export default function FamilySettingsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="tts_delay_minutes">Délai de rappel vocal (minutes)</Label>
+              <Label htmlFor="tts_delay_minutes">Rappel automatique avant l'heure limite (minutes)</Label>
               <div className="flex items-center gap-2">
                 <Input
                   id="tts_delay_minutes"
@@ -244,6 +244,9 @@ export default function FamilySettingsPage() {
                 />
                 <span className="text-sm text-muted-foreground">min</span>
               </div>
+              <p className="text-xs text-muted-foreground">
+                Une notification de rappel sera envoyée à l'enfant X minutes avant l'heure limite de chaque tâche
+              </p>
             </div>
             <Separator />
             <div className="space-y-2">
