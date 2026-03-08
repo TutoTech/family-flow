@@ -41,7 +41,7 @@ export function useSavingsGoals() {
   const createGoal = useMutation({
     mutationFn: async ({ title, icon, targetAmount }: { title: string; icon: string; targetAmount: number }) => {
       const { error } = await supabase.from("savings_goals").insert({
-        child_id: user!.id,
+        child_id: viewUserId!,
         family_id: familyId!,
         title,
         icon,

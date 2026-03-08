@@ -74,11 +74,9 @@ export default function SavingsGoalCard() {
             <div className="text-center py-6">
               <Target className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
               <p className="text-sm text-muted-foreground">{t("savingsGoals.empty")}</p>
-              {!isImpersonating && (
-                <Button size="sm" variant="link" onClick={() => setCreateOpen(true)} className="mt-2">
-                  {t("savingsGoals.addFirst")}
-                </Button>
-              )}
+              <Button size="sm" variant="link" onClick={() => setCreateOpen(true)} className="mt-2">
+                {t("savingsGoals.addFirst")}
+              </Button>
             </div>
           )}
 
