@@ -16,7 +16,11 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
-const ICONS = ["🚫", "📵", "🗣️", "🧹", "🔇", "⚠️", "🛑", "💤"];
+const ICONS = [
+  "🚫", "📵", "🗣️", "🧹", "🔇", "⚠️", "🛑", "💤",
+  "👊", "🤥", "😤", "🚪", "📺", "🎮", "💢", "🙅",
+  "⏰", "🍬", "🗑️", "😡", "🔊", "💥", "🤬", "👎",
+];
 
 export default function CreateRuleDialog({ open, onOpenChange }: Props) {
   const { t } = useTranslation();

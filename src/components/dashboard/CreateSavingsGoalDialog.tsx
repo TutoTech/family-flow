@@ -8,7 +8,12 @@ import { useSavingsGoals } from "@/hooks/useSavingsGoals";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useToast } from "@/hooks/use-toast";
 
-const ICON_OPTIONS = ["🎮", "📱", "🎧", "👟", "🎨", "📚", "🚲", "🎯", "🧸", "🎁", "💎", "🏖️"];
+const ICON_OPTIONS = [
+  "🎮", "📱", "🎧", "👟", "🎨", "📚", "🚲", "🎯", "🧸", "🎁", "💎", "🏖️",
+  "🎸", "🎹", "🎻", "🎬", "🎤", "🏀", "⚽", "🎾", "🏊", "🛹", "🎿", "🧩",
+  "🤖", "🦄", "🐶", "🐱", "🎂", "🍕", "🍦", "🧁", "👑", "💄", "👗", "🕹️",
+  "📷", "🔭", "🧪", "✈️", "🚀", "🏠", "💻", "⌚", "🛍️", "💰",
+];
 
 interface Props {
   open: boolean;

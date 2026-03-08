@@ -50,7 +50,12 @@ export default function CreateRewardDialog({ open, onOpenChange }: Props) {
     }
   };
 
-  const ICON_OPTIONS = ["🎁", "🎮", "🍕", "🎬", "📱", "⚽", "🏖️", "🎵", "📚", "🧸", "🍦", "🎨"];
+  const ICON_OPTIONS = [
+    "🎁", "🎮", "🍕", "🎬", "📱", "⚽", "🏖️", "🎵", "📚", "🧸", "🍦", "🎨",
+    "🎧", "🎤", "🎸", "🎹", "🏀", "🎾", "🛹", "🚲", "🎂", "🧁", "🍩", "🍿",
+    "👑", "💎", "👗", "💄", "⏰", "🕹️", "🎯", "🎪", "🎭", "🏊", "🎿", "🛍️",
+    "🐶", "🐱", "🦄", "🐴", "📷", "✈️", "🚀", "💻", "⌚", "🎒",
+  ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
