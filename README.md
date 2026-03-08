@@ -14,8 +14,6 @@
 
 **Stop Repeat** est une application web pensée pour les familles souhaitant instaurer une routine positive pour leurs enfants. Elle permet aux parents de créer des tâches récurrentes, de suivre leur réalisation, d'attribuer des récompenses et d'appliquer des pénalités éducatives — le tout dans une interface ludique et motivante.
 
-L'application a été **principalement vibe-codée avec [Lovable](https://lovable.dev)**, qui a généreusement rendu sa plateforme gratuite lors de l'événement **International Women's Day #SheBuilds** 💜.
-
 ---
 
 ## ✨ Fonctionnalités
@@ -1488,7 +1486,7 @@ Projet offert au nom de l'association **TutoTech** 🎓
 
 ## 💜 Remerciements
 
-- **[Lovable](https://lovable.dev)** — Cette application a été principalement vibe-codée grâce à Lovable, qui a généreusement rendu sa plateforme gratuite lors de l'**International Women's Day #SheBuilds**. Merci pour cette initiative inspirante !
+- **[Lovable](https://lovable.dev)** — Cette application a été principalement vibe-codée grâce à Lovable, qui a généreusement rendu sa plateforme gratuite le 08/03/2026 lors de l'**International Women's Day #SheBuilds** en partenariat avec Anthropic et Stripe. Merci pour cette initiative inspirante !
 - **[shadcn/ui](https://ui.shadcn.com/)** — Pour les composants UI élégants et accessibles
 - **[Supabase](https://supabase.com/)** — Pour l'infrastructure backend open-source
-- **[TutoTech](https://tutotech.fr)** — Association au service de l'inclusion numérique
+- **[TutoTech](https://tutotech.org)** — Association au service de l'inclusion numérique
