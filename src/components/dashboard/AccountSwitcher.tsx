@@ -22,8 +22,34 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { ChevronDown, Shield, User, Users, ArrowLeft } from "lucide-react";
+import { ChevronDown, Shield, User, Users, ArrowLeft, Pencil } from "lucide-react";
 import { toast } from "sonner";
+import AvatarEditorDialog from "./AvatarEditorDialog";
+
+function MemberAvatar({ avatarUrl, name, className = "h-8 w-8", textClass = "text-xs", roleClass = "" }: {
+  avatarUrl: string | null;
+  name: string;
+  className?: string;
+  textClass?: string;
+  roleClass?: string;
+}) {
+  const isEmoji = avatarUrl && !avatarUrl.startsWith("http");
+  const getInitials = (n: string) => n.split(" ").map((p) => p[0]).join("").toUpperCase().slice(0, 2);
+  return (
+    <Avatar className={className}>
+      {isEmoji ? (
+        <AvatarFallback className={`${textClass} bg-primary/10`}>{avatarUrl}</AvatarFallback>
+      ) : (
+        <>
+          <AvatarImage src={avatarUrl ?? undefined} />
+          <AvatarFallback className={`${textClass} ${roleClass || "bg-primary/10 text-primary"}`}>
+            {getInitials(name)}
+          </AvatarFallback>
+        </>
+      )}
+    </Avatar>
+  );
+}
 
 export default function AccountSwitcher() {
   const { t } = useTranslation();
