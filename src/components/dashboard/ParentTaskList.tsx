@@ -37,6 +37,15 @@ export default function ParentTaskList() {
     }
   };
 
+  const handleReset = async (instanceId: string) => {
+    try {
+      await resetTask.mutateAsync(instanceId);
+      toast({ title: t("taskList.taskReset") });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
   const viewPhoto = (storageKey: string) => {
     const { data } = supabase.storage.from("task-evidence").getPublicUrl(storageKey);
     setPreviewPhoto(data.publicUrl);
