@@ -24,7 +24,8 @@
     "copied": "Copié !",
     "loading": "Chargement...",
     "back": "Retour",
-    "search": "Recherche…"
+    "search": "Recherche…",
+    "next": "Suivant"
   },
   "nav": {
     "features": "Fonctionnalités",
@@ -383,7 +384,9 @@
     "language": "Langue",
     "languageDesc": "Choisissez la langue de l'interface",
     "french": "Français",
-    "english": "English"
+    "english": "English",
+    "pinTitle": "Sécurité du compte",
+    "pinDesc": "Définissez un code PIN à 4 chiffres pour protéger l'accès à votre compte parent depuis le sélecteur de profil."
   },
   "level": {
     "title": "Mon niveau",
@@ -459,5 +462,20 @@
       "late": "En retard",
       "done": "Terminée"
     }
+  },
+  "accountSwitcher": {
+    "title": "Changer de profil",
+    "pinRequired": "Code PIN requis",
+    "enterPin": "Entrez le code PIN de {{name}} pour accéder à ce compte.",
+    "wrongPin": "Code PIN incorrect",
+    "noPinSet": "Ce parent n'a pas encore configuré de code PIN. Allez dans les paramètres pour en définir un.",
+    "switched": "Profil changé : {{name}}",
+    "unlock": "Déverrouiller",
+    "setPin": "Définir un code PIN",
+    "changePin": "Changer le code PIN",
+    "enterNewPin": "Entrez un code PIN à 4 chiffres pour protéger l'accès à votre compte.",
+    "confirmNewPin": "Confirmez votre code PIN.",
+    "pinMismatch": "Les codes PIN ne correspondent pas.",
+    "pinSet": "Code PIN défini avec succès !"
   }
 }

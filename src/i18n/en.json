@@ -24,7 +24,8 @@
     "copied": "Copied!",
     "loading": "Loading...",
     "back": "Back",
-    "search": "Search…"
+    "search": "Search…",
+    "next": "Next"
   },
   "nav": {
     "features": "Features",
@@ -383,7 +384,9 @@
     "language": "Language",
     "languageDesc": "Choose the interface language",
     "french": "Français",
-    "english": "English"
+    "english": "English",
+    "pinTitle": "Account Security",
+    "pinDesc": "Set a 4-digit PIN code to protect access to your parent account from the profile switcher."
   },
   "level": {
     "title": "My Level",
@@ -459,5 +462,20 @@
       "late": "Late",
       "done": "Done"
     }
+  },
+  "accountSwitcher": {
+    "title": "Switch Profile",
+    "pinRequired": "PIN Required",
+    "enterPin": "Enter {{name}}'s PIN to access this account.",
+    "wrongPin": "Incorrect PIN",
+    "noPinSet": "This parent hasn't set a PIN yet. Go to settings to set one.",
+    "switched": "Switched to: {{name}}",
+    "unlock": "Unlock",
+    "setPin": "Set PIN Code",
+    "changePin": "Change PIN Code",
+    "enterNewPin": "Enter a 4-digit PIN to protect access to your account.",
+    "confirmNewPin": "Confirm your PIN code.",
+    "pinMismatch": "PIN codes don't match.",
+    "pinSet": "PIN code set successfully!"
   }
 }

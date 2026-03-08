@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins } from "lucide-react";
+import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield } from "lucide-react";
+import SetPinDialog from "@/components/dashboard/SetPinDialog";
 import { CURRENCIES, CurrencyCode } from "@/hooks/useCurrency";
 
 interface FamilySettings {
@@ -27,12 +28,25 @@ interface FamilySettings {
 
 export default function FamilySettingsPage() {
   const { t, i18n } = useTranslation();
-  const { profile, role } = useAuth();
+  const { profile, role, user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [settings, setSettings] = useState<FamilySettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [hasPin, setHasPin] = useState(false);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    supabase
+      .from("profiles")
+      .select("pin_code_hash")
+      .eq("user_id", user.id)
+      .single()
+      .then(({ data }) => {
+        setHasPin(!!data?.pin_code_hash);
+      });
+  }, [user?.id]);
 
   useEffect(() => {
     if (!profile?.family_id) return;
@@ -284,6 +298,20 @@ export default function FamilySettingsPage() {
                 <span className="text-sm text-muted-foreground">{t("common.days")}</span>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* PIN Code Security */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Shield className="h-5 w-5 text-primary" />
+              {t("settings.pinTitle")}
+            </CardTitle>
+            <CardDescription>{t("settings.pinDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SetPinDialog hasExistingPin={hasPin} onPinSet={() => setHasPin(true)} />
           </CardContent>
         </Card>
 
