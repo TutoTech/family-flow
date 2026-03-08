@@ -34,6 +34,38 @@
     "login": "Log in",
     "signup": "Sign up"
   },
+  "pricing": {
+    "title": "Simple pricing, no subscription",
+    "subtitle": "Start for free, upgrade to Family whenever you're ready.",
+    "free": {
+      "name": "Free",
+      "period": "forever",
+      "description": "Perfect to try Stop Repeat with your child.",
+      "features": [
+        "1 parent",
+        "1 child",
+        "Unlimited tasks",
+        "Rewards & shop",
+        "Points & streak tracking"
+      ],
+      "cta": "Get started for free"
+    },
+    "family": {
+      "name": "Family",
+      "period": "one-time purchase",
+      "badge": "Popular",
+      "description": "For the whole family, no recurring fees.",
+      "features": [
+        "Up to 2 parents",
+        "Unlimited children",
+        "All free features",
+        "Family calendar",
+        "Advanced stats",
+        "Savings goals"
+      ],
+      "cta": "Buy for €10"
+    }
+  },
   "hero": {
     "badge": "No more endless repeating",
     "titleStart": "Say it",
