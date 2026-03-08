@@ -27,7 +27,7 @@ export default function ChildTaskList() {
     late: { label: t("taskList.late"), variant: "destructive" },
   };
 
-  const myTasks = tasks.filter((tk) => tk.assigned_to_user_id === user?.id);
+  const myTasks = tasks.filter((tk) => tk.assigned_to_user_id === viewUserId);
 
   const handleComplete = (taskId: string, requiresPhoto: boolean) => {
     if (requiresPhoto) {
