@@ -35,7 +35,14 @@ export default function ChildDashboard({ name }: Props) {
           </p>
         </div>
         {!profile?.family_id && <FamilyCard />}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <Card className="shadow-card bg-emerald-500/5 border-emerald-500/20">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.wallet")}</CardTitle>
+              <Wallet className="h-4 w-4 text-emerald-600" />
+            </CardHeader>
+            <CardContent><div className="text-2xl font-bold text-emerald-600">{(stats?.wallet_balance ?? 0).toFixed(2)}{currencySymbol}</div></CardContent>
+          </Card>
           <Card className="shadow-card bg-primary/5 border-primary/20">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("common.points")}</CardTitle>
