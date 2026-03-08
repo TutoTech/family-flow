@@ -10,6 +10,7 @@ import ActivityHistory from "./ActivityHistory";
 import ChildPenaltyHistory from "./ChildPenaltyHistory";
 import LevelProgressCard from "./LevelProgressCard";
 import BadgesDisplay from "./BadgesDisplay";
+import BadgeCelebration from "./BadgeCelebration";
 import { useChildStats } from "@/hooks/useRewards";
 import { useTodayTasks } from "@/hooks/useTasks";
 import { useCurrency } from "@/hooks/useCurrency";
@@ -82,6 +83,7 @@ export default function ChildDashboard({ name }: Props) {
         </div>
         {profile?.family_id && (
           <>
+            <BadgeCelebration />
             <div className="grid md:grid-cols-2 gap-4">
               <LevelProgressCard />
               <BadgesDisplay />

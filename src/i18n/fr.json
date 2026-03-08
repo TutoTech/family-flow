@@ -405,6 +405,10 @@
     "title": "Mes badges",
     "earnedAgo": "Obtenu il y a {{time}}",
     "notEarned": "Pas encore obtenu",
+    "celebration": {
+      "unlocked": "🎉 Nouveau badge débloqué !",
+      "tapToDismiss": "Touche pour fermer"
+    },
     "names": {
       "streak_7": "Semaine parfaite",
       "streak_30": "Mois parfait",
