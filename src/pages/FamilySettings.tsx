@@ -81,7 +81,7 @@ export default function FamilySettingsPage() {
     setSaving(false);
   };
 
-  const updateField = (field: keyof FamilySettings, value: number) => {
+  const updateField = (field: keyof FamilySettings, value: number | string) => {
     setSettings((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 

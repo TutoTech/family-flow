@@ -299,7 +299,7 @@
     "ruleDescription": "Description (optionnel)",
     "ruleDescPlaceholder": "Détails...",
     "pointsPenalty": "Pénalité points",
-    "walletPenalty": "Pénalité portefeuille (€)",
+    "walletPenalty": "Pénalité portefeuille",
     "createRule": "Créer la règle",
     "ruleCreated": "Règle créée !",
     "applyTitle": "Appliquer une pénalité",
