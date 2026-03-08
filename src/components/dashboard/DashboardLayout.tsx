@@ -6,7 +6,6 @@ import { LogOut, Home, Settings } from "lucide-react";
 import logo from "@/assets/logo.png";
 import NotificationBell from "@/components/dashboard/NotificationBell";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import NotificationBell from "@/components/dashboard/NotificationBell";
 
 interface Props {
   children: ReactNode;
