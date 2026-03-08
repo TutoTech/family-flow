@@ -128,7 +128,7 @@ export default function FamilyCard() {
             {family?.invite_code}
           </code>
           <Button variant="ghost" size="icon" onClick={copyCode} className="h-8 w-8">
-            {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+            {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
           </Button>
         </div>
       </CardHeader>
