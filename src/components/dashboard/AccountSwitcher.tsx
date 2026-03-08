@@ -60,6 +60,7 @@ export default function AccountSwitcher() {
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
   const [pin, setPin] = useState("");
   const [verifying, setVerifying] = useState(false);
+  const [avatarEditorOpen, setAvatarEditorOpen] = useState(false);
 
   if (!profile?.family_id || members.length <= 1) {
     // Still show "switch back" if impersonating
