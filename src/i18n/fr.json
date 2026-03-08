@@ -308,7 +308,9 @@
     "commentPlaceholder": "Contexte...",
     "applying": "Application...",
     "applyButton": "Appliquer la pénalité",
-    "penaltyApplied": "Pénalité appliquée"
+    "penaltyApplied": "Pénalité appliquée",
+    "myPenalties": "Mes pénalités",
+    "noPenalties": "Aucune pénalité, bravo !"
   },
   "activity": {
     "title": "Historique des activités",
