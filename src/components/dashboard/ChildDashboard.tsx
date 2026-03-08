@@ -100,7 +100,7 @@ export default function ChildDashboard({ name }: Props) {
             </div>
             <ChildTaskList />
             {isPaid ? <SavingsGoalCard /> : (
-              <PremiumGate featureLabel={t("savings.title")}><SavingsGoalCard /></PremiumGate>
+              <PremiumGate featureLabel={t("savingsGoals.title")}><SavingsGoalCard /></PremiumGate>
             )}
             <ChildRewardShop />
             <ChildPenaltyHistory />

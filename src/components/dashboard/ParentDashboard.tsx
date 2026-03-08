@@ -54,7 +54,7 @@ export default function ParentDashboard({ name }: Props) {
         {profile?.family_id && (
           <>
             {isPaid ? <StatsCharts /> : (
-              <PremiumGate featureLabel={t("dashboard.statsTitle")}><StatsCharts /></PremiumGate>
+              <PremiumGate featureLabel={t("stats.title")}><StatsCharts /></PremiumGate>
             )}
             <ParentTaskList />
             <ParentRewardList />
