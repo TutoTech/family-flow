@@ -89,6 +89,12 @@ export default function FamilySettingsPage() {
     i18n.changeLanguage(lang);
   };
 
+  const handleCurrencyChange = (code: string) => {
+    setSettings((prev) => (prev ? { ...prev, currency: code } : prev));
+  };
+
+  const currencySymbol = CURRENCIES.find((c) => c.code === settings?.currency)?.symbol ?? "€";
+
   if (role !== "parent") {
     return <Navigate to="/dashboard" replace />;
   }
