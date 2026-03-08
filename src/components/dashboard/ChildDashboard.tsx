@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import FamilyCard from "./FamilyCard";
 import ChildTaskList from "./ChildTaskList";
 import ChildRewardShop from "./ChildRewardShop";
+import ActivityHistory from "./ActivityHistory";
 import { useChildStats } from "@/hooks/useRewards";
 import { useChildPenalties } from "@/hooks/usePenalties";
 import { useTodayTasks } from "@/hooks/useTasks";
@@ -83,6 +84,7 @@ export default function ChildDashboard({ name }: Props) {
           <>
             <ChildTaskList />
             <ChildRewardShop />
+            <ActivityHistory />
           </>
         )}
       </div>
