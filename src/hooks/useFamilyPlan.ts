@@ -19,13 +19,15 @@ export function useFamilyPlan() {
       return;
     }
 
+    // Use rpc or raw select to get the plan column that may not be in generated types yet
     const { data } = await supabase
       .from("families")
-      .select("plan")
+      .select("*")
       .eq("id", profile.family_id)
       .single();
 
-    setPlan((data?.plan as FamilyPlan) || "free");
+    const familyPlan = (data as any)?.plan as string | undefined;
+    setPlan(familyPlan === "family" ? "family" : "free");
     setLoading(false);
   }, [profile?.family_id]);
 
@@ -42,11 +44,13 @@ export function useFamilyPlan() {
       const { data, error } = await supabase.functions.invoke("verify-payment");
       if (!error && data?.plan) {
         setPlan(data.plan as FamilyPlan);
+        // Re-fetch from DB to confirm
+        await fetchPlan();
       }
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, fetchPlan]);
 
   const startPayment = useCallback(async () => {
     const { data, error } = await supabase.functions.invoke("create-payment");
