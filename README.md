@@ -519,9 +519,23 @@ Private Key: dGhpc...xyz
 
 ### 📝 Étape 4 — Déployer les Edge Functions Supabase
 
-Les Edge Functions du dossier `supabase/functions/` doivent être déployées sur votre projet Supabase.
+Les Edge Functions du dossier `supabase/functions/` doivent être déployées sur votre projet Supabase. Voici ce que fait chacune d'elles :
+
+| Fonction | Rôle |
+|---|---|
+| `create-payment` | Crée une session Stripe Checkout pour le paiement du plan Famille |
+| `verify-payment` | Vérifie si l'utilisateur a payé et met à jour le plan de la famille |
+| `delete-account` | Supprime le compte utilisateur et toutes ses données associées |
+| `redeem-activation-code` | Valide et applique un code d'activation premium |
+| `daily-task-reset` | Génère les instances de tâches du jour pour toutes les familles |
+| `task-reminders` | Envoie des rappels de tâches avant l'heure limite |
+| `send-push` | Envoie des notifications push Web aux appareils enregistrés |
+| `push-vapid-key` | Expose la clé publique VAPID pour l'inscription push côté client |
 
 ```bash
+# Assurez-vous d'être lié à votre projet
+supabase link --project-ref VOTRE_PROJECT_REF
+
 # Déployer toutes les fonctions d'un coup
 supabase functions deploy create-payment
 supabase functions deploy verify-payment
@@ -537,6 +551,8 @@ supabase functions deploy push-vapid-key
 > ```bash
 > supabase functions deploy
 > ```
+
+> **⚠️ Si vous êtes sur l'Option B (auto-hébergé)** : Les Edge Functions Supabase utilisent Deno et sont exécutées par le conteneur `supabase-edge-functions`. Vérifiez que ce conteneur est bien démarré avec `docker compose ps`. Si vous rencontrez des erreurs, consultez les logs : `docker compose logs functions`.
 
 ---
 
