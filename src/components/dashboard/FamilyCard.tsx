@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
 import { Users, Copy, Check, UserPlus, Home } from "lucide-react";
 import CreateFamilyDialog from "./CreateFamilyDialog";
@@ -21,6 +22,7 @@ interface FamilyMember {
 export default function FamilyCard() {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
+  const { activeProfile } = useProfileSwitch();
   const { toast } = useToast();
   const [family, setFamily] = useState<{ id: string; name: string; invite_code: string } | null>(null);
   const [members, setMembers] = useState<FamilyMember[]>([]);
@@ -151,7 +153,7 @@ export default function FamilyCard() {
                 <Badge variant={member.role === "parent" ? "default" : "secondary"} className="text-xs">
                   {member.role === "parent" ? t("common.parent") : t("common.child")}
                 </Badge>
-                {member.user_id === user?.id && (
+                {member.user_id === activeProfile?.userId && (
                   <Badge variant="outline" className="text-xs">{t("common.you")}</Badge>
                 )}
               </div>
