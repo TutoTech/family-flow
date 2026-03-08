@@ -529,5 +529,18 @@
     "completed": "Goal reached! Well done! 🎉",
     "created": "Goal created!",
     "completedSection": "Completed goals"
+  },
+  "payment": {
+    "successTitle": "Payment successful!",
+    "successDescription": "Your family has been upgraded to the Family Plan. You can now add multiple children and 2 parents.",
+    "goToDashboard": "Go to dashboard",
+    "upgrade": "Upgrade to Family Plan",
+    "upgrading": "Redirecting…",
+    "currentPlan": "Your current plan",
+    "freePlan": "Free",
+    "familyPlan": "Family",
+    "limitReached": "Limit reached",
+    "limitReachedDesc": "Your free plan is limited to 1 parent and 1 child. Upgrade to the Family Plan to add more members.",
+    "upgradeNow": "Upgrade to Family Plan — €10"
   }
 }

@@ -18,7 +18,7 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
   const { t } = useTranslation();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const { toast } = useToast();
 
   const handleJoin = async () => {
@@ -27,13 +27,45 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
     try {
       const { data: family, error: findError } = await supabase
         .from("families")
-        .select("id, name")
+        .select("id, name, plan")
         .eq("invite_code", code.trim().toLowerCase())
         .single();
 
       if (findError || !family) {
         toast({ title: t("family.invalidCode"), description: t("family.invalidCodeDesc"), variant: "destructive" });
         return;
+      }
+
+      // Check member limits based on plan
+      const familyPlan = (family as any).plan || "free";
+      const maxParents = familyPlan === "family" ? 2 : 1;
+      const maxChildren = familyPlan === "family" ? 99 : 1;
+
+      // Count existing members by role
+      const { data: members } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("family_id", family.id);
+
+      if (members) {
+        // Get roles for all members
+        const userIds = members.map((m) => m.user_id);
+        const { data: roles } = await supabase
+          .from("user_roles")
+          .select("user_id, role")
+          .in("user_id", userIds);
+
+        const parentCount = roles?.filter((r) => r.role === "parent").length || 0;
+        const childCount = roles?.filter((r) => r.role === "child").length || 0;
+
+        if (role === "parent" && parentCount >= maxParents) {
+          toast({ title: t("payment.limitReached"), description: t("payment.limitReachedDesc"), variant: "destructive" });
+          return;
+        }
+        if (role === "child" && childCount >= maxChildren) {
+          toast({ title: t("payment.limitReached"), description: t("payment.limitReachedDesc"), variant: "destructive" });
+          return;
+        }
       }
 
       const { error: profileError } = await supabase

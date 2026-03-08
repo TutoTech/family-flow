@@ -1,10 +1,29 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Check, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const PricingSection = () => {
   const { t } = useTranslation();
+  const { session } = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  const handleBuyFamily = async () => {
+    if (!session) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment");
+      if (error) throw error;
+      if (data?.url) window.open(data.url, "_blank");
+    } catch {
+      // silent
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section id="pricing" className="py-20 bg-muted/30">
@@ -60,9 +79,15 @@ const PricingSection = () => {
                 </li>
               ))}
             </ul>
-            <Button className="w-full" asChild>
-              <Link to="/signup">{t("pricing.family.cta")}</Link>
-            </Button>
+            {session ? (
+              <Button className="w-full" onClick={handleBuyFamily} disabled={loading}>
+                {loading ? t("payment.upgrading") : t("pricing.family.cta")}
+              </Button>
+            ) : (
+              <Button className="w-full" asChild>
+                <Link to="/signup">{t("pricing.family.cta")}</Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>
