@@ -7,6 +7,7 @@ import FamilyCard from "./FamilyCard";
 import ChildTaskList from "./ChildTaskList";
 import ChildRewardShop from "./ChildRewardShop";
 import ActivityHistory from "./ActivityHistory";
+import ChildPenaltyHistory from "./ChildPenaltyHistory";
 import { useChildStats } from "@/hooks/useRewards";
 import { useTodayTasks } from "@/hooks/useTasks";
 
