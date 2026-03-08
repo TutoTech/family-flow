@@ -384,5 +384,50 @@
     "languageDesc": "Choisissez la langue de l'interface",
     "french": "Français",
     "english": "English"
+  },
+  "level": {
+    "title": "Mon niveau",
+    "levelN": "Niveau {{n}}",
+    "totalPoints": "points cumulés",
+    "nextLevel": "Prochain niveau",
+    "pointsToGo": "Plus que {{points}} pts !",
+    "maxReached": "🎉 Niveau maximum atteint !",
+    "levels": {
+      "Débutant": "Débutant",
+      "Apprenti": "Apprenti",
+      "Confirmé": "Confirmé",
+      "Expert": "Expert",
+      "Champion": "Champion",
+      "Légende": "Légende"
+    }
+  },
+  "badges": {
+    "title": "Mes badges",
+    "earnedAgo": "Obtenu il y a {{time}}",
+    "notEarned": "Pas encore obtenu",
+    "names": {
+      "streak_7": "Semaine parfaite",
+      "streak_30": "Mois parfait",
+      "tasks_10": "Premiers pas",
+      "tasks_50": "En route",
+      "tasks_100": "Centurion",
+      "tasks_500": "Machine",
+      "points_100": "Chasseur de points",
+      "points_500": "Collectionneur",
+      "points_1000": "Millionnaire",
+      "zero_penalty_day": "Journée parfaite"
+    },
+    "descriptions": {
+      "streak_7": "7 jours de série",
+      "streak_30": "30 jours de série",
+      "tasks_10": "10 tâches validées",
+      "tasks_50": "50 tâches validées",
+      "tasks_100": "100 tâches validées",
+      "tasks_500": "500 tâches validées",
+      "points_100": "100 points cumulés",
+      "points_500": "500 points cumulés",
+      "points_1000": "1000 points cumulés",
+      "zero_penalty_day": "Une journée sans pénalité"
+    }
   }
 }
