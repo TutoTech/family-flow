@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { LogOut, Home } from "lucide-react";
 import logo from "@/assets/logo.png";
+import NotificationBell from "@/components/dashboard/NotificationBell";
 
 interface Props {
   children: ReactNode;
@@ -29,7 +30,8 @@ export default function DashboardLayout({ children, title }: Props) {
               {title}
             </h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <NotificationBell />
             <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
               <Home className="h-4 w-4" />
             </Button>
