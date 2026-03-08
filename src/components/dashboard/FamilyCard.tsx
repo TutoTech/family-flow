@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
 import { Users, Copy, Check, UserPlus, Home } from "lucide-react";
 import CreateFamilyDialog from "./CreateFamilyDialog";
