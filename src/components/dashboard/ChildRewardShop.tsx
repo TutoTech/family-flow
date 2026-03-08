@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Gift, Star, ShoppingCart, Clock, CheckCircle2, XCircle } from "lucide-react";
 
 export default function ChildRewardShop() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: stats } = useChildStats();
@@ -20,7 +22,7 @@ export default function ChildRewardShop() {
 
   const handleRedeem = async (rewardId: string, title: string, cost: number) => {
     if (currentPoints < cost) {
-      toast({ title: "Pas assez de points", description: `Il te faut ${cost} points pour "${title}".`, variant: "destructive" });
+      toast({ title: t("rewards.notEnoughPoints"), description: t("rewards.notEnoughDesc", { cost, title }), variant: "destructive" });
       return;
     }
 
@@ -31,31 +33,30 @@ export default function ChildRewardShop() {
       });
       if (error) throw error;
 
-      toast({ title: "Demande envoyée ! 🎉", description: `Ta demande pour "${title}" est en attente d'approbation.` });
+      toast({ title: t("rewards.requestSent"), description: t("rewards.requestSentDesc", { title }) });
       queryClient.invalidateQueries({ queryKey: ["redemptions"] });
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     }
   };
 
   const STATUS_MAP: Record<string, { label: string; icon: typeof Clock }> = {
-    requested: { label: "En attente", icon: Clock },
-    approved: { label: "Approuvé ✓", icon: CheckCircle2 },
-    rejected: { label: "Refusé", icon: XCircle },
-    delivered: { label: "Reçu", icon: Gift },
+    requested: { label: t("rewards.requested"), icon: Clock },
+    approved: { label: t("rewards.approved"), icon: CheckCircle2 },
+    rejected: { label: t("rewards.rejected"), icon: XCircle },
+    delivered: { label: t("rewards.delivered"), icon: Gift },
   };
 
   return (
     <div className="space-y-4">
-      {/* Shop */}
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <ShoppingCart className="h-5 w-5 text-primary" />
-            Boutique
+            {t("rewards.shop")}
             <Badge variant="secondary" className="ml-auto text-xs">
               <Star className="h-3 w-3 mr-1" />
-              {currentPoints} pts
+              {currentPoints} {t("common.pts")}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -67,7 +68,7 @@ export default function ChildRewardShop() {
           ) : rewards.length === 0 ? (
             <div className="text-center py-4 text-muted-foreground">
               <Gift className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Pas encore de récompenses disponibles</p>
+              <p className="text-sm">{t("rewards.noRewardsAvailable")}</p>
             </div>
           ) : (
             <div className="grid gap-3">
@@ -81,7 +82,7 @@ export default function ChildRewardShop() {
                       {reward.description && <p className="text-xs text-muted-foreground truncate">{reward.description}</p>}
                       <div className="flex items-center gap-1 mt-0.5 text-xs text-primary">
                         <Star className="h-3 w-3" />
-                        {reward.cost_points} pts
+                        {reward.cost_points} {t("common.pts")}
                       </div>
                     </div>
                     <Button
@@ -90,7 +91,7 @@ export default function ChildRewardShop() {
                       disabled={!canAfford}
                       onClick={() => handleRedeem(reward.id, reward.title, reward.cost_points)}
                     >
-                      Échanger
+                      {t("rewards.exchange")}
                     </Button>
                   </div>
                 );
@@ -100,11 +101,10 @@ export default function ChildRewardShop() {
         </CardContent>
       </Card>
 
-      {/* Recent redemptions */}
       {redemptions.length > 0 && (
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Mes demandes récentes</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">{t("rewards.recentRequests")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {redemptions.map((r: any) => {

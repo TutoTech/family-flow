@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -6,30 +7,32 @@ import { useActivityHistory, ActivityItem } from "@/hooks/useActivityHistory";
 import { useAuth } from "@/hooks/useAuth";
 import { History, Star, Filter } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
-
-const TYPE_CONFIG: Record<ActivityItem["type"], { label: string; color: string; category: string }> = {
-  task_validated: { label: "Tâche validée", color: "text-secondary", category: "tasks" },
-  reward_approved: { label: "Récompense", color: "text-primary", category: "rewards" },
-  reward_rejected: { label: "Refusée", color: "text-muted-foreground", category: "rewards" },
-  penalty: { label: "Pénalité", color: "text-destructive", category: "penalties" },
-  reward_redeemed: { label: "Échangée", color: "text-primary", category: "rewards" },
-};
-
-const CATEGORY_LABELS: Record<string, string> = {
-  all: "Tout",
-  tasks: "Tâches",
-  rewards: "Récompenses",
-  penalties: "Pénalités",
-};
+import { fr, enUS } from "date-fns/locale";
+import i18n from "@/i18n";
 
 export default function ActivityHistory() {
+  const { t } = useTranslation();
   const { role } = useAuth();
   const { data: activities = [], isLoading } = useActivityHistory();
   const isParent = role === "parent";
 
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [childFilter, setChildFilter] = useState("all");
+
+  const TYPE_CONFIG: Record<ActivityItem["type"], { label: string; color: string; category: string }> = {
+    task_validated: { label: t("activity.taskValidated"), color: "text-secondary", category: "tasks" },
+    reward_approved: { label: t("activity.reward"), color: "text-primary", category: "rewards" },
+    reward_rejected: { label: t("activity.rewardRejected"), color: "text-muted-foreground", category: "rewards" },
+    penalty: { label: t("activity.penalty"), color: "text-destructive", category: "penalties" },
+    reward_redeemed: { label: t("activity.rewardRedeemed"), color: "text-primary", category: "rewards" },
+  };
+
+  const CATEGORY_LABELS: Record<string, string> = {
+    all: t("common.all"),
+    tasks: t("activity.tasks"),
+    rewards: t("activity.rewards"),
+    penalties: t("activity.penaltiesFilter"),
+  };
 
   const childNames = useMemo(() => {
     if (!isParent) return [];
@@ -49,13 +52,14 @@ export default function ActivityHistory() {
   }, [activities, categoryFilter, childFilter]);
 
   const hasFilters = categoryFilter !== "all" || childFilter !== "all";
+  const dateFnsLocale = i18n.language === "fr" ? fr : enUS;
 
   return (
     <Card className="shadow-card">
       <CardHeader className="space-y-3">
         <CardTitle className="text-lg flex items-center gap-2">
           <History className="h-5 w-5 text-muted-foreground" />
-          Historique des activités
+          {t("activity.title")}
         </CardTitle>
         <div className="flex items-center gap-2 flex-wrap">
           <Filter className="h-3.5 w-3.5 text-muted-foreground" />
@@ -75,7 +79,7 @@ export default function ActivityHistory() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all" className="text-xs">Tous les enfants</SelectItem>
+                <SelectItem value="all" className="text-xs">{t("activity.allChildren")}</SelectItem>
                 {childNames.map(([id, name]) => (
                   <SelectItem key={id} value={id} className="text-xs">{name}</SelectItem>
                 ))}
@@ -87,7 +91,7 @@ export default function ActivityHistory() {
               onClick={() => { setCategoryFilter("all"); setChildFilter("all"); }}
               className="text-xs text-muted-foreground hover:text-foreground underline"
             >
-              Réinitialiser
+              {t("common.reset")}
             </button>
           )}
         </div>
@@ -100,7 +104,7 @@ export default function ActivityHistory() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-6 text-muted-foreground">
             <History className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">{hasFilters ? "Aucun résultat pour ces filtres" : "Aucune activité pour le moment"}</p>
+            <p className="text-sm">{hasFilters ? t("activity.noResults") : t("activity.noActivity")}</p>
           </div>
         ) : (
           <div className="space-y-1">
@@ -129,7 +133,7 @@ export default function ActivityHistory() {
                       <span>
                         {formatDistanceToNow(new Date(activity.timestamp), {
                           addSuffix: true,
-                          locale: fr,
+                          locale: dateFnsLocale,
                         })}
                       </span>
                     </div>

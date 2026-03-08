@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useWeeklyStats } from "@/hooks/useWeeklyStats";
 import { useFamilyChildren } from "@/hooks/useTasks";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +12,7 @@ import {
 import { BarChart3, TrendingUp, AlertTriangle, Users } from "lucide-react";
 
 export default function StatsCharts() {
+  const { t } = useTranslation();
   const [selectedChild, setSelectedChild] = useState<string>("all");
   const { data: children = [] } = useFamilyChildren();
   const childId = selectedChild === "all" ? null : selectedChild;
@@ -28,8 +30,8 @@ export default function StatsCharts() {
 
   const recentDaily = dailyStats.slice(-14);
   const childName = selectedChild === "all"
-    ? "toute la famille"
-    : children.find((c) => c.user_id === selectedChild)?.name ?? "l'enfant";
+    ? t("stats.wholeFamily")
+    : children.find((c) => c.user_id === selectedChild)?.name ?? t("common.child");
 
   return (
     <Card>
@@ -38,10 +40,10 @@ export default function StatsCharts() {
           <div>
             <CardTitle className="flex items-center gap-2" style={{ fontFamily: "var(--font-display)" }}>
               <BarChart3 className="h-5 w-5 text-primary" />
-              Statistiques
+              {t("stats.title")}
             </CardTitle>
             <CardDescription>
-              Évolution sur les 4 dernières semaines — {childName}
+              {t("stats.evolution", { name: childName })}
             </CardDescription>
           </div>
           {children.length > 0 && (
@@ -51,7 +53,7 @@ export default function StatsCharts() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Toute la famille</SelectItem>
+                <SelectItem value="all">{t("stats.selectAll")}</SelectItem>
                 {children.map((child) => (
                   <SelectItem key={child.user_id} value={child.user_id}>
                     {child.name}
@@ -65,12 +67,11 @@ export default function StatsCharts() {
       <CardContent>
         <Tabs defaultValue="weekly" className="space-y-4">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="weekly">Par semaine</TabsTrigger>
-            <TabsTrigger value="daily">Par jour</TabsTrigger>
-            <TabsTrigger value="points">Points</TabsTrigger>
+            <TabsTrigger value="weekly">{t("stats.weekly")}</TabsTrigger>
+            <TabsTrigger value="daily">{t("stats.daily")}</TabsTrigger>
+            <TabsTrigger value="points">{t("stats.pointsTab")}</TabsTrigger>
           </TabsList>
 
-          {/* Weekly bar chart */}
           <TabsContent value="weekly" className="space-y-4">
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -78,41 +79,20 @@ export default function StatsCharts() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis dataKey="weekLabel" className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} />
                   <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                    }}
-                  />
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
                   <Legend wrapperStyle={{ fontSize: "12px" }} />
-                  <Bar dataKey="tasksCompleted" name="Tâches" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="penalties" name="Pénalités" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="tasksCompleted" name={t("stats.tasksChart")} fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="penalties" name={t("stats.penaltiesChart")} fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
-
             <div className="grid grid-cols-3 gap-3">
-              <SummaryCard
-                label="Total tâches"
-                value={weeklyStats.reduce((s, w) => s + w.tasksCompleted, 0)}
-                icon={<TrendingUp className="h-4 w-4 text-primary" />}
-              />
-              <SummaryCard
-                label="Total pénalités"
-                value={weeklyStats.reduce((s, w) => s + w.penalties, 0)}
-                icon={<AlertTriangle className="h-4 w-4 text-destructive" />}
-              />
-              <SummaryCard
-                label="Points gagnés"
-                value={weeklyStats.reduce((s, w) => s + w.pointsEarned, 0)}
-                icon={<BarChart3 className="h-4 w-4 text-primary" />}
-              />
+              <SummaryCard label={t("stats.totalTasks")} value={weeklyStats.reduce((s, w) => s + w.tasksCompleted, 0)} icon={<TrendingUp className="h-4 w-4 text-primary" />} />
+              <SummaryCard label={t("stats.totalPenalties")} value={weeklyStats.reduce((s, w) => s + w.penalties, 0)} icon={<AlertTriangle className="h-4 w-4 text-destructive" />} />
+              <SummaryCard label={t("stats.pointsEarned")} value={weeklyStats.reduce((s, w) => s + w.pointsEarned, 0)} icon={<BarChart3 className="h-4 w-4 text-primary" />} />
             </div>
           </TabsContent>
 
-          {/* Daily line chart */}
           <TabsContent value="daily">
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -120,23 +100,15 @@ export default function StatsCharts() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis dataKey="label" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} interval="preserveStartEnd" />
                   <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                    }}
-                  />
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
                   <Legend wrapperStyle={{ fontSize: "12px" }} />
-                  <Line type="monotone" dataKey="tasksCompleted" name="Tâches" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="penalties" name="Pénalités" stroke="hsl(var(--destructive))" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="tasksCompleted" name={t("stats.tasksChart")} stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="penalties" name={t("stats.penaltiesChart")} stroke="hsl(var(--destructive))" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </TabsContent>
 
-          {/* Points area chart */}
           <TabsContent value="points">
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -144,22 +116,8 @@ export default function StatsCharts() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis dataKey="label" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} interval="preserveStartEnd" />
                   <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="pointsEarned"
-                    name="Points gagnés"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary) / 0.15)"
-                    strokeWidth={2}
-                  />
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                  <Area type="monotone" dataKey="pointsEarned" name={t("stats.pointsEarned")} stroke="hsl(var(--primary))" fill="hsl(var(--primary) / 0.15)" strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

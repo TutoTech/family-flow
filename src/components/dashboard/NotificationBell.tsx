@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Bell, Check, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -6,8 +7,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { useNotifications, Notification } from "@/hooks/useNotifications";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import i18n from "@/i18n";
 
 const typeIcons: Record<string, string> = {
   task_completed: "✅",
@@ -23,6 +25,7 @@ function NotificationItem({
   notification: Notification;
   onRead: (id: string) => void;
 }) {
+  const dateFnsLocale = i18n.language === "fr" ? fr : enUS;
   return (
     <div
       className={cn(
@@ -45,7 +48,7 @@ function NotificationItem({
         <p className="text-xs text-muted-foreground/60 mt-1">
           {formatDistanceToNow(new Date(notification.created_at), {
             addSuffix: true,
-            locale: fr,
+            locale: dateFnsLocale,
           })}
         </p>
       </div>
@@ -54,6 +57,7 @@ function NotificationItem({
 }
 
 export default function NotificationBell() {
+  const { t } = useTranslation();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [open, setOpen] = useState(false);
 
@@ -74,7 +78,7 @@ export default function NotificationBell() {
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <h3 className="font-semibold text-sm">Notifications</h3>
+          <h3 className="font-semibold text-sm">{t("notifications.title")}</h3>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -83,14 +87,14 @@ export default function NotificationBell() {
               onClick={markAllAsRead}
             >
               <CheckCheck className="h-3 w-3" />
-              Tout lire
+              {t("notifications.readAll")}
             </Button>
           )}
         </div>
         <ScrollArea className="max-h-80">
           {notifications.length === 0 ? (
             <div className="p-6 text-center text-sm text-muted-foreground">
-              Aucune notification
+              {t("notifications.noNotifications")}
             </div>
           ) : (
             notifications.map((n) => (

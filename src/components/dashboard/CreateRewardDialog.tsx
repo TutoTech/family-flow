@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function CreateRewardDialog({ open, onOpenChange }: Props) {
+  const { t } = useTranslation();
   const { profile } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -37,15 +39,12 @@ export default function CreateRewardDialog({ open, onOpenChange }: Props) {
       });
       if (error) throw error;
 
-      toast({ title: "Récompense créée !", description: `"${title}" ajoutée à la boutique.` });
+      toast({ title: t("rewards.rewardCreated"), description: t("rewards.rewardCreatedDesc", { title }) });
       queryClient.invalidateQueries({ queryKey: ["rewards"] });
-      setTitle("");
-      setDescription("");
-      setCost("10");
-      setIcon("🎁");
+      setTitle(""); setDescription(""); setCost("10"); setIcon("🎁");
       onOpenChange(false);
     } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -57,13 +56,13 @@ export default function CreateRewardDialog({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Nouvelle récompense</DialogTitle>
-          <DialogDescription>Ajoutez une récompense que les enfants pourront échanger contre des points.</DialogDescription>
+          <DialogTitle>{t("rewards.createTitle")}</DialogTitle>
+          <DialogDescription>{t("rewards.createSubtitle")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label>Icône</Label>
+            <Label>{t("rewards.icon")}</Label>
             <div className="flex flex-wrap gap-2">
               {ICON_OPTIONS.map((emoji) => (
                 <button
@@ -79,27 +78,24 @@ export default function CreateRewardDialog({ open, onOpenChange }: Props) {
               ))}
             </div>
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="reward-title">Nom</Label>
-            <Input id="reward-title" placeholder="Ex: 30 min de jeu vidéo" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <Label htmlFor="reward-title">{t("rewards.name")}</Label>
+            <Input id="reward-title" placeholder={t("rewards.namePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="reward-desc">Description (optionnelle)</Label>
-            <Input id="reward-desc" placeholder="Détails" value={description} onChange={(e) => setDescription(e.target.value)} />
+            <Label htmlFor="reward-desc">{t("createTask.description")}</Label>
+            <Input id="reward-desc" placeholder={t("createTask.descriptionPlaceholder")} value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="reward-cost">Coût en points</Label>
+            <Label htmlFor="reward-cost">{t("rewards.costPoints")}</Label>
             <Input id="reward-cost" type="number" min="1" value={cost} onChange={(e) => setCost(e.target.value)} />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
           <Button onClick={handleCreate} disabled={!title.trim() || loading}>
-            {loading ? "Création…" : "Créer"}
+            {loading ? t("common.creating") : t("common.create")}
           </Button>
         </DialogFooter>
       </DialogContent>

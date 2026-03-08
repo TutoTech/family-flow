@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ interface FamilyMember {
 }
 
 export default function FamilyCard() {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [family, setFamily] = useState<{ id: string; name: string; invite_code: string } | null>(null);
@@ -43,7 +45,6 @@ export default function FamilyCard() {
     if (familyRes.data) setFamily(familyRes.data);
 
     if (membersRes.data) {
-      // Fetch roles for each member
       const memberIds = membersRes.data.map((m) => m.user_id);
       const { data: roles } = await supabase.from("user_roles").select("user_id, role").in("user_id", memberIds);
       const roleMap = new Map(roles?.map((r) => [r.user_id, r.role]) ?? []);
@@ -70,7 +71,7 @@ export default function FamilyCard() {
     if (!family) return;
     await navigator.clipboard.writeText(family.invite_code);
     setCopied(true);
-    toast({ title: "Copié !", description: "Code d'invitation copié dans le presse-papiers." });
+    toast({ title: t("common.copied"), description: t("family.inviteCodeCopied") });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -84,7 +85,6 @@ export default function FamilyCard() {
     );
   }
 
-  // No family yet
   if (!profile?.family_id) {
     return (
       <>
@@ -92,19 +92,19 @@ export default function FamilyCard() {
           <CardContent className="py-8 text-center space-y-4">
             <Home className="h-12 w-12 mx-auto text-primary" />
             <h3 className="text-lg font-bold text-foreground" style={{ fontFamily: "var(--font-display)" }}>
-              Créez ou rejoignez un foyer
+              {t("family.createOrJoinTitle")}
             </h3>
             <p className="text-muted-foreground text-sm max-w-md mx-auto">
-              Pour commencer, créez votre foyer familial ou rejoignez-en un existant avec un code d'invitation.
+              {t("family.createOrJoinDesc")}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button onClick={() => setCreateOpen(true)} className="gap-2">
                 <Users className="h-4 w-4" />
-                Créer un foyer
+                {t("family.createFamily")}
               </Button>
               <Button variant="outline" onClick={() => setJoinOpen(true)} className="gap-2">
                 <UserPlus className="h-4 w-4" />
-                Rejoindre avec un code
+                {t("family.joinWithCode")}
               </Button>
             </div>
           </CardContent>
@@ -115,7 +115,6 @@ export default function FamilyCard() {
     );
   }
 
-  // Family exists
   return (
     <Card className="shadow-card">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -135,7 +134,7 @@ export default function FamilyCard() {
       <CardContent>
         <div className="space-y-3">
           <p className="text-sm text-muted-foreground">
-            {members.length} membre{members.length > 1 ? "s" : ""}
+            {t("family.memberCount", { count: members.length })}
           </p>
           <div className="grid gap-2">
             {members.map((member) => (
@@ -150,10 +149,10 @@ export default function FamilyCard() {
                 </Avatar>
                 <span className="text-sm font-medium text-foreground flex-1">{member.name}</span>
                 <Badge variant={member.role === "parent" ? "default" : "secondary"} className="text-xs">
-                  {member.role === "parent" ? "Parent" : "Enfant"}
+                  {member.role === "parent" ? t("common.parent") : t("common.child")}
                 </Badge>
                 {member.user_id === user?.id && (
-                  <Badge variant="outline" className="text-xs">Vous</Badge>
+                  <Badge variant="outline" className="text-xs">{t("common.you")}</Badge>
                 )}
               </div>
             ))}
