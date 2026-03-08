@@ -20,7 +20,7 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className="py-24 px-6">
+    <section id="fonctionnalites" className="py-24 px-6">
       <div className="container max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <span className="inline-block px-4 py-1.5 rounded-full bg-secondary/10 text-secondary font-body font-semibold text-sm mb-4">{t("features.badge")}</span>
