@@ -13,7 +13,7 @@ export interface ActivityItem {
   timestamp: string;
 }
 
-export function useActivityHistory(limit = 20) {
+export function useActivityHistory(limit = 50) {
   const { profile, role, user } = useAuth();
   const familyId = profile?.family_id;
   const isParent = role === "parent";
@@ -22,6 +22,9 @@ export function useActivityHistory(limit = 20) {
     queryKey: ["activity-history", familyId, user?.id, role],
     queryFn: async (): Promise<ActivityItem[]> => {
       const activities: ActivityItem[] = [];
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      const cutoff = oneMonthAgo.toISOString();
 
       // 1. Validated tasks
       const taskQuery = supabase
@@ -29,6 +32,7 @@ export function useActivityHistory(limit = 20) {
         .select("id, status, validated_at, assigned_to_user_id, task_template:task_templates(title, icon, points_reward)")
         .eq("family_id", familyId!)
         .eq("status", "validated")
+        .gte("validated_at", cutoff)
         .order("validated_at", { ascending: false })
         .limit(limit);
 
@@ -52,6 +56,7 @@ export function useActivityHistory(limit = 20) {
         .from("reward_redemptions")
         .select("id, status, updated_at, child_id, reward:rewards(title, icon, cost_points)")
         .in("status", ["approved", "rejected"])
+        .gte("updated_at", cutoff)
         .order("updated_at", { ascending: false })
         .limit(limit);
 
@@ -75,6 +80,7 @@ export function useActivityHistory(limit = 20) {
         .from("penalties_log")
         .select("id, created_at, child_id, rule:house_rules(label, icon, points_penalty)")
         .eq("family_id", familyId!)
+        .gte("created_at", cutoff)
         .order("created_at", { ascending: false })
         .limit(limit);
 
