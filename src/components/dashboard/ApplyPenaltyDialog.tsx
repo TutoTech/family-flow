@@ -23,6 +23,7 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
   const { user, profile } = useAuth();
   const { data: rules = [] } = useFamilyRules();
   const { data: children = [] } = useFamilyChildren();
+  const { symbol: currencySymbol } = useCurrency();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [childId, setChildId] = useState("");
