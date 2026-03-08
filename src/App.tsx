@@ -44,6 +44,7 @@ const App = () => (
               <Route path="/cgu" element={<CGU />} />
               <Route path="/cgv" element={<CGV />} />
               <Route path="/confidentialite" element={<PrivacyPolicy />} />
+              <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
               <Route
                 path="/dashboard"
                 element={

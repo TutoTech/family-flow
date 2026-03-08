@@ -529,5 +529,18 @@
     "completed": "Objectif atteint ! Bravo ! 🎉",
     "created": "Objectif créé !",
     "completedSection": "Objectifs atteints"
+  },
+  "payment": {
+    "successTitle": "Paiement réussi !",
+    "successDescription": "Votre famille a été mise à niveau vers le Plan Famille. Vous pouvez maintenant ajouter plusieurs enfants et 2 parents.",
+    "goToDashboard": "Aller au tableau de bord",
+    "upgrade": "Passer au Plan Famille",
+    "upgrading": "Redirection…",
+    "currentPlan": "Votre plan actuel",
+    "freePlan": "Gratuit",
+    "familyPlan": "Famille",
+    "limitReached": "Limite atteinte",
+    "limitReachedDesc": "Votre plan gratuit est limité à 1 parent et 1 enfant. Passez au Plan Famille pour ajouter plus de membres.",
+    "upgradeNow": "Passer au Plan Famille — 10€"
   }
 }
