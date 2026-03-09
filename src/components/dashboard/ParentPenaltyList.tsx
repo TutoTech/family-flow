@@ -26,7 +26,7 @@ export default function ParentPenaltyList() {
 
   return (
     <>
-      <Card className="shadow-card">
+      <Card id="section-penalties" className="shadow-card">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 min-w-0">
             <ShieldAlert className="h-5 w-5 text-destructive flex-shrink-0" />
