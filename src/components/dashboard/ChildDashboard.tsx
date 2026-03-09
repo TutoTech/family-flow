@@ -68,6 +68,16 @@ export default function ChildDashboard({ name }: Props) {
   const myTasks = tasks.filter((t) => t.assigned_to_user_id === viewUserId);
   const completedTasks = myTasks.filter((t) => ["validated", "awaiting_validation", "done"].includes(t.status));
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+    }
+  };
+
   return (
     <DashboardLayout title={t("dashboard.childTitle")}>
       <div className="space-y-6">
@@ -86,8 +96,8 @@ export default function ChildDashboard({ name }: Props) {
 
         {/* Cartes de statistiques rapides */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          {/* Solde du portefeuille */}
-          <Card className="shadow-card bg-emerald-500/5 border-emerald-500/20">
+          {/* Solde du portefeuille → objectifs d'épargne */}
+          <Card className="shadow-card bg-emerald-500/5 border-emerald-500/20 cursor-pointer hover:ring-2 hover:ring-emerald-500/30 transition-shadow" onClick={() => scrollToSection("section-savings")}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.wallet")}</CardTitle>
               <Wallet className="h-4 w-4 text-emerald-600" />
@@ -95,8 +105,8 @@ export default function ChildDashboard({ name }: Props) {
             <CardContent><div className="text-2xl font-bold text-emerald-600">{(stats?.wallet_balance ?? 0).toFixed(2)}{currencySymbol}</div></CardContent>
           </Card>
 
-          {/* Points actuels */}
-          <Card className="shadow-card bg-primary/5 border-primary/20">
+          {/* Points → boutique récompenses */}
+          <Card className="shadow-card bg-primary/5 border-primary/20 cursor-pointer hover:ring-2 hover:ring-primary/30 transition-shadow" onClick={() => scrollToSection("section-rewards")}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("common.points")}</CardTitle>
               <Star className="h-4 w-4 text-primary" />
@@ -113,8 +123,8 @@ export default function ChildDashboard({ name }: Props) {
             <CardContent><div className="text-2xl font-bold text-accent-foreground">{t("dashboard.streakDays", { count: stats?.streak_days ?? 0 })}</div></CardContent>
           </Card>
 
-          {/* Tâches complétées aujourd'hui */}
-          <Card className="shadow-card">
+          {/* Tâches → liste des tâches */}
+          <Card className="shadow-card cursor-pointer hover:ring-2 hover:ring-secondary/30 transition-shadow" onClick={() => scrollToSection("section-tasks")}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.tasks")}</CardTitle>
               <CheckCircle2 className="h-4 w-4 text-secondary" />
