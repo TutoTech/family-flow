@@ -120,7 +120,8 @@
     "legalNotice": "Legal Notice",
     "cgu": "Terms of Use",
     "cgv": "Terms of Sale",
-    "privacy": "Privacy Policy"
+    "privacy": "Privacy Policy",
+    "sourceCode": "Source Code"
   },
   "legal": {
     "mentionsTitle": "Legal Notice",
