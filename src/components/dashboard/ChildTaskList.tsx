@@ -68,7 +68,7 @@ export default function ChildTaskList() {
 
   if (myTasks.length === 0) {
     return (
-      <Card className="border-dashed border-2 border-secondary/30 bg-secondary/5">
+      <Card id="section-tasks" className="border-dashed border-2 border-secondary/30 bg-secondary/5">
         <CardContent className="py-8 text-center">
           <CheckCircle2 className="h-12 w-12 mx-auto text-secondary mb-4" />
           <h3 className="text-lg font-bold text-foreground mb-2">{t("childTasks.noTasks")}</h3>
