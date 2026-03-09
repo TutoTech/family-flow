@@ -7,6 +7,7 @@
 
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { Github } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const Footer = () => {
