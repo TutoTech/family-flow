@@ -597,5 +597,22 @@
     "invalidFile": "The file is not a valid image.",
     "fileTooLarge": "Image must be under 2 MB.",
     "editAvatar": "Edit my avatar"
+  },
+  "testimonials": {
+    "badge": "Testimonials",
+    "title": "They chose Stop Repeat",
+    "subtitle": "Parents and children share their experience with our application.",
+    "parent1Name": "Sophie M.",
+    "parent1Content": "Stop Repeat has transformed our daily life! No more repeating the same things 10 times. The kids know exactly what they need to do and are motivated by the points system. A real relief for the whole family.",
+    "child1Name": "Lucas, 9 years old",
+    "child1Content": "I love earning points! Now I can save up to buy what I want. And I like seeing my badges when I do my tasks well several days in a row.",
+    "parent2Name": "Marc D.",
+    "parent2Content": "The app is simple and effective. The automatic notifications save us from playing the supervisor role. The kids are really becoming more independent and responsible. I highly recommend it!",
+    "child2Name": "Emma, 11 years old",
+    "child2Content": "It's cool to be able to take photos to prove I've done my tasks. And my parents give me rewards when I have enough points. It's much more fun than before!",
+    "parent3Name": "Claire B.",
+    "parent3Content": "We have 3 children and it was total chaos before Stop Repeat. Now, everyone has their tasks, everything is organized in the family calendar, and we've finally found some peace. Thank you!",
+    "child3Name": "Noah, 7 years old",
+    "child3Content": "I like the app because there are colors and stars. And when I do all my tasks, my parents are happy and so am I!"
   }
 }
