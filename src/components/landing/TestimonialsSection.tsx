@@ -68,7 +68,7 @@ const TestimonialsSection = () => {
             {t("testimonials.title", "Ils ont adopté Stop Repeat")}
           </h2>
           <p className="text-muted-foreground text-lg font-body max-w-2xl mx-auto">
-            {t("testimonials.subtitle", "Parents et enfants partagent leur expérience avec notre application (témoignages fictifs).")}
+            {t("testimonials.subtitle", "Parents et enfants partagent leur expérience avec notre application.")}
           </p>
         </div>
 
