@@ -5,7 +5,9 @@
  * les objectifs d'épargne, la boutique de récompenses et l'historique.
  */
 
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Star, Flame, CheckCircle2, Gift, AlertTriangle, Wallet } from "lucide-react";
