@@ -25,9 +25,12 @@ const typeIcons: Record<string, string> = {
 
 const typeToSection: Record<string, string> = {
   task_completed: "section-tasks",
+  task_assigned: "section-tasks",
+  task_reminder: "section-tasks",
   reward_approved: "section-rewards",
   reward_requested: "section-rewards",
   redemption_requested: "section-rewards",
+  penalty: "section-penalties",
 };
 
 function NotificationItem({

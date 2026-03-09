@@ -5,7 +5,9 @@
  * les objectifs d'épargne, la boutique de récompenses et l'historique.
  */
 
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Star, Flame, CheckCircle2, Gift, AlertTriangle, Wallet } from "lucide-react";
@@ -35,12 +37,32 @@ export default function ChildDashboard({ name }: Props) {
   const { activeProfile, isImpersonating } = useProfileSwitch();
   const { plan } = useFamilyPlan();
   const isPaid = plan === "family";
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Détermine l'ID de l'enfant affiché (impersoné ou réel)
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
   const { data: stats } = useChildStats(isImpersonating ? viewUserId : undefined);
   const { symbol: currencySymbol } = useCurrency();
   const { tasks } = useTodayTasks();
+
+  // Scroll to section if coming from notification click
+  useEffect(() => {
+    const state = location.state as { scrollTo?: string } | null;
+    if (state?.scrollTo) {
+      const sectionId = state.scrollTo;
+      navigate(location.pathname, { replace: true, state: {} });
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+      }, 500);
+    }
+  }, [location.state, navigate, location.pathname]);
 
   // Filtre les tâches assignées à cet enfant
   const myTasks = tasks.filter((t) => t.assigned_to_user_id === viewUserId);
