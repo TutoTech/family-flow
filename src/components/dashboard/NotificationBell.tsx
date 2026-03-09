@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, Check, CheckCheck } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Bell, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -14,16 +15,23 @@ import i18n from "@/i18n";
 const typeIcons: Record<string, string> = {
   task_completed: "✅",
   reward_approved: "🎁",
+  reward_requested: "🎁",
   penalty: "⚠️",
   info: "ℹ️",
 };
 
+const typeToSection: Record<string, string> = {
+  task_completed: "section-tasks",
+  reward_approved: "section-rewards",
+  reward_requested: "section-rewards",
+};
+
 function NotificationItem({
   notification,
-  onRead,
+  onClick,
 }: {
   notification: Notification;
-  onRead: (id: string) => void;
+  onClick: (notification: Notification) => void;
 }) {
   const dateFnsLocale = i18n.language === "fr" ? fr : enUS;
   return (
@@ -32,7 +40,7 @@ function NotificationItem({
         "flex items-start gap-3 p-3 border-b border-border last:border-0 transition-colors cursor-pointer hover:bg-muted/50",
         !notification.is_read && "bg-primary/5"
       )}
-      onClick={() => !notification.is_read && onRead(notification.id)}
+      onClick={() => onClick(notification)}
     >
       <span className="text-lg mt-0.5">{typeIcons[notification.type] || "ℹ️"}</span>
       <div className="flex-1 min-w-0">
