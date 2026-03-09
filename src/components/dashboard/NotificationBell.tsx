@@ -91,15 +91,17 @@ export default function NotificationBell() {
             </Button>
           )}
         </div>
-        <ScrollArea className="max-h-80">
+        <ScrollArea className="h-80">
           {notifications.length === 0 ? (
             <div className="p-6 text-center text-sm text-muted-foreground">
               {t("notifications.noNotifications")}
             </div>
           ) : (
-            notifications.map((n) => (
-              <NotificationItem key={n.id} notification={n} onRead={markAsRead} />
-            ))
+            <div>
+              {notifications.map((n) => (
+                <NotificationItem key={n.id} notification={n} onRead={markAsRead} />
+              ))}
+            </div>
           )}
         </ScrollArea>
       </PopoverContent>
