@@ -4,8 +4,9 @@
  * les tâches du jour, les récompenses, les pénalités et l'historique.
  */
 
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { useFamilyPlan } from "@/hooks/useFamilyPlan";
