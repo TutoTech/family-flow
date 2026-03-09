@@ -135,8 +135,8 @@ export default function ChildDashboard({ name }: Props) {
             </CardContent>
           </Card>
 
-          {/* Pénalités du jour */}
-          <Card className="shadow-card bg-destructive/5 border-destructive/20">
+          {/* Pénalités → historique pénalités */}
+          <Card className="shadow-card bg-destructive/5 border-destructive/20 cursor-pointer hover:ring-2 hover:ring-destructive/30 transition-shadow" onClick={() => scrollToSection("section-penalties")}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.penalties")}</CardTitle>
               <AlertTriangle className="h-4 w-4 text-destructive" />
