@@ -60,21 +60,25 @@ export default function ParentRewardList() {
             <div className="space-y-2">
               <p className="text-sm font-medium text-foreground">{t("rewards.pendingRequests")}</p>
               {pendingRedemptions.map((r: any) => (
-                <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5">
-                  <span className="text-xl">{r.reward?.icon ?? "🎁"}</span>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-foreground">{r.reward?.title}</span>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Star className="h-3 w-3" />
-                      {r.reward?.cost_points} {t("common.pts")}
+                <div key={r.id} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 rounded-lg border border-primary/20 bg-primary/5">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-lg shrink-0">{r.reward?.icon ?? "🎁"}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium text-foreground block truncate">{r.reward?.title}</span>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Star className="h-3 w-3" />
+                        {r.reward?.cost_points} {t("common.pts")}
+                      </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={() => handleRedemption(r.id, true)} disabled={isImpersonating}>
-                    <CheckCircle2 className="h-5 w-5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleRedemption(r.id, false)} disabled={isImpersonating}>
-                    <XCircle className="h-5 w-5" />
-                  </Button>
+                  <div className="flex items-center gap-2 justify-end">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={() => handleRedemption(r.id, true)} disabled={isImpersonating}>
+                      <CheckCircle2 className="h-5 w-5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleRedemption(r.id, false)} disabled={isImpersonating}>
+                      <XCircle className="h-5 w-5" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
