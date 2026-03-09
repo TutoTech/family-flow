@@ -56,13 +56,15 @@ export default function ParentPenaltyList() {
           ) : (
             <div className="grid gap-2">
               {rules.map((rule) => (
-                <div key={rule.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                  <span className="text-xl">{rule.icon ?? "🚫"}</span>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-foreground">{rule.label}</span>
-                    {rule.description && <p className="text-xs text-muted-foreground truncate">{rule.description}</p>}
+                <div key={rule.id} className="flex flex-col sm:flex-row sm:items-center gap-2 p-2 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-lg shrink-0">{rule.icon ?? "🚫"}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium text-foreground block truncate">{rule.label}</span>
+                      {rule.description && <p className="text-xs text-muted-foreground truncate">{rule.description}</p>}
+                    </div>
                   </div>
-                  <Badge variant="outline" className="text-xs flex-shrink-0 text-destructive border-destructive/30">
+                  <Badge variant="outline" className="text-xs w-fit shrink-0 text-destructive border-destructive/30">
                     <Star className="h-3 w-3 mr-1" />
                     -{rule.points_penalty}
                   </Badge>
@@ -75,12 +77,14 @@ export default function ParentPenaltyList() {
             <div className="space-y-2 pt-2 border-t">
               <p className="text-sm font-medium text-foreground">{t("penalties.recentPenalties")}</p>
               {penalties.map((p: any) => (
-                <div key={p.id} className="flex items-center gap-2 text-sm">
-                  <span>{p.rule?.icon ?? "🚫"}</span>
-                  <span className="flex-1 truncate text-foreground">
-                    {childNameMap[p.child_id] ?? t("common.child")} — {p.rule?.label}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
+                <div key={p.id} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="shrink-0">{p.rule?.icon ?? "🚫"}</span>
+                    <span className="flex-1 truncate text-foreground">
+                      {childNameMap[p.child_id] ?? t("common.child")} — {p.rule?.label}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground shrink-0 pl-6 sm:pl-0">
                     {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateFnsLocale })}
                   </span>
                 </div>
