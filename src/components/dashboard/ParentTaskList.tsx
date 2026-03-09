@@ -60,7 +60,7 @@ export default function ParentTaskList() {
 
   return (
     <>
-      <Card className="shadow-card">
+      <Card id="section-tasks" className="shadow-card">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">{t("taskList.todayTasks")}</CardTitle>
           <div className="flex items-center gap-2">

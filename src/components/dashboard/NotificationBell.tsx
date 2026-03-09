@@ -66,8 +66,28 @@ function NotificationItem({
 
 export default function NotificationBell() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [open, setOpen] = useState(false);
+
+  const handleNotificationClick = (notification: Notification) => {
+    if (!notification.is_read) {
+      markAsRead(notification.id);
+    }
+
+    const sectionId = typeToSection[notification.type];
+    if (sectionId) {
+      setOpen(false);
+      if (location.pathname === "/dashboard") {
+        setTimeout(() => {
+          document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      } else {
+        navigate(`/dashboard#${sectionId}`);
+      }
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -107,7 +127,7 @@ export default function NotificationBell() {
           ) : (
             <div>
               {notifications.map((n) => (
-                <NotificationItem key={n.id} notification={n} onRead={markAsRead} />
+                <NotificationItem key={n.id} notification={n} onClick={handleNotificationClick} />
               ))}
             </div>
           )}
