@@ -44,14 +44,14 @@ export default function ParentRewardList() {
 
   return (
     <>
-      <Card id="section-rewards" className="shadow-card">
-        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+      <Card id="section-rewards" className="shadow-card overflow-hidden">
+        <CardHeader className="flex flex-col gap-3 pb-3">
           <CardTitle className="text-base sm:text-lg flex items-center gap-2">
             <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
             <span className="truncate">{t("rewards.title")}</span>
           </CardTitle>
-          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1 text-xs sm:text-sm px-2 sm:px-3 w-full sm:w-auto" disabled={isImpersonating}>
-            <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1 text-xs px-2 w-full" disabled={isImpersonating}>
+            <Plus className="h-3.5 w-3.5 shrink-0" />
             {t("common.add")}
           </Button>
         </CardHeader>
