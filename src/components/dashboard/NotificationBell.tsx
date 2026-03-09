@@ -71,6 +71,19 @@ export default function NotificationBell() {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [open, setOpen] = useState(false);
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerOffset = 80; // Header height + padding
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleNotificationClick = (notification: Notification) => {
     if (!notification.is_read) {
       markAsRead(notification.id);
@@ -80,11 +93,11 @@ export default function NotificationBell() {
     if (sectionId) {
       setOpen(false);
       if (location.pathname === "/dashboard") {
-        setTimeout(() => {
-          document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 100);
+        // Délai plus long pour laisser le popover se fermer sur mobile
+        setTimeout(() => scrollToSection(sectionId), 300);
       } else {
-        navigate(`/dashboard#${sectionId}`);
+        // Navigation vers le dashboard puis scroll
+        navigate("/dashboard", { state: { scrollTo: sectionId } });
       }
     }
   };
