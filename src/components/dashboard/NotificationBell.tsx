@@ -14,8 +14,11 @@ import i18n from "@/i18n";
 
 const typeIcons: Record<string, string> = {
   task_completed: "✅",
+  task_assigned: "📋",
+  task_reminder: "⏰",
   reward_approved: "🎁",
   reward_requested: "🎁",
+  redemption_requested: "🎁",
   penalty: "⚠️",
   info: "ℹ️",
 };
@@ -24,6 +27,7 @@ const typeToSection: Record<string, string> = {
   task_completed: "section-tasks",
   reward_approved: "section-rewards",
   reward_requested: "section-rewards",
+  redemption_requested: "section-rewards",
 };
 
 function NotificationItem({
