@@ -68,6 +68,16 @@ export default function ChildDashboard({ name }: Props) {
   const myTasks = tasks.filter((t) => t.assigned_to_user_id === viewUserId);
   const completedTasks = myTasks.filter((t) => ["validated", "awaiting_validation", "done"].includes(t.status));
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+    }
+  };
+
   return (
     <DashboardLayout title={t("dashboard.childTitle")}>
       <div className="space-y-6">
