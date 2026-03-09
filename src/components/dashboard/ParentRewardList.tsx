@@ -44,15 +44,14 @@ export default function ParentRewardList() {
 
   return (
     <>
-      <Card id="section-rewards" className="shadow-card overflow-hidden">
-        <CardHeader className="flex flex-col gap-3 pb-3">
-          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-            <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
+      <Card id="section-rewards" className="shadow-card">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2 min-w-0">
+            <Gift className="h-5 w-5 text-primary flex-shrink-0" />
             <span className="truncate">{t("rewards.title")}</span>
           </CardTitle>
-          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1 text-xs px-2 w-full" disabled={isImpersonating}>
-            <Plus className="h-3.5 w-3.5 shrink-0" />
-            {t("common.add")}
+          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1 flex-shrink-0" disabled={isImpersonating}>
+            <Plus className="h-4 w-4" />{t("common.add")}
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -60,18 +59,18 @@ export default function ParentRewardList() {
             <div className="space-y-2">
               <p className="text-sm font-medium text-foreground">{t("rewards.pendingRequests")}</p>
               {pendingRedemptions.map((r: any) => (
-                <div key={r.id} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 rounded-lg border border-primary/20 bg-primary/5">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-lg shrink-0">{r.reward?.icon ?? "🎁"}</span>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-sm font-medium text-foreground block truncate">{r.reward?.title}</span>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Star className="h-3 w-3" />
-                        {r.reward?.cost_points} {t("common.pts")}
-                      </div>
+                <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="flex-shrink-0">{r.reward?.icon ?? "🎁"}</span>
+                      <span className="text-sm font-medium text-foreground truncate">{r.reward?.title}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                      <Star className="h-3 w-3" />
+                      {r.reward?.cost_points} {t("common.pts")}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 justify-end">
+                  <div className="flex items-center gap-1 flex-shrink-0">
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={() => handleRedemption(r.id, true)} disabled={isImpersonating}>
                       <CheckCircle2 className="h-5 w-5" />
                     </Button>
@@ -94,17 +93,17 @@ export default function ParentRewardList() {
               <p className="text-sm">{t("rewards.noRewards")}</p>
             </div>
           ) : (
-            <div className="grid gap-2">
+            <div className="space-y-3">
               {rewards.map((reward) => (
-                <div key={reward.id} className="flex flex-col sm:flex-row sm:items-center gap-2 p-2 rounded-lg bg-muted/50">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-lg shrink-0">{reward.icon ?? "🎁"}</span>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-sm font-medium text-foreground block truncate">{reward.title}</span>
-                      {reward.description && <p className="text-xs text-muted-foreground truncate">{reward.description}</p>}
+                <div key={reward.id} className="flex items-center gap-3 p-3 rounded-lg border bg-card">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="flex-shrink-0">{reward.icon ?? "🎁"}</span>
+                      <span className="text-sm font-medium text-foreground truncate">{reward.title}</span>
                     </div>
+                    {reward.description && <p className="text-xs text-muted-foreground truncate mt-0.5">{reward.description}</p>}
                   </div>
-                  <Badge variant="outline" className="text-xs w-fit shrink-0">
+                  <Badge variant="outline" className="text-xs flex-shrink-0">
                     <Star className="h-3 w-3 mr-1" />
                     {reward.cost_points}
                   </Badge>
