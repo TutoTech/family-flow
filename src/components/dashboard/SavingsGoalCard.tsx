@@ -65,7 +65,7 @@ export default function SavingsGoalCard() {
 
   return (
     <>
-      <Card className="shadow-card">
+      <Card id="section-savings" className="shadow-card">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
             <PiggyBank className="h-5 w-5 text-primary" />
