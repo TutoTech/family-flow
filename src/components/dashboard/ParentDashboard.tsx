@@ -31,15 +31,25 @@ export default function ParentDashboard({ name }: Props) {
   const location = useLocation();
   const isPaid = plan === "family";
 
-  // Scroll to section if hash is present in URL
+  // Scroll to section if coming from notification click
   useEffect(() => {
-    if (location.hash) {
-      const sectionId = location.hash.replace("#", "");
+    const state = location.state as { scrollTo?: string } | null;
+    if (state?.scrollTo) {
+      const sectionId = state.scrollTo;
+      // Clear the state to prevent re-scrolling
+      navigate(location.pathname, { replace: true, state: {} });
+      
       setTimeout(() => {
-        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 300);
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+      }, 500); // Délai pour laisser le rendu se terminer
     }
-  }, [location.hash]);
+  }, [location.state, navigate, location.pathname]);
 
   return (
     <DashboardLayout title={t("dashboard.parentTitle")}>
