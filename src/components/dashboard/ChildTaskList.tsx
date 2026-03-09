@@ -58,7 +58,7 @@ export default function ChildTaskList() {
 
   if (isLoading) {
     return (
-      <Card className="shadow-card">
+      <Card id="section-tasks" className="shadow-card">
         <CardContent className="py-6 flex justify-center">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
         </CardContent>
