@@ -44,7 +44,7 @@ export default function ParentRewardList() {
 
   return (
     <>
-      <Card className="shadow-card">
+      <Card id="section-rewards" className="shadow-card">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
             <Gift className="h-5 w-5 text-primary" />

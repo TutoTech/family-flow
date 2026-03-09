@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, Check, CheckCheck } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Bell, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -14,16 +15,23 @@ import i18n from "@/i18n";
 const typeIcons: Record<string, string> = {
   task_completed: "✅",
   reward_approved: "🎁",
+  reward_requested: "🎁",
   penalty: "⚠️",
   info: "ℹ️",
 };
 
+const typeToSection: Record<string, string> = {
+  task_completed: "section-tasks",
+  reward_approved: "section-rewards",
+  reward_requested: "section-rewards",
+};
+
 function NotificationItem({
   notification,
-  onRead,
+  onClick,
 }: {
   notification: Notification;
-  onRead: (id: string) => void;
+  onClick: (notification: Notification) => void;
 }) {
   const dateFnsLocale = i18n.language === "fr" ? fr : enUS;
   return (
@@ -32,7 +40,7 @@ function NotificationItem({
         "flex items-start gap-3 p-3 border-b border-border last:border-0 transition-colors cursor-pointer hover:bg-muted/50",
         !notification.is_read && "bg-primary/5"
       )}
-      onClick={() => !notification.is_read && onRead(notification.id)}
+      onClick={() => onClick(notification)}
     >
       <span className="text-lg mt-0.5">{typeIcons[notification.type] || "ℹ️"}</span>
       <div className="flex-1 min-w-0">
@@ -58,8 +66,28 @@ function NotificationItem({
 
 export default function NotificationBell() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [open, setOpen] = useState(false);
+
+  const handleNotificationClick = (notification: Notification) => {
+    if (!notification.is_read) {
+      markAsRead(notification.id);
+    }
+
+    const sectionId = typeToSection[notification.type];
+    if (sectionId) {
+      setOpen(false);
+      if (location.pathname === "/dashboard") {
+        setTimeout(() => {
+          document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      } else {
+        navigate(`/dashboard#${sectionId}`);
+      }
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -99,7 +127,7 @@ export default function NotificationBell() {
           ) : (
             <div>
               {notifications.map((n) => (
-                <NotificationItem key={n.id} notification={n} onRead={markAsRead} />
+                <NotificationItem key={n.id} notification={n} onClick={handleNotificationClick} />
               ))}
             </div>
           )}
