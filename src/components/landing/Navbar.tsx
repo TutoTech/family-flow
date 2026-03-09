@@ -30,10 +30,11 @@ const Navbar = () => {
           <span className="text-xl font-bold font-display text-foreground">Stop Repeat</span>
         </Link>
         <div className="hidden md:flex items-center gap-8 font-body text-sm font-medium text-muted-foreground">
-          <a href="#fonctionnalites" className="hover:text-foreground transition-colors">{t("nav.features")}</a>
-          <a href="#comment-ca-marche" className="hover:text-foreground transition-colors">{t("nav.howItWorks")}</a>
-          <a href="#pricing" className="hover:text-foreground transition-colors">{t("nav.pricing")}</a>
-          <a href="#faq" className="hover:text-foreground transition-colors">{t("nav.faq")}</a>
+          <a href="/#fonctionnalites" className="hover:text-foreground transition-colors">{t("nav.features")}</a>
+          <a href="/#comment-ca-marche" className="hover:text-foreground transition-colors">{t("nav.howItWorks")}</a>
+          <a href="/#pricing" className="hover:text-foreground transition-colors">{t("nav.pricing")}</a>
+          <a href="/#temoignages" className="hover:text-foreground transition-colors">{t("nav.testimonials")}</a>
+          <a href="/#faq" className="hover:text-foreground transition-colors">{t("nav.faq")}</a>
         </div>
         <div className="flex items-center gap-3">
           <DropdownMenu>
