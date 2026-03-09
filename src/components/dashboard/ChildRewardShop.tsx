@@ -53,11 +53,11 @@ export default function ChildRewardShop() {
   return (
     <div className="space-y-4">
       <Card className="shadow-card">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <ShoppingCart className="h-5 w-5 text-primary" />
-            {t("rewards.shop")}
-            <Badge variant="secondary" className="ml-auto text-xs">
+        <CardHeader className="pb-3 sm:pb-6">
+          <CardTitle className="text-base sm:text-lg flex flex-wrap items-center gap-2">
+            <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
+            <span className="truncate">{t("rewards.shop")}</span>
+            <Badge variant="secondary" className="ml-auto text-xs shrink-0">
               <Star className="h-3 w-3 mr-1" />
               {currentPoints} {t("common.pts")}
             </Badge>

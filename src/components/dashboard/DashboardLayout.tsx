@@ -33,29 +33,29 @@ export default function DashboardLayout({ children, title }: Props) {
     <div className="min-h-screen bg-background">
       {/* Barre de navigation supérieure */}
       <header className="border-b border-border bg-card sticky top-0 z-40">
-        <div className="container mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between gap-2">
-          <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
-            <img src={logo} alt="Stop Repeat" className="h-7 w-7 sm:h-8 sm:w-8 shrink-0" />
-            <h1 className="text-sm sm:text-lg font-bold text-foreground truncate" style={{ fontFamily: "var(--font-display)" }}>
+        <div className="container mx-auto px-2 sm:px-4 h-14 sm:h-16 flex items-center justify-between gap-1 sm:gap-2 overflow-x-auto">
+          <Link to="/" className="flex items-center gap-1.5 sm:gap-3 shrink-0 min-w-0 max-w-[40%] sm:max-w-none">
+            <img src={logo} alt="Stop Repeat" className="h-6 w-6 sm:h-8 sm:w-8 shrink-0" />
+            <h1 className="text-xs sm:text-lg font-bold text-foreground truncate" style={{ fontFamily: "var(--font-display)" }}>
               {title}
             </h1>
           </Link>
-          <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+          <div className="flex items-center gap-0 sm:gap-1 shrink-0">
             {/* Sélecteur de profil (impersonation parent → enfant) */}
             <AccountSwitcher />
             <ThemeToggle />
             <NotificationBell />
             {/* Bouton paramètres (parent uniquement) */}
             {role === "parent" && (
-              <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" onClick={() => navigate("/settings")}>
-                <Settings className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-9 sm:w-9" onClick={() => navigate("/settings")}>
+                <Settings className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             )}
-            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" onClick={() => navigate("/dashboard")}>
-              <Home className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-9 sm:w-9" onClick={() => navigate("/dashboard")}>
+              <Home className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-9 sm:w-9" onClick={handleSignOut}>
+              <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
           </div>
         </div>

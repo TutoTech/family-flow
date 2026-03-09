@@ -27,19 +27,19 @@ export default function ParentPenaltyList() {
   return (
     <>
       <Card className="shadow-card">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-destructive" />
-            {t("penalties.rulesAndPenalties")}
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+            <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 text-destructive shrink-0" />
+            <span className="truncate">{t("penalties.rulesAndPenalties")}</span>
           </CardTitle>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isImpersonating}>
-              <Plus className="h-4 w-4" />
-              {t("penalties.rule")}
+          <div className="flex gap-1.5 sm:gap-2 w-full sm:w-auto">
+            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1 flex-1 sm:flex-initial text-xs sm:text-sm px-2 sm:px-3" disabled={isImpersonating}>
+              <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="truncate">{t("penalties.rule")}</span>
             </Button>
-            <Button size="sm" variant="destructive" onClick={() => setApplyOpen(true)} className="gap-1" disabled={rules.length === 0 || isImpersonating}>
-              <AlertTriangle className="h-4 w-4" />
-              {t("penalties.penalty")}
+            <Button size="sm" variant="destructive" onClick={() => setApplyOpen(true)} className="gap-1 flex-1 sm:flex-initial text-xs sm:text-sm px-2 sm:px-3" disabled={rules.length === 0 || isImpersonating}>
+              <AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="truncate">{t("penalties.penalty")}</span>
             </Button>
           </div>
         </CardHeader>
