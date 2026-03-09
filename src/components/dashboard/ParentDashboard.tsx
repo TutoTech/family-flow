@@ -28,7 +28,18 @@ export default function ParentDashboard({ name }: Props) {
   const { profile } = useAuth();
   const { plan } = useFamilyPlan();
   const navigate = useNavigate();
+  const location = useLocation();
   const isPaid = plan === "family";
+
+  // Scroll to section if hash is present in URL
+  useEffect(() => {
+    if (location.hash) {
+      const sectionId = location.hash.replace("#", "");
+      setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    }
+  }, [location.hash]);
 
   return (
     <DashboardLayout title={t("dashboard.parentTitle")}>
