@@ -82,7 +82,7 @@ export default function ChildTaskList() {
     <>
       <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
 
-      <Card className="shadow-card">
+      <Card id="section-tasks" className="shadow-card">
         <CardHeader>
           <CardTitle className="text-lg">{t("childTasks.myTasks")}</CardTitle>
         </CardHeader>
