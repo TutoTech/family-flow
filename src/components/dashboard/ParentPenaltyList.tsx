@@ -26,20 +26,18 @@ export default function ParentPenaltyList() {
 
   return (
     <>
-      <Card className="shadow-card overflow-hidden">
-        <CardHeader className="flex flex-col gap-3 pb-3">
-          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 text-destructive shrink-0" />
+      <Card className="shadow-card">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2 min-w-0">
+            <ShieldAlert className="h-5 w-5 text-destructive flex-shrink-0" />
             <span className="truncate">{t("penalties.rulesAndPenalties")}</span>
           </CardTitle>
-          <div className="grid grid-cols-2 gap-2">
-            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1 text-xs px-2" disabled={isImpersonating}>
-              <Plus className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">{t("penalties.rule")}</span>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isImpersonating}>
+              <Plus className="h-4 w-4" /><span className="hidden sm:inline">{t("penalties.rule")}</span>
             </Button>
-            <Button size="sm" variant="destructive" onClick={() => setApplyOpen(true)} className="gap-1 text-xs px-2" disabled={rules.length === 0 || isImpersonating}>
-              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">{t("penalties.penalty")}</span>
+            <Button size="sm" variant="destructive" onClick={() => setApplyOpen(true)} className="gap-1" disabled={rules.length === 0 || isImpersonating}>
+              <AlertTriangle className="h-4 w-4" /><span className="hidden sm:inline">{t("penalties.penalty")}</span>
             </Button>
           </div>
         </CardHeader>
@@ -54,17 +52,17 @@ export default function ParentPenaltyList() {
               <p className="text-sm">{t("penalties.noRules")}</p>
             </div>
           ) : (
-            <div className="grid gap-2">
+            <div className="space-y-3">
               {rules.map((rule) => (
-                <div key={rule.id} className="flex flex-col sm:flex-row sm:items-center gap-2 p-2 rounded-lg bg-muted/50">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-lg shrink-0">{rule.icon ?? "🚫"}</span>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-sm font-medium text-foreground block truncate">{rule.label}</span>
-                      {rule.description && <p className="text-xs text-muted-foreground truncate">{rule.description}</p>}
+                <div key={rule.id} className="flex items-center gap-3 p-3 rounded-lg border bg-card">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="flex-shrink-0">{rule.icon ?? "🚫"}</span>
+                      <span className="text-sm font-medium text-foreground truncate">{rule.label}</span>
                     </div>
+                    {rule.description && <p className="text-xs text-muted-foreground truncate mt-0.5">{rule.description}</p>}
                   </div>
-                  <Badge variant="outline" className="text-xs w-fit shrink-0 text-destructive border-destructive/30">
+                  <Badge variant="outline" className="text-xs flex-shrink-0 text-destructive border-destructive/30">
                     <Star className="h-3 w-3 mr-1" />
                     -{rule.points_penalty}
                   </Badge>
@@ -77,14 +75,12 @@ export default function ParentPenaltyList() {
             <div className="space-y-2 pt-2 border-t">
               <p className="text-sm font-medium text-foreground">{t("penalties.recentPenalties")}</p>
               {penalties.map((p: any) => (
-                <div key={p.id} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="shrink-0">{p.rule?.icon ?? "🚫"}</span>
-                    <span className="flex-1 truncate text-foreground">
-                      {childNameMap[p.child_id] ?? t("common.child")} — {p.rule?.label}
-                    </span>
-                  </div>
-                  <span className="text-xs text-muted-foreground shrink-0 pl-6 sm:pl-0">
+                <div key={p.id} className="flex items-center gap-2 p-2 rounded-lg border bg-card text-sm">
+                  <span className="flex-shrink-0">{p.rule?.icon ?? "🚫"}</span>
+                  <span className="flex-1 truncate text-foreground">
+                    {childNameMap[p.child_id] ?? t("common.child")} — {p.rule?.label}
+                  </span>
+                  <span className="text-xs text-muted-foreground flex-shrink-0">
                     {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateFnsLocale })}
                   </span>
                 </div>

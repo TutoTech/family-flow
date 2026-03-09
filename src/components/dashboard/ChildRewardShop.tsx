@@ -52,18 +52,16 @@ export default function ChildRewardShop() {
 
   return (
     <div className="space-y-4">
-      <Card className="shadow-card overflow-hidden">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base sm:text-lg flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
-              <span className="truncate">{t("rewards.shop")}</span>
-            </div>
-            <Badge variant="secondary" className="text-xs w-fit">
-              <Star className="h-3 w-3 mr-1" />
-              {currentPoints} {t("common.pts")}
-            </Badge>
+      <Card className="shadow-card">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2 min-w-0">
+            <ShoppingCart className="h-5 w-5 text-primary flex-shrink-0" />
+            <span className="truncate">{t("rewards.shop")}</span>
           </CardTitle>
+          <Badge variant="secondary" className="text-xs flex-shrink-0">
+            <Star className="h-3 w-3 mr-1" />
+            {currentPoints} {t("common.pts")}
+          </Badge>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -76,33 +74,31 @@ export default function ChildRewardShop() {
               <p className="text-sm">{t("rewards.noRewardsAvailable")}</p>
             </div>
           ) : (
-            <div className="grid gap-3">
+            <div className="space-y-3">
               {rewards.map((reward) => {
                 const canAfford = currentPoints >= reward.cost_points;
                 return (
-                  <div key={reward.id} className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 rounded-lg border ${canAfford ? "bg-card border-primary/20" : "bg-muted/30 opacity-70"}`}>
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <span className="text-xl shrink-0">{reward.icon ?? "🎁"}</span>
-                      <div className="flex-1 min-w-0">
-                        <span className="font-medium text-sm text-foreground block truncate">{reward.title}</span>
-                        {reward.description && <p className="text-xs text-muted-foreground truncate">{reward.description}</p>}
+                  <div key={reward.id} className={`flex items-center gap-3 p-3 rounded-lg border ${canAfford ? "bg-card border-primary/20" : "bg-muted/30 opacity-70"}`}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="flex-shrink-0">{reward.icon ?? "🎁"}</span>
+                        <span className="font-medium text-sm text-foreground truncate">{reward.title}</span>
                       </div>
-                    </div>
-                    <div className="flex items-center justify-between gap-2 sm:gap-3">
-                      <div className="flex items-center gap-1 text-xs text-primary shrink-0">
+                      {reward.description && <p className="text-xs text-muted-foreground truncate mt-0.5">{reward.description}</p>}
+                      <div className="flex items-center gap-1 mt-1 text-xs text-primary">
                         <Star className="h-3 w-3" />
                         {reward.cost_points} {t("common.pts")}
                       </div>
-                      <Button
-                        size="sm"
-                        variant={canAfford ? "default" : "outline"}
-                        disabled={!canAfford}
-                        onClick={() => handleRedeem(reward.id, reward.title, reward.cost_points)}
-                        className="text-xs px-3 shrink-0"
-                      >
-                        {t("rewards.exchange")}
-                      </Button>
                     </div>
+                    <Button
+                      size="sm"
+                      variant={canAfford ? "default" : "outline"}
+                      disabled={!canAfford}
+                      onClick={() => handleRedeem(reward.id, reward.title, reward.cost_points)}
+                      className="flex-shrink-0"
+                    >
+                      {t("rewards.exchange")}
+                    </Button>
                   </div>
                 );
               })}
@@ -121,9 +117,9 @@ export default function ChildRewardShop() {
               const st = STATUS_MAP[r.status] ?? STATUS_MAP.requested;
               return (
                 <div key={r.id} className="flex items-center gap-2 text-sm">
-                  <span>{r.reward?.icon ?? "🎁"}</span>
+                  <span className="flex-shrink-0">{r.reward?.icon ?? "🎁"}</span>
                   <span className="flex-1 truncate text-foreground">{r.reward?.title}</span>
-                  <Badge variant="outline" className="text-xs">{st.label}</Badge>
+                  <Badge variant="outline" className="text-xs flex-shrink-0">{st.label}</Badge>
                 </div>
               );
             })}
