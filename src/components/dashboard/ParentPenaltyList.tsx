@@ -77,12 +77,14 @@ export default function ParentPenaltyList() {
             <div className="space-y-2 pt-2 border-t">
               <p className="text-sm font-medium text-foreground">{t("penalties.recentPenalties")}</p>
               {penalties.map((p: any) => (
-                <div key={p.id} className="flex items-center gap-2 text-sm">
-                  <span>{p.rule?.icon ?? "🚫"}</span>
-                  <span className="flex-1 truncate text-foreground">
-                    {childNameMap[p.child_id] ?? t("common.child")} — {p.rule?.label}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
+                <div key={p.id} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="shrink-0">{p.rule?.icon ?? "🚫"}</span>
+                    <span className="flex-1 truncate text-foreground">
+                      {childNameMap[p.child_id] ?? t("common.child")} — {p.rule?.label}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground shrink-0 pl-6 sm:pl-0">
                     {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateFnsLocale })}
                   </span>
                 </div>

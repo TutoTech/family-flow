@@ -80,24 +80,29 @@ export default function ChildRewardShop() {
               {rewards.map((reward) => {
                 const canAfford = currentPoints >= reward.cost_points;
                 return (
-                  <div key={reward.id} className={`flex items-center gap-3 p-3 rounded-lg border ${canAfford ? "bg-card border-primary/20" : "bg-muted/30 opacity-70"}`}>
-                    <span className="text-2xl">{reward.icon ?? "🎁"}</span>
-                    <div className="flex-1 min-w-0">
-                      <span className="font-medium text-sm text-foreground">{reward.title}</span>
-                      {reward.description && <p className="text-xs text-muted-foreground truncate">{reward.description}</p>}
-                      <div className="flex items-center gap-1 mt-0.5 text-xs text-primary">
+                  <div key={reward.id} className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 rounded-lg border ${canAfford ? "bg-card border-primary/20" : "bg-muted/30 opacity-70"}`}>
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <span className="text-xl shrink-0">{reward.icon ?? "🎁"}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="font-medium text-sm text-foreground block truncate">{reward.title}</span>
+                        {reward.description && <p className="text-xs text-muted-foreground truncate">{reward.description}</p>}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between gap-2 sm:gap-3">
+                      <div className="flex items-center gap-1 text-xs text-primary shrink-0">
                         <Star className="h-3 w-3" />
                         {reward.cost_points} {t("common.pts")}
                       </div>
+                      <Button
+                        size="sm"
+                        variant={canAfford ? "default" : "outline"}
+                        disabled={!canAfford}
+                        onClick={() => handleRedeem(reward.id, reward.title, reward.cost_points)}
+                        className="text-xs px-3 shrink-0"
+                      >
+                        {t("rewards.exchange")}
+                      </Button>
                     </div>
-                    <Button
-                      size="sm"
-                      variant={canAfford ? "default" : "outline"}
-                      disabled={!canAfford}
-                      onClick={() => handleRedeem(reward.id, reward.title, reward.cost_points)}
-                    >
-                      {t("rewards.exchange")}
-                    </Button>
                   </div>
                 );
               })}

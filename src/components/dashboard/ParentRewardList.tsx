@@ -96,13 +96,15 @@ export default function ParentRewardList() {
           ) : (
             <div className="grid gap-2">
               {rewards.map((reward) => (
-                <div key={reward.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                  <span className="text-xl">{reward.icon ?? "🎁"}</span>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-foreground">{reward.title}</span>
-                    {reward.description && <p className="text-xs text-muted-foreground truncate">{reward.description}</p>}
+                <div key={reward.id} className="flex flex-col sm:flex-row sm:items-center gap-2 p-2 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-lg shrink-0">{reward.icon ?? "🎁"}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium text-foreground block truncate">{reward.title}</span>
+                      {reward.description && <p className="text-xs text-muted-foreground truncate">{reward.description}</p>}
+                    </div>
                   </div>
-                  <Badge variant="outline" className="text-xs flex-shrink-0">
+                  <Badge variant="outline" className="text-xs w-fit shrink-0">
                     <Star className="h-3 w-3 mr-1" />
                     {reward.cost_points}
                   </Badge>
