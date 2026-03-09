@@ -52,12 +52,14 @@ export default function ChildRewardShop() {
 
   return (
     <div className="space-y-4">
-      <Card className="shadow-card">
-        <CardHeader className="pb-3 sm:pb-6">
-          <CardTitle className="text-base sm:text-lg flex flex-wrap items-center gap-2">
-            <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
-            <span className="truncate">{t("rewards.shop")}</span>
-            <Badge variant="secondary" className="ml-auto text-xs shrink-0">
+      <Card className="shadow-card overflow-hidden">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base sm:text-lg flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
+              <span className="truncate">{t("rewards.shop")}</span>
+            </div>
+            <Badge variant="secondary" className="text-xs w-fit">
               <Star className="h-3 w-3 mr-1" />
               {currentPoints} {t("common.pts")}
             </Badge>
