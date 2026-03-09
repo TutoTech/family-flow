@@ -123,8 +123,8 @@ export default function ChildDashboard({ name }: Props) {
             <CardContent><div className="text-2xl font-bold text-accent-foreground">{t("dashboard.streakDays", { count: stats?.streak_days ?? 0 })}</div></CardContent>
           </Card>
 
-          {/* Tâches complétées aujourd'hui */}
-          <Card className="shadow-card">
+          {/* Tâches → liste des tâches */}
+          <Card className="shadow-card cursor-pointer hover:ring-2 hover:ring-secondary/30 transition-shadow" onClick={() => scrollToSection("section-tasks")}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.tasks")}</CardTitle>
               <CheckCircle2 className="h-4 w-4 text-secondary" />
