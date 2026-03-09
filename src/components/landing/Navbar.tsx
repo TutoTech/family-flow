@@ -33,6 +33,7 @@ const Navbar = () => {
           <a href="#fonctionnalites" className="hover:text-foreground transition-colors">{t("nav.features")}</a>
           <a href="#comment-ca-marche" className="hover:text-foreground transition-colors">{t("nav.howItWorks")}</a>
           <a href="#pricing" className="hover:text-foreground transition-colors">{t("nav.pricing")}</a>
+          <a href="#faq" className="hover:text-foreground transition-colors">{t("nav.faq")}</a>
         </div>
         <div className="flex items-center gap-3">
           <DropdownMenu>

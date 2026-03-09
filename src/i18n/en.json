@@ -33,6 +33,7 @@
     "features": "Features",
     "howItWorks": "How it works",
     "pricing": "Pricing",
+    "faq": "FAQ",
     "login": "Log in",
     "signup": "Sign up",
     "dashboard": "My Dashboard"
@@ -119,7 +120,8 @@
     "legalNotice": "Legal Notice",
     "cgu": "Terms of Use",
     "cgv": "Terms of Sale",
-    "privacy": "Privacy Policy"
+    "privacy": "Privacy Policy",
+    "sourceCode": "Source Code"
   },
   "legal": {
     "mentionsTitle": "Legal Notice",

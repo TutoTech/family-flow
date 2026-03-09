@@ -33,6 +33,7 @@
     "features": "Fonctionnalités",
     "howItWorks": "Comment ça marche",
     "pricing": "Tarifs",
+    "faq": "FAQ",
     "login": "Se connecter",
     "signup": "S'inscrire",
     "dashboard": "Mon tableau de bord"
@@ -119,7 +120,8 @@
     "legalNotice": "Mentions légales",
     "cgu": "CGU",
     "cgv": "CGV",
-    "privacy": "Confidentialité"
+    "privacy": "Confidentialité",
+    "sourceCode": "Code source"
   },
   "legal": {
     "mentionsTitle": "Mentions légales",

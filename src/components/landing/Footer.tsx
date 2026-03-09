@@ -7,6 +7,7 @@
 
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { Github } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const Footer = () => {
@@ -19,7 +20,7 @@ const Footer = () => {
             <img src={logo} alt="Stop Repeat" className="w-6 h-6" />
             <span className="font-bold font-display text-foreground">Stop Repeat</span>
           </div>
-          <nav className="flex items-center gap-6 text-sm font-body">
+          <nav className="flex flex-wrap items-center justify-center gap-6 text-sm font-body">
             <Link to="/mentions-legales" className="text-muted-foreground hover:text-foreground transition-colors">
               {t("footer.legalNotice")}
             </Link>
@@ -32,6 +33,15 @@ const Footer = () => {
             <Link to="/confidentialite" className="text-muted-foreground hover:text-foreground transition-colors">
               {t("footer.privacy")}
             </Link>
+            <a 
+              href="https://github.com/TutoTech/family-flow" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2"
+            >
+              <Github className="w-4 h-4" />
+              {t("footer.sourceCode")}
+            </a>
           </nav>
           <p className="text-sm text-muted-foreground font-body">
             © {new Date().getFullYear()} Stop Repeat. {t("footer.tagline")}
