@@ -20,6 +20,7 @@ export interface TaskTemplate {
   requires_photo: boolean;
   overdue_penalty_enabled: boolean;
   overdue_penalty_points: number;
+  is_obligatory: boolean;
   is_active: boolean;
   created_at: string;
 }

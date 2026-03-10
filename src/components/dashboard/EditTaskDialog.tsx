@@ -44,6 +44,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
   const [requiresPhoto, setRequiresPhoto] = useState(false);
   const [overduePenaltyEnabled, setOverduePenaltyEnabled] = useState(false);
   const [overduePenaltyPoints, setOverduePenaltyPoints] = useState("5");
+  const [isObligatory, setIsObligatory] = useState(false);
 
   useEffect(() => {
     if (template) {
@@ -56,6 +57,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
       setRequiresPhoto(template.requires_photo);
       setOverduePenaltyEnabled(template.overdue_penalty_enabled);
       setOverduePenaltyPoints(String(template.overdue_penalty_points || 5));
+      setIsObligatory(template.is_obligatory);
     }
   }, [template]);
 
@@ -74,6 +76,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
           requires_photo: requiresPhoto,
           overdue_penalty_enabled: overduePenaltyEnabled,
           overdue_penalty_points: overduePenaltyEnabled ? (parseInt(overduePenaltyPoints) || 0) : 0,
+          is_obligatory: isObligatory,
         },
       });
       toast({ title: t("editTask.taskUpdated"), description: t("editTask.taskUpdatedDesc", { title }) });
@@ -124,6 +127,14 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
               </Select>
             </div>
           </div>
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div>
+              <Label>{t("createTask.obligatoryTask")}</Label>
+              <p className="text-xs text-muted-foreground">{t("createTask.obligatoryTaskHint")}</p>
+            </div>
+            <Switch checked={isObligatory} onCheckedChange={setIsObligatory} />
+          </div>
+          {!isObligatory && (
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="edit-points">{t("createTask.pointsLabel")}</Label>
@@ -134,6 +145,13 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
               <Input id="edit-time" type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} />
             </div>
           </div>
+          )}
+          {isObligatory && (
+          <div className="space-y-2">
+            <Label htmlFor="edit-time">{t("createTask.deadline")}</Label>
+            <Input id="edit-time" type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} />
+          </div>
+          )}
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
               <Label>{t("createTask.photoRequired")}</Label>

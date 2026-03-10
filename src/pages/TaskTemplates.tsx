@@ -132,7 +132,11 @@ export default function TaskTemplatesPage() {
                       </div>
                       {template.description && <p className="text-sm text-muted-foreground truncate mb-2">{template.description}</p>}
                       <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1"><Star className="h-3 w-3 text-primary" />{template.points_reward} {t("common.pts")}</span>
+                        {template.is_obligatory ? (
+                          <Badge variant="outline" className="text-xs">{t("createTask.obligatoryBadge")}</Badge>
+                        ) : (
+                          <span className="flex items-center gap-1"><Star className="h-3 w-3 text-primary" />{template.points_reward} {t("common.pts")}</span>
+                        )}
                         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{template.due_time.slice(0, 5)}</span>
                         <Badge variant="outline" className="text-xs">{RECURRENCE_LABELS[template.recurrence_type] || template.recurrence_type}</Badge>
                         <span>→ {childNameMap.get(template.assigned_to_user_id) || "?"}</span>

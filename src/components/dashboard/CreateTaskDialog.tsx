@@ -52,6 +52,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
   const [requiresPhoto, setRequiresPhoto] = useState(false);
   const [overduePenaltyEnabled, setOverduePenaltyEnabled] = useState(false);
   const [overduePenaltyPoints, setOverduePenaltyPoints] = useState("5");
+  const [isObligatory, setIsObligatory] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const toggleChild = (childId: string) => {
@@ -85,6 +86,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
         requires_photo: requiresPhoto,
         overdue_penalty_enabled: overduePenaltyEnabled,
         overdue_penalty_points: overduePenaltyEnabled ? (parseInt(overduePenaltyPoints) || 0) : 0,
+        is_obligatory: isObligatory,
       }));
 
       const { error } = await supabase.from("task_templates").insert(rows);
@@ -98,6 +100,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
       setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
       setRecurrence("daily"); setWeeklyDay(String(new Date().getDay())); setSelectedChildren([]); setRequiresPhoto(false);
       setOverduePenaltyEnabled(false); setOverduePenaltyPoints("5");
+      setIsObligatory(false);
       onOpenChange(false);
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
@@ -178,6 +181,14 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
               </Select>
             </div>
           )}
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div>
+              <Label>{t("createTask.obligatoryTask")}</Label>
+              <p className="text-xs text-muted-foreground">{t("createTask.obligatoryTaskHint")}</p>
+            </div>
+            <Switch checked={isObligatory} onCheckedChange={setIsObligatory} />
+          </div>
+          {!isObligatory && (
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="task-points">{t("createTask.pointsLabel")}</Label>
@@ -188,6 +199,13 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
               <Input id="task-time" type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} />
             </div>
           </div>
+          )}
+          {isObligatory && (
+          <div className="space-y-2">
+            <Label htmlFor="task-time">{t("createTask.deadline")}</Label>
+            <Input id="task-time" type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} />
+          </div>
+          )}
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
               <Label>{t("createTask.photoRequired")}</Label>

@@ -30,7 +30,7 @@ export function useTodayTasks() {
         .from("task_instances")
         .select(`
           *,
-          task_template:task_templates(title, description, icon, points_reward, requires_photo),
+          task_template:task_templates(title, description, icon, points_reward, requires_photo, is_obligatory),
           evidence:task_evidence_photos(id, storage_key)
         `)
         .eq("family_id", familyId!)

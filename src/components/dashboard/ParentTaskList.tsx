@@ -102,7 +102,7 @@ export default function ParentTaskList() {
                       {tmpl?.description && <p className="text-xs text-muted-foreground truncate">{tmpl.description}</p>}
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
-                        <span className="text-xs text-muted-foreground">{tmpl?.points_reward} {t("common.pts")}</span>
+                        <span className="text-xs text-muted-foreground">{tmpl?.is_obligatory ? t("createTask.obligatoryBadge") : `${tmpl?.points_reward} ${t("common.pts")}`}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">

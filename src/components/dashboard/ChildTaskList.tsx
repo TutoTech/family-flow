@@ -114,8 +114,11 @@ export default function ChildTaskList() {
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
                     <span className="text-xs text-primary flex items-center gap-0.5">
-                      <Star className="h-3 w-3" />
-                      {tmpl?.points_reward}
+                      {tmpl?.is_obligatory ? (
+                        <Badge variant="outline" className="text-xs">{t("createTask.obligatoryBadge")}</Badge>
+                      ) : (
+                        <><Star className="h-3 w-3" />{tmpl?.points_reward}</>
+                      )}
                     </span>
                     <span className="text-xs text-muted-foreground flex items-center gap-0.5">
                       <Clock className="h-3 w-3" />
