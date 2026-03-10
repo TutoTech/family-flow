@@ -31,6 +31,7 @@ export function useTodayTasks() {
         .select(`
           *,
           task_template:task_templates(title, description, icon, points_reward, requires_photo),
+          assigned_profile:profiles!task_instances_assigned_to_user_id_fkey(name, avatar_url),
           evidence:task_evidence_photos(id, storage_key)
         `)
         .eq("family_id", familyId!)
