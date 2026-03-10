@@ -72,6 +72,10 @@ const TestimonialsSection = () => {
           </p>
         </div>
 
+        <p className="text-xs text-muted-foreground/60 italic mt-2">
+          {t("testimonials.disclaimer", "* Témoignages fictifs à titre illustratif.")}
+        </p>
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((testimonial, i) => (
             <Card key={i} className="p-6 shadow-sm hover:shadow-md transition-all">
