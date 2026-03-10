@@ -5,9 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFamilyRules, useRecentPenalties, useFamilyChildren } from "@/hooks/usePenalties";
-import { Plus, ShieldAlert, AlertTriangle, Star } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Plus, ShieldAlert, AlertTriangle, Star, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import CreateRuleDialog from "./CreateRuleDialog";
 import ApplyPenaltyDialog from "./ApplyPenaltyDialog";
+import EditRuleDialog from "./EditRuleDialog";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import i18n from "@/i18n";
@@ -18,11 +24,33 @@ export default function ParentPenaltyList() {
   const { data: rules = [], isLoading } = useFamilyRules();
   const { data: penalties = [] } = useRecentPenalties();
   const { data: children = [] } = useFamilyChildren();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
+  const [editRule, setEditRule] = useState<any>(null);
+  const [deleteRule, setDeleteRule] = useState<any>(null);
 
   const childNameMap = Object.fromEntries(children.map((c) => [c.user_id, c.name]));
   const dateFnsLocale = i18n.language === "fr" ? fr : enUS;
+
+  const handleDelete = async () => {
+    if (!deleteRule) return;
+    try {
+      const { error } = await supabase
+        .from("house_rules")
+        .update({ is_active: false })
+        .eq("id", deleteRule.id);
+      if (error) throw error;
+
+      toast({ title: t("penalties.ruleDeleted") });
+      queryClient.invalidateQueries({ queryKey: ["house-rules"] });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } finally {
+      setDeleteRule(null);
+    }
+  };
 
   return (
     <>
@@ -66,6 +94,23 @@ export default function ParentPenaltyList() {
                     <Star className="h-3 w-3 mr-1" />
                     -{rule.points_penalty}
                   </Badge>
+                  {!isImpersonating && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setEditRule(rule)}>
+                          <Pencil className="h-4 w-4 mr-2" />{t("common.edit")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => setDeleteRule(rule)}>
+                          <Trash2 className="h-4 w-4 mr-2" />{t("common.delete")}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </div>
               ))}
             </div>
@@ -92,6 +137,22 @@ export default function ParentPenaltyList() {
 
       <CreateRuleDialog open={createOpen} onOpenChange={setCreateOpen} />
       <ApplyPenaltyDialog open={applyOpen} onOpenChange={setApplyOpen} />
+      <EditRuleDialog open={!!editRule} onOpenChange={(o) => !o && setEditRule(null)} rule={editRule} />
+
+      <AlertDialog open={!!deleteRule} onOpenChange={(o) => !o && setDeleteRule(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("penalties.deleteConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("penalties.deleteConfirmDesc", { label: deleteRule?.label })}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {t("common.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
