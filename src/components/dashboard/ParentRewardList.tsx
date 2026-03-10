@@ -9,8 +9,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Plus, Gift, CheckCircle2, XCircle, Star } from "lucide-react";
+import { Plus, Gift, CheckCircle2, XCircle, Star, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import CreateRewardDialog from "./CreateRewardDialog";
+import EditRewardDialog from "./EditRewardDialog";
 
 export default function ParentRewardList() {
   const { t } = useTranslation();
@@ -21,6 +24,8 @@ export default function ParentRewardList() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
+  const [editReward, setEditReward] = useState<any>(null);
+  const [deleteReward, setDeleteReward] = useState<any>(null);
 
   const handleRedemption = async (redemptionId: string, approved: boolean) => {
     try {
@@ -39,6 +44,24 @@ export default function ParentRewardList() {
       queryClient.invalidateQueries({ queryKey: ["child-stats"] });
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteReward) return;
+    try {
+      const { error } = await supabase
+        .from("rewards")
+        .update({ is_active: false })
+        .eq("id", deleteReward.id);
+      if (error) throw error;
+
+      toast({ title: t("rewards.rewardDeleted") });
+      queryClient.invalidateQueries({ queryKey: ["rewards"] });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } finally {
+      setDeleteReward(null);
     }
   };
 
@@ -107,6 +130,23 @@ export default function ParentRewardList() {
                     <Star className="h-3 w-3 mr-1" />
                     {reward.cost_points}
                   </Badge>
+                  {!isImpersonating && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setEditReward(reward)}>
+                          <Pencil className="h-4 w-4 mr-2" />{t("common.edit")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => setDeleteReward(reward)}>
+                          <Trash2 className="h-4 w-4 mr-2" />{t("common.delete")}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </div>
               ))}
             </div>
@@ -115,6 +155,22 @@ export default function ParentRewardList() {
       </Card>
 
       <CreateRewardDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <EditRewardDialog open={!!editReward} onOpenChange={(o) => !o && setEditReward(null)} reward={editReward} />
+
+      <AlertDialog open={!!deleteReward} onOpenChange={(o) => !o && setDeleteReward(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("rewards.deleteConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("rewards.deleteConfirmDesc", { title: deleteReward?.title })}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {t("common.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
