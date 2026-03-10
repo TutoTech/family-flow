@@ -335,7 +335,13 @@
     "namePlaceholder": "Ex: 30 min de jeu vidéo",
     "costPoints": "Coût en points",
     "rewardCreated": "Récompense créée !",
-    "rewardCreatedDesc": "\"{{title}}\" ajoutée à la boutique."
+    "rewardCreatedDesc": "\"{{title}}\" ajoutée à la boutique.",
+    "editTitle": "Modifier la récompense",
+    "editSubtitle": "Modifiez les détails de cette récompense.",
+    "rewardUpdated": "Récompense modifiée !",
+    "rewardDeleted": "Récompense supprimée",
+    "deleteConfirmTitle": "Supprimer la récompense ?",
+    "deleteConfirmDesc": "La récompense \"{{title}}\" sera définitivement retirée de la boutique."
   },
   "penalties": {
     "rulesAndPenalties": "Règles & Pénalités",
