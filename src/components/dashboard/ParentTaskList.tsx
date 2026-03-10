@@ -16,6 +16,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 export default function ParentTaskList() {
   const { t } = useTranslation();
   const { tasks, isLoading, validateTask, resetTask } = useTodayTasks();
+  const { data: children = [] } = useFamilyChildren();
+  const childNameMap = Object.fromEntries(children.map((c) => [c.user_id, c.name]));
   const { toast } = useToast();
   const { role: realRole } = useAuth();
   const { isImpersonating } = useProfileSwitch();
