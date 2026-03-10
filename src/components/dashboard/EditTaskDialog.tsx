@@ -42,6 +42,8 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
   const [recurrence, setRecurrence] = useState("daily");
   const [assignedTo, setAssignedTo] = useState("");
   const [requiresPhoto, setRequiresPhoto] = useState(false);
+  const [overduePenaltyEnabled, setOverduePenaltyEnabled] = useState(false);
+  const [overduePenaltyPoints, setOverduePenaltyPoints] = useState("5");
 
   useEffect(() => {
     if (template) {
@@ -52,6 +54,8 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
       setRecurrence(template.recurrence_type);
       setAssignedTo(template.assigned_to_user_id);
       setRequiresPhoto(template.requires_photo);
+      setOverduePenaltyEnabled(template.overdue_penalty_enabled);
+      setOverduePenaltyPoints(String(template.overdue_penalty_points || 5));
     }
   }, [template]);
 
@@ -68,6 +72,8 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
           recurrence_type: recurrence as any,
           assigned_to_user_id: assignedTo,
           requires_photo: requiresPhoto,
+          overdue_penalty_enabled: overduePenaltyEnabled,
+          overdue_penalty_points: overduePenaltyEnabled ? (parseInt(overduePenaltyPoints) || 0) : 0,
         },
       });
       toast({ title: t("editTask.taskUpdated"), description: t("editTask.taskUpdatedDesc", { title }) });
@@ -135,6 +141,19 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
             </div>
             <Switch checked={requiresPhoto} onCheckedChange={setRequiresPhoto} />
           </div>
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div>
+              <Label>{t("createTask.overduePenalty")}</Label>
+              <p className="text-xs text-muted-foreground">{t("createTask.overduePenaltyHint")}</p>
+            </div>
+            <Switch checked={overduePenaltyEnabled} onCheckedChange={setOverduePenaltyEnabled} />
+          </div>
+          {overduePenaltyEnabled && (
+            <div className="space-y-2">
+              <Label htmlFor="edit-penalty-points">{t("createTask.overduePenaltyPoints")}</Label>
+              <Input id="edit-penalty-points" type="number" min="1" max="100" value={overduePenaltyPoints} onChange={(e) => setOverduePenaltyPoints(e.target.value)} />
+            </div>
+          )}
         </div>
 
         <DialogFooter>

@@ -18,6 +18,8 @@ export interface TaskTemplate {
   recurrence_type: string;
   assigned_to_user_id: string;
   requires_photo: boolean;
+  overdue_penalty_enabled: boolean;
+  overdue_penalty_points: number;
   is_active: boolean;
   created_at: string;
 }
