@@ -96,6 +96,9 @@ export default function ParentTaskList() {
                         <span className="font-medium text-sm text-foreground truncate">{tmpl?.title}</span>
                         {tmpl?.requires_photo && <Camera className="h-3 w-3 text-muted-foreground flex-shrink-0" />}
                       </div>
+                      {childNameMap[task.assigned_to_user_id] && (
+                        <p className="text-xs text-primary/70 font-medium">{childNameMap[task.assigned_to_user_id]}</p>
+                      )}
                       {tmpl?.description && <p className="text-xs text-muted-foreground truncate">{tmpl.description}</p>}
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
