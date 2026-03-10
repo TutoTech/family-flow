@@ -198,6 +198,10 @@
     "penalties": "Pénalités",
     "wallet": "Portefeuille"
   },
+  "childDashboard": {
+    "houseRules": "Règles de la maison",
+    "houseRulesDesc": "Comportements attendus et pénalités en cas de manquement."
+  },
   "family": {
     "createOrJoinTitle": "Créez ou rejoignez un foyer",
     "createOrJoinDesc": "Pour commencer, créez votre foyer familial ou rejoignez-en un existant avec un code d'invitation.",

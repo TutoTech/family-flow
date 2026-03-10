@@ -21,6 +21,7 @@ import ActivityHistory from "./ActivityHistory";
 import SavingsGoalCard from "./SavingsGoalCard";
 import { PremiumGate } from "./PremiumBadge";
 import ChildPenaltyHistory from "./ChildPenaltyHistory";
+import ChildRulesList from "./ChildRulesList";
 import LevelProgressCard from "./LevelProgressCard";
 import BadgesDisplay from "./BadgesDisplay";
 import BadgeCelebration from "./BadgeCelebration";
@@ -170,6 +171,7 @@ export default function ChildDashboard({ name }: Props) {
 
             {/* Boutique de récompenses et historique */}
             <ChildRewardShop />
+            <ChildRulesList />
             <ChildPenaltyHistory />
             <ActivityHistory />
           </>

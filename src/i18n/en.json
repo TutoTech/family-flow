@@ -198,6 +198,10 @@
     "penalties": "Penalties",
     "wallet": "Wallet"
   },
+  "childDashboard": {
+    "houseRules": "House rules",
+    "houseRulesDesc": "Expected behaviors and penalties for infractions."
+  },
   "family": {
     "createOrJoinTitle": "Create or join a household",
     "createOrJoinDesc": "To get started, create your family household or join an existing one with an invite code.",
