@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useTodayTasks } from "@/hooks/useTasks";
+import { useTodayTasks, useFamilyChildren } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
