@@ -25,12 +25,10 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
     if (!code.trim() || !user) return;
     setLoading(true);
     try {
-      const { data: family, error: findError } = await supabase
-        .from("families")
-        .select("*")
-        .eq("invite_code", code.trim().toLowerCase())
-        .single();
+      const { data: families, error: findError } = await supabase
+        .rpc("lookup_family_by_invite_code", { _code: code.trim().toLowerCase() });
 
+      const family = families?.[0];
       if (findError || !family) {
         toast({ title: t("family.invalidCode"), description: t("family.invalidCodeDesc"), variant: "destructive" });
         return;
