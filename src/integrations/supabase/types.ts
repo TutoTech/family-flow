@@ -731,6 +731,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      lookup_family_by_invite_code: {
+        Args: { _code: string }
+        Returns: {
+          id: string
+          name: string
+          plan: string
+        }[]
+      }
     }
     Enums: {
       app_role: "parent" | "child"
