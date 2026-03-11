@@ -34,8 +34,7 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
         return;
       }
 
-      // Check member limits based on plan
-      const familyPlan = (family as any).plan || "free";
+      const familyPlan = family.plan || "free";
       const maxParents = familyPlan === "family" ? 2 : 1;
       const maxChildren = familyPlan === "family" ? 99 : 1;
 
