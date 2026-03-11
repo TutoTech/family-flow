@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS on_task_completed_notify ON public.task_instances;
