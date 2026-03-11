@@ -62,9 +62,11 @@ export function useNotifications() {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          // Ajoute la nouvelle notification en tête de liste
           const newNotif = payload.new as unknown as Notification;
-          setNotifications((prev) => [newNotif, ...prev]);
+          setNotifications((prev) => {
+            if (prev.some((n) => n.id === newNotif.id)) return prev;
+            return [newNotif, ...prev];
+          });
           setUnreadCount((prev) => prev + 1);
         }
       )
