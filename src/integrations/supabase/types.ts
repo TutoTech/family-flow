@@ -636,9 +636,6 @@ export type Database = {
           icon: string | null
           id: string
           is_active: boolean
-          is_obligatory: boolean
-          overdue_penalty_enabled: boolean
-          overdue_penalty_points: number
           points_reward: number
           recurrence_config: Json | null
           recurrence_type: Database["public"]["Enums"]["recurrence_type"]
@@ -656,9 +653,6 @@ export type Database = {
           icon?: string | null
           id?: string
           is_active?: boolean
-          is_obligatory?: boolean
-          overdue_penalty_enabled?: boolean
-          overdue_penalty_points?: number
           points_reward?: number
           recurrence_config?: Json | null
           recurrence_type?: Database["public"]["Enums"]["recurrence_type"]
@@ -676,9 +670,6 @@ export type Database = {
           icon?: string | null
           id?: string
           is_active?: boolean
-          is_obligatory?: boolean
-          overdue_penalty_enabled?: boolean
-          overdue_penalty_points?: number
           points_reward?: number
           recurrence_config?: Json | null
           recurrence_type?: Database["public"]["Enums"]["recurrence_type"]
