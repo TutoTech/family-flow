@@ -25,6 +25,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const isInvalidRefreshTokenError = (error: unknown): boolean => {
+  if (!error || typeof error !== "object") return false;
+
+  const maybeError = error as { code?: string; message?: string };
+  return (
+    maybeError.code === "refresh_token_not_found" ||
+    maybeError.code === "invalid_refresh_token" ||
+    maybeError.message?.includes("Refresh Token Not Found") === true
+  );
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -42,11 +53,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       supabase.from("user_roles").select("role").eq("user_id", userId).single(),
     ]);
 
-    if (profileRes.data) {
-      setProfile(profileRes.data);
+    if (profileRes.error) {
+      console.error("Erreur récupération profil:", profileRes.error);
+      setProfile(null);
+    } else {
+      setProfile(profileRes.data ?? null);
     }
-    if (roleRes.data) {
-      setRole(roleRes.data.role as AppRole);
+
+    if (roleRes.error) {
+      console.error("Erreur récupération rôle:", roleRes.error);
+      setRole(null);
+    } else {
+      setRole((roleRes.data?.role as AppRole | undefined) ?? null);
     }
   };
 
@@ -54,33 +72,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true;
 
     // Écoute les changements d'état d'authentification (connexion, déconnexion, refresh de token)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+      if (!mounted) return;
 
-        if (session?.user) {
-          fetchProfileAndRole(session.user.id).finally(() => {
-            if (mounted) setLoading(false);
-          });
-        } else {
-          // Réinitialise les données quand l'utilisateur se déconnecte
-          setProfile(null);
-          setRole(null);
-          setLoading(false);
-        }
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+
+      if (currentSession?.user) {
+        void fetchProfileAndRole(currentSession.user.id).finally(() => {
+          if (mounted) setLoading(false);
+        });
+      } else {
+        // Réinitialise les données quand l'utilisateur se déconnecte
+        setProfile(null);
+        setRole(null);
+        setLoading(false);
       }
-    );
+    });
 
     // Récupère la session existante au montage du composant
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchProfileAndRole(session.user.id);
+    const initializeSession = async () => {
+      try {
+        const {
+          data: { session: currentSession },
+          error,
+        } = await supabase.auth.getSession();
+
+        if (error) throw error;
+
+        if (!mounted) return;
+
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+
+        if (currentSession?.user) {
+          await fetchProfileAndRole(currentSession.user.id);
+        }
+      } catch (error) {
+        if (isInvalidRefreshTokenError(error)) {
+          await supabase.auth.signOut().catch(() => undefined);
+        } else {
+          console.error("Erreur initialisation session:", error);
+        }
+
+        if (mounted) {
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          setRole(null);
+        }
+      } finally {
+        if (mounted) setLoading(false);
       }
-      if (mounted) setLoading(false);
-    });
+    };
+
+    void initializeSession();
 
     return () => {
       mounted = false;
@@ -136,3 +184,4 @@ export function useAuth() {
   if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 }
+
