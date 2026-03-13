@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -12,13 +12,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFamilyChildren } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import type { TaskTemplate } from "@/hooks/useTaskTemplates";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialData?: Partial<TaskTemplate> | null;
 }
 
-export default function CreateTaskDialog({ open, onOpenChange }: Props) {
+export default function CreateTaskDialog({ open, onOpenChange, initialData }: Props) {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -54,6 +56,42 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
   const [overduePenaltyPoints, setOverduePenaltyPoints] = useState("5");
   const [isObligatory, setIsObligatory] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Initialiser les champs à l'ouverture de la modale
+  // - Pré-remplir si on duplique (initialData existe)
+  // - Remettre à zéro sinon (pour éviter de garder les valeurs d'une précédente création)
+  useEffect(() => {
+    if (open) {
+      if (initialData) {
+        setTitle(initialData.title ? `${initialData.title} (copie)` : "");
+        setDescription(initialData.description || "");
+        setPoints(initialData.points_reward ? String(initialData.points_reward) : "1");
+        setDueTime(initialData.due_time || "18:00");
+        setRecurrence(initialData.recurrence_type || "daily");
+        
+        // Use type assertion since recurrence_config is not explicitly typed in Partial<TaskTemplate> interface
+        const config = (initialData as any).recurrence_config;
+        if (initialData.recurrence_type === "weekly" && config) {
+            if (config.day_of_week !== undefined) {
+               setWeeklyDay(String(config.day_of_week));
+            }
+        } else {
+            setWeeklyDay(String(new Date().getDay()));
+        }
+        
+        setSelectedChildren(initialData.assigned_to_user_id ? [initialData.assigned_to_user_id] : []);
+        setRequiresPhoto(initialData.requires_photo || false);
+        setOverduePenaltyEnabled(initialData.overdue_penalty_enabled || false);
+        setOverduePenaltyPoints(initialData.overdue_penalty_points ? String(initialData.overdue_penalty_points) : "5");
+        setIsObligatory(initialData.is_obligatory || false);
+      } else {
+        setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
+        setRecurrence("daily"); setWeeklyDay(String(new Date().getDay())); setSelectedChildren([]); setRequiresPhoto(false);
+        setOverduePenaltyEnabled(false); setOverduePenaltyPoints("5");
+        setIsObligatory(false);
+      }
+    }
+  }, [open, initialData]);
 
   const toggleChild = (childId: string) => {
     setSelectedChildren((prev) =>
@@ -96,11 +134,6 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
 
       toast({ title: t("createTask.taskCreated"), description: t("createTask.taskCreatedDesc", { title }) });
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
-
-      setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
-      setRecurrence("daily"); setWeeklyDay(String(new Date().getDay())); setSelectedChildren([]); setRequiresPhoto(false);
-      setOverduePenaltyEnabled(false); setOverduePenaltyPoints("5");
-      setIsObligatory(false);
       onOpenChange(false);
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });

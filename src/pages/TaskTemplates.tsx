@@ -21,7 +21,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Plus, Pencil, Trash2, Clock, Star, Camera, RotateCcw } from "lucide-react";
+import { ArrowLeft, Plus, Pencil, Trash2, Clock, Star, Camera, RotateCcw, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TaskTemplatesPage() {
@@ -34,6 +34,7 @@ export default function TaskTemplatesPage() {
 
   const [editTemplate, setEditTemplate] = useState<TaskTemplate | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<TaskTemplate | null>(null);
+  const [cloneTemplate, setCloneTemplate] = useState<TaskTemplate | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
 
   const childNameMap = new Map(children.map((c) => [c.user_id, c.name]));
@@ -144,6 +145,7 @@ export default function TaskTemplatesPage() {
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <Switch checked={template.is_active} onCheckedChange={() => handleToggle(template)} />
+                      <Button variant="ghost" size="icon" onClick={() => { setCloneTemplate(template); setCreateOpen(true); }} title={t("common.duplicate")}><Copy className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => setEditTemplate(template)}><Pencil className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => setDeleteTarget(template)}><Trash2 className="h-4 w-4" /></Button>
                     </div>
@@ -156,7 +158,7 @@ export default function TaskTemplatesPage() {
       </div>
 
       <EditTaskDialog open={!!editTemplate} onOpenChange={(open) => !open && setEditTemplate(null)} template={editTemplate} />
-      <CreateTaskDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <CreateTaskDialog open={createOpen} onOpenChange={(open) => { setCreateOpen(open); if(!open) setCloneTemplate(null); }} initialData={cloneTemplate} />
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>
