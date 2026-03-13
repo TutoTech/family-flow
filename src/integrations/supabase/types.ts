@@ -631,13 +631,13 @@ export type Database = {
           created_at: string
           created_by_user_id: string
           description: string | null
+          display_order: number
           due_time: string
           family_id: string
           icon: string | null
           id: string
           is_active: boolean
           is_obligatory: boolean
-          display_order: number
           overdue_penalty_enabled: boolean
           overdue_penalty_points: number
           points_reward: number
@@ -652,13 +652,13 @@ export type Database = {
           created_at?: string
           created_by_user_id: string
           description?: string | null
+          display_order?: number
           due_time: string
           family_id: string
           icon?: string | null
           id?: string
           is_active?: boolean
           is_obligatory?: boolean
-          display_order?: number
           overdue_penalty_enabled?: boolean
           overdue_penalty_points?: number
           points_reward?: number
@@ -673,13 +673,13 @@ export type Database = {
           created_at?: string
           created_by_user_id?: string
           description?: string | null
+          display_order?: number
           due_time?: string
           family_id?: string
           icon?: string | null
           id?: string
           is_active?: boolean
           is_obligatory?: boolean
-          display_order?: number
           overdue_penalty_enabled?: boolean
           overdue_penalty_points?: number
           points_reward?: number
@@ -893,6 +893,8 @@ export const Constants = {
         "awaiting_validation",
         "validated",
         "rejected",
+        "skipped",
+        "not_done",
       ],
     },
   },
