@@ -243,7 +243,9 @@
     "taskRejected": "Task rejected",
     "taskReset": "Task reset!",
     "resetTask": "Reset task",
-    "skipped": "Skipped"
+    "skipped": "Skipped",
+    "notDone": "Not done",
+    "penaltyApplied": "Penalty applied!"
   },
   "childTasks": {
     "toDo": "To do",
@@ -257,7 +259,8 @@
     "retry": "Retry",
     "notToDo": "Not to do",
     "skipped": "Skipped",
-    "taskSkipped": "Task marked as skipped."
+    "taskSkipped": "Task marked as skipped.",
+    "notDone": "Not done"
   },
   "createTask": {
     "title": "New task",
@@ -421,7 +424,8 @@
   "notifications": {
     "title": "Notifications",
     "readAll": "Read all",
-    "noNotifications": "No notifications"
+    "noNotifications": "No notifications",
+    "penaltyForNotDone": "Penalty for task not done"
   },
   "settings": {
     "pageTitle": "Household settings",

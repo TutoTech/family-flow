@@ -139,7 +139,73 @@ export function useTodayTasks() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["today-tasks"] }),
   });
 
-  return { tasks: tasksQuery.data ?? [], isLoading: tasksQuery.isLoading, completeTask, validateTask, resetTask, skipTask };
+  /** Mutation pour clôturer manuellement une tâche ("Pas fait") et appliquer d'éventuelles pénalités */
+  const markNotDone = useMutation({
+    mutationFn: async (instanceId: string) => {
+      // 1. Récupérer l'instance et sa configuration de pénalité
+      const { data: instance, error: instanceError } = await supabase
+        .from("task_instances")
+        .select(`
+          id,
+          assigned_to_user_id,
+          task_template:task_templates(title, overdue_penalty_enabled, overdue_penalty_points)
+        `)
+        .eq("id", instanceId)
+        .single();
+      
+      if (instanceError) throw instanceError;
+
+      // 2. Mettre à jour le statut
+      const { error: updateError } = await supabase
+        .from("task_instances")
+        .update({
+          status: "not_done",
+          completed_at: new Date().toISOString(),
+        })
+        .eq("id", instanceId);
+
+      if (updateError) throw updateError;
+
+      // 3. Appliquer la pénalité si nécessaire
+      const template = instance.task_template as any;
+      if (template?.overdue_penalty_enabled && template?.overdue_penalty_points > 0) {
+        const penaltyPoints = template.overdue_penalty_points;
+
+        const { data: stats } = await supabase
+          .from("child_stats")
+          .select("current_points")
+          .eq("child_id", instance.assigned_to_user_id)
+          .single();
+
+        if (stats) {
+          await supabase
+            .from("child_stats")
+            .update({
+              current_points: Math.max(0, stats.current_points - penaltyPoints),
+            })
+            .eq("child_id", instance.assigned_to_user_id);
+        }
+
+        await supabase.from("notifications").insert({
+          user_id: instance.assigned_to_user_id,
+          type: "overdue_penalty",
+          title: `⚠️ Pénalité automatique`,
+          body: `Tu as perdu ${penaltyPoints} points car "${template.title}" a été marquée comme non faite.`,
+          metadata: {
+            task_instance_id: instance.id,
+            penalty_points: penaltyPoints,
+          },
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["child-stats"] }); // pour mettre à jour les points si perte
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+
+  return { tasks: tasksQuery.data ?? [], isLoading: tasksQuery.isLoading, completeTask, validateTask, resetTask, skipTask, markNotDone };
 }
 
 /** Récupère la liste des enfants d'une famille (en croisant profils et rôles) */

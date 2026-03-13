@@ -755,6 +755,7 @@ export type Database = {
         | "validated"
         | "rejected"
         | "skipped"
+        | "not_done"
     }
     CompositeTypes: {
       [_ in never]: never

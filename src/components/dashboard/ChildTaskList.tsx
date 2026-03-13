@@ -26,6 +26,7 @@ export default function ChildTaskList() {
     rejected: { label: t("taskList.rejected"), variant: "destructive" },
     late: { label: t("taskList.late"), variant: "destructive" },
     skipped: { label: t("childTasks.skipped"), variant: "outline" },
+    not_done: { label: t("childTasks.notDone"), variant: "destructive" },
   };
 
   const myTasks = tasks.filter((tk) => tk.assigned_to_user_id === viewUserId);

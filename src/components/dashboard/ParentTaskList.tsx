@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 export default function ParentTaskList() {
   const { t } = useTranslation();
-  const { tasks, isLoading, validateTask, resetTask } = useTodayTasks();
+  const { tasks, isLoading, validateTask, resetTask, markNotDone } = useTodayTasks();
   const { data: children = [] } = useFamilyChildren();
   const childNameMap = Object.fromEntries(children.map((c) => [c.user_id, c.name]));
   const { toast } = useToast();
@@ -36,6 +36,7 @@ export default function ParentTaskList() {
     rejected: { label: t("taskList.rejected"), variant: "destructive" },
     late: { label: t("taskList.late"), variant: "destructive" },
     skipped: { label: t("taskList.skipped"), variant: "outline" },
+    not_done: { label: t("taskList.notDone"), variant: "destructive" },
   };
 
   const handleValidate = async (instanceId: string, approved: boolean) => {
@@ -51,6 +52,15 @@ export default function ParentTaskList() {
     try {
       await resetTask.mutateAsync(instanceId);
       toast({ title: t("taskList.taskReset") });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleMarkNotDone = async (instanceId: string) => {
+    try {
+      await markNotDone.mutateAsync(instanceId);
+      toast({ title: t("penalties.penaltyApplied") });
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     }
@@ -122,7 +132,18 @@ export default function ParentTaskList() {
                           </Button>
                         </>
                       )}
-                      {["validated", "rejected", "awaiting_validation", "done", "late", "skipped"].includes(task.status) && !isReadOnly && (
+                      {task.status === "pending" && !isReadOnly && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() => handleMarkNotDone(task.id)}
+                          title={t("taskList.notDone")}
+                        >
+                          <XCircle className="h-5 w-5" />
+                        </Button>
+                      )}
+                      {["validated", "rejected", "awaiting_validation", "done", "late", "skipped", "not_done"].includes(task.status) && !isReadOnly && (
                         <Button
                           variant="ghost"
                           size="icon"

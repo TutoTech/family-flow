@@ -243,7 +243,9 @@
     "taskRejected": "Tâche refusée",
     "taskReset": "Tâche réinitialisée !",
     "resetTask": "Réinitialiser la tâche",
-    "skipped": "Pas à faire"
+    "skipped": "Pas à faire",
+    "notDone": "Pas fait",
+    "penaltyApplied": "Pénalité appliquée !"
   },
   "childTasks": {
     "toDo": "À faire",
@@ -257,7 +259,8 @@
     "retry": "Renvoyer",
     "notToDo": "Pas à faire",
     "skipped": "Pas à faire",
-    "taskSkipped": "Tâche marquée comme pas à faire."
+    "taskSkipped": "Tâche marquée comme pas à faire.",
+    "notDone": "Pas fait"
   },
   "createTask": {
     "title": "Nouvelle tâche",
@@ -421,7 +424,8 @@
   "notifications": {
     "title": "Notifications",
     "readAll": "Tout lire",
-    "noNotifications": "Aucune notification"
+    "noNotifications": "Aucune notification",
+    "penaltyForNotDone": "Pénalité pour tâche non faite"
   },
   "settings": {
     "pageTitle": "Paramètres du foyer",
