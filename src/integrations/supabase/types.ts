@@ -637,6 +637,7 @@ export type Database = {
           id: string
           is_active: boolean
           is_obligatory: boolean
+          display_order: number
           overdue_penalty_enabled: boolean
           overdue_penalty_points: number
           points_reward: number
@@ -657,6 +658,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_obligatory?: boolean
+          display_order?: number
           overdue_penalty_enabled?: boolean
           overdue_penalty_points?: number
           points_reward?: number
@@ -677,6 +679,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_obligatory?: boolean
+          display_order?: number
           overdue_penalty_enabled?: boolean
           overdue_penalty_points?: number
           points_reward?: number

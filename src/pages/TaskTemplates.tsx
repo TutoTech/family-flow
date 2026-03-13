@@ -21,7 +21,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Plus, Pencil, Trash2, Clock, Star, Camera, RotateCcw, Copy } from "lucide-react";
+import { ArrowLeft, Plus, Pencil, Trash2, Clock, Star, Camera, RotateCcw, Copy, ArrowUp, ArrowDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TaskTemplatesPage() {
@@ -29,7 +29,7 @@ export default function TaskTemplatesPage() {
   const { role, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { templates, isLoading, deleteTemplate, toggleActive } = useTaskTemplates();
+  const { templates, isLoading, deleteTemplate, toggleActive, reorderTemplates } = useTaskTemplates();
   const { data: children = [] } = useFamilyChildren();
 
   const [editTemplate, setEditTemplate] = useState<TaskTemplate | null>(null);
@@ -78,6 +78,25 @@ export default function TaskTemplatesPage() {
     }
   };
 
+  const handleMove = async (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === templates.length - 1) return;
+
+    const currentTemplate = templates[index];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const targetTemplate = templates[targetIndex];
+
+    try {
+      // Échange les valeurs de display_order entre les deux éléments
+      await reorderTemplates.mutateAsync([
+        { id: currentTemplate.id, display_order: targetTemplate.display_order },
+        { id: targetTemplate.id, display_order: currentTemplate.display_order }
+      ]);
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
   return (
     <DashboardLayout title={t("taskTemplates.pageTitle")}>
       <div className="max-w-3xl mx-auto space-y-6">
@@ -121,10 +140,18 @@ export default function TaskTemplatesPage() {
           </Card>
         ) : (
           <div className="space-y-3">
-            {templates.map((template) => (
+            {templates.map((template, index) => (
               <Card key={template.id} className={`transition-opacity ${!template.is_active ? "opacity-50" : ""}`}>
                 <CardContent className="py-4">
                   <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-2 flex-shrink-0 mr-2 flex-col">
+                      <Button variant="ghost" size="icon" className="h-6 w-6" disabled={index === 0 || reorderTemplates.isPending} onClick={() => handleMove(index, 'up')}>
+                        <ArrowUp className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-6 w-6" disabled={index === templates.length - 1 || reorderTemplates.isPending} onClick={() => handleMove(index, 'down')}>
+                        <ArrowDown className="h-4 w-4" />
+                      </Button>
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold text-foreground truncate">{template.title}</h3>

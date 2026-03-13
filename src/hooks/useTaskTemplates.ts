@@ -22,6 +22,7 @@ export interface TaskTemplate {
   overdue_penalty_points: number;
   is_obligatory: boolean;
   is_active: boolean;
+  display_order: number;
   created_at: string;
 }
 
@@ -38,6 +39,7 @@ export function useTaskTemplates() {
         .from("task_templates")
         .select("*")
         .eq("family_id", familyId!)
+        .order("display_order", { ascending: true })
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as TaskTemplate[];
@@ -89,11 +91,33 @@ export function useTaskTemplates() {
     },
   });
 
+  /** Réorganise dynamiquement une liste de modèles de tâches */
+  const reorderTemplates = useMutation({
+    mutationFn: async (updates: { id: string; display_order: number }[]) => {
+      // Exécute les promesses de mise à jour en parallèle
+      const promises = updates.map((update) => 
+        supabase
+          .from("task_templates")
+          .update({ display_order: update.display_order })
+          .eq("id", update.id)
+      );
+      
+      const results = await Promise.all(promises);
+      const firstError = results.find((r) => r.error);
+      if (firstError) throw firstError.error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["task-templates"] });
+      queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
+    },
+  });
+
   return {
     templates: templatesQuery.data ?? [],
     isLoading: templatesQuery.isLoading,
     updateTemplate,
     deleteTemplate,
     toggleActive,
+    reorderTemplates,
   };
 }

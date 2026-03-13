@@ -30,15 +30,30 @@ export function useTodayTasks() {
         .from("task_instances")
         .select(`
           *,
-          task_template:task_templates(title, description, icon, points_reward, requires_photo, is_obligatory),
+          task_template:task_templates(title, description, icon, points_reward, requires_photo, is_obligatory, display_order),
           evidence:task_evidence_photos(id, storage_key)
         `)
         .eq("family_id", familyId!)
-        .eq("scheduled_for_date", today)
-        .order("due_at", { ascending: true });
+        .eq("scheduled_for_date", today);
 
       if (error) throw error;
-      return data;
+      
+      // Tri côté client : d'abord par display_order, puis par heure d'échéance (due_at)
+      const sortedData = [...(data || [])].sort((a, b) => {
+        const orderA = a.task_template?.display_order ?? 0;
+        const orderB = b.task_template?.display_order ?? 0;
+        
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+        
+        // En cas d'égalité sur l'ordre d'affichage, on trie par heure
+        const timeA = a.due_at || "";
+        const timeB = b.due_at || "";
+        return timeA.localeCompare(timeB);
+      });
+
+      return sortedData;
     },
     enabled: !!familyId,
   });
