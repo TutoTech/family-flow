@@ -287,7 +287,10 @@ export type Database = {
           family_id: string
           id: string
           logged_by_parent_id: string
-          rule_id: string
+          rule_id: string | null
+          points_amount: number | null
+          wallet_amount: number | null
+          custom_title: string | null
         }
         Insert: {
           child_id: string
@@ -296,7 +299,10 @@ export type Database = {
           family_id: string
           id?: string
           logged_by_parent_id: string
-          rule_id: string
+          rule_id?: string | null
+          points_amount?: number | null
+          wallet_amount?: number | null
+          custom_title?: string | null
         }
         Update: {
           child_id?: string
@@ -305,7 +311,10 @@ export type Database = {
           family_id?: string
           id?: string
           logged_by_parent_id?: string
-          rule_id?: string
+          rule_id?: string | null
+          points_amount?: number | null
+          wallet_amount?: number | null
+          custom_title?: string | null
         }
         Relationships: [
           {
