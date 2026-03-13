@@ -117,7 +117,7 @@ export default function CreateTaskDialog({ open, onOpenChange }: Props) {
           <DialogDescription>{t("createTask.subtitle")}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
+        <div className="space-y-4 py-2 max-h-[65vh] overflow-y-auto px-1">
           <div className="space-y-2">
             <Label htmlFor="task-title">{t("createTask.taskTitle")}</Label>
             <Input id="task-title" placeholder={t("createTask.taskTitlePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} />

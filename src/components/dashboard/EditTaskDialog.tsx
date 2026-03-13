@@ -94,7 +94,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
           <DialogDescription>{t("editTask.subtitle")}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
+        <div className="space-y-4 py-2 max-h-[65vh] overflow-y-auto px-1">
           <div className="space-y-2">
             <Label htmlFor="edit-title">{t("createTask.taskTitle")}</Label>
             <Input id="edit-title" value={title} onChange={(e) => setTitle(e.target.value)} />
