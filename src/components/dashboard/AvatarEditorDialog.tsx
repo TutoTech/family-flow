@@ -93,11 +93,11 @@ export default function AvatarEditorDialog({ open, onOpenChange }: Props) {
       return;
     }
 
-    const { data: urlData } = supabase.storage
+    const { data: urlData } = await supabase.storage
       .from("task-evidence")
-      .getPublicUrl(filePath);
+      .createSignedUrl(filePath, 60 * 60 * 24 * 7); // 7 days
 
-    const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+    const avatarUrl = urlData?.signedUrl || "";
 
     const { error: updateError } = await supabase
       .from("profiles")

@@ -55,9 +55,9 @@ export default function ParentTaskList() {
     }
   };
 
-  const viewPhoto = (storageKey: string) => {
-    const { data } = supabase.storage.from("task-evidence").getPublicUrl(storageKey);
-    setPreviewPhoto(data.publicUrl);
+  const viewPhoto = async (storageKey: string) => {
+    const { data, error } = await supabase.storage.from("task-evidence").createSignedUrl(storageKey, 300);
+    if (data?.signedUrl) setPreviewPhoto(data.signedUrl);
   };
 
   return (
