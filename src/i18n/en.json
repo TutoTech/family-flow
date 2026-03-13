@@ -245,7 +245,9 @@
     "resetTask": "Reset task",
     "skipped": "Skipped",
     "notDone": "Not done",
-    "penaltyApplied": "Penalty applied!"
+    "penaltyApplied": "Penalty applied!",
+    "allChildren": "All children",
+    "noFilterResults": "No tasks match these filters"
   },
   "childTasks": {
     "toDo": "To do",

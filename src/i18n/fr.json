@@ -245,7 +245,9 @@
     "resetTask": "Réinitialiser la tâche",
     "skipped": "Pas à faire",
     "notDone": "Pas fait",
-    "penaltyApplied": "Pénalité appliquée !"
+    "penaltyApplied": "Pénalité appliquée !",
+    "allChildren": "Tous les enfants",
+    "noFilterResults": "Aucune tâche ne correspond à ces filtres"
   },
   "childTasks": {
     "toDo": "À faire",
