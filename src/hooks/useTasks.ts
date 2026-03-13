@@ -124,7 +124,22 @@ export function useTodayTasks() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["today-tasks"] }),
   });
 
-  return { tasks: tasksQuery.data ?? [], isLoading: tasksQuery.isLoading, completeTask, validateTask, resetTask };
+  /** Mutation pour marquer une tâche comme "Pas à faire" (côté enfant) */
+  const skipTask = useMutation({
+    mutationFn: async (instanceId: string) => {
+      const { error } = await supabase
+        .from("task_instances")
+        .update({
+          status: "skipped",
+          completed_at: new Date().toISOString(),
+        })
+        .eq("id", instanceId);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["today-tasks"] }),
+  });
+
+  return { tasks: tasksQuery.data ?? [], isLoading: tasksQuery.isLoading, completeTask, validateTask, resetTask, skipTask };
 }
 
 /** Récupère la liste des enfants d'une famille (en croisant profils et rôles) */

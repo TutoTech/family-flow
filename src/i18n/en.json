@@ -242,7 +242,8 @@
     "taskValidated": "Task validated!",
     "taskRejected": "Task rejected",
     "taskReset": "Task reset!",
-    "resetTask": "Reset task"
+    "resetTask": "Reset task",
+    "skipped": "Skipped"
   },
   "childTasks": {
     "toDo": "To do",
@@ -253,7 +254,10 @@
     "done": "Done!",
     "wellDone": "Well done! 🎉",
     "taskSent": "Your task has been sent for validation.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "notToDo": "Not to do",
+    "skipped": "Skipped",
+    "taskSkipped": "Task marked as skipped."
   },
   "createTask": {
     "title": "New task",

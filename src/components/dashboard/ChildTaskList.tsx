@@ -7,14 +7,14 @@ import { useTodayTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Camera, Clock, Star } from "lucide-react";
+import { CheckCircle2, Camera, Clock, Star, Ban } from "lucide-react";
 
 export default function ChildTaskList() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { activeProfile, isImpersonating } = useProfileSwitch();
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
-  const { tasks, isLoading, completeTask } = useTodayTasks();
+  const { tasks, isLoading, completeTask, skipTask } = useTodayTasks();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingTaskIdRef = useRef<string | null>(null);
@@ -25,6 +25,7 @@ export default function ChildTaskList() {
     validated: { label: t("taskList.validated"), variant: "secondary" },
     rejected: { label: t("taskList.rejected"), variant: "destructive" },
     late: { label: t("taskList.late"), variant: "destructive" },
+    skipped: { label: t("childTasks.skipped"), variant: "outline" },
   };
 
   const myTasks = tasks.filter((tk) => tk.assigned_to_user_id === viewUserId);
@@ -54,6 +55,15 @@ export default function ChildTaskList() {
       pendingTaskIdRef.current = null;
     }
     e.target.value = "";
+  };
+
+  const handleSkip = async (taskId: string) => {
+    try {
+      await skipTask.mutateAsync(taskId);
+      toast({ title: t("childTasks.skipped"), description: t("childTasks.taskSkipped") });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
   };
 
   if (isLoading) {
@@ -126,18 +136,31 @@ export default function ChildTaskList() {
                     </span>
                   </div>
                 </div>
-
                 {canAct && (
-                  <Button
-                    size="sm"
-                    variant={isRejected ? "outline" : "default"}
-                    className="gap-1 flex-shrink-0"
-                    onClick={() => handleComplete(task.id, tmpl?.requires_photo)}
-                    disabled={completeTask.isPending}
-                  >
-                    {tmpl?.requires_photo ? <Camera className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                    {isRejected ? t("childTasks.retry") : t("childTasks.done")}
-                  </Button>
+                  <div className="flex gap-2 flex-shrink-0">
+                    {isPending && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1 flex-shrink-0"
+                        onClick={() => handleSkip(task.id)}
+                        disabled={skipTask.isPending}
+                      >
+                        <Ban className="h-4 w-4" />
+                        <span className="hidden sm:inline">{t("childTasks.notToDo")}</span>
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant={isRejected ? "outline" : "default"}
+                      className="gap-1 flex-shrink-0"
+                      onClick={() => handleComplete(task.id, tmpl?.requires_photo)}
+                      disabled={completeTask.isPending}
+                    >
+                      {tmpl?.requires_photo ? <Camera className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                      {isRejected ? t("childTasks.retry") : t("childTasks.done")}
+                    </Button>
+                  </div>
                 )}
               </div>
             );

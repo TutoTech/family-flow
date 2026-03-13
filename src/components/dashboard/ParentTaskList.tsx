@@ -35,6 +35,7 @@ export default function ParentTaskList() {
     validated: { label: t("taskList.validated"), variant: "secondary" },
     rejected: { label: t("taskList.rejected"), variant: "destructive" },
     late: { label: t("taskList.late"), variant: "destructive" },
+    skipped: { label: t("taskList.skipped"), variant: "outline" },
   };
 
   const handleValidate = async (instanceId: string, approved: boolean) => {
@@ -121,7 +122,7 @@ export default function ParentTaskList() {
                           </Button>
                         </>
                       )}
-                      {["validated", "rejected", "awaiting_validation", "done", "late"].includes(task.status) && !isReadOnly && (
+                      {["validated", "rejected", "awaiting_validation", "done", "late", "skipped"].includes(task.status) && !isReadOnly && (
                         <Button
                           variant="ghost"
                           size="icon"

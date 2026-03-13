@@ -242,7 +242,8 @@
     "taskValidated": "Tâche validée !",
     "taskRejected": "Tâche refusée",
     "taskReset": "Tâche réinitialisée !",
-    "resetTask": "Réinitialiser la tâche"
+    "resetTask": "Réinitialiser la tâche",
+    "skipped": "Pas à faire"
   },
   "childTasks": {
     "toDo": "À faire",
@@ -253,7 +254,10 @@
     "done": "Fait !",
     "wellDone": "Bien joué ! 🎉",
     "taskSent": "Ta tâche a été envoyée pour validation.",
-    "retry": "Renvoyer"
+    "retry": "Renvoyer",
+    "notToDo": "Pas à faire",
+    "skipped": "Pas à faire",
+    "taskSkipped": "Tâche marquée comme pas à faire."
   },
   "createTask": {
     "title": "Nouvelle tâche",

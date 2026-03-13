@@ -754,6 +754,7 @@ export type Database = {
         | "awaiting_validation"
         | "validated"
         | "rejected"
+        | "skipped"
     }
     CompositeTypes: {
       [_ in never]: never
