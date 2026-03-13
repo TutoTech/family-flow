@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,10 +8,25 @@ import { useTodayTasks, useFamilyChildren } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
-import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw } from "lucide-react";
+import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw, Filter, Users } from "lucide-react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
+
+const STATUS_GROUPS: { key: StatusFilter; color: string }[] = [
+  { key: "all", color: "" },
+  { key: "awaiting_validation", color: "bg-amber-500" },
+  { key: "pending", color: "bg-muted-foreground" },
+  { key: "validated", color: "bg-emerald-500" },
+  { key: "not_done", color: "bg-destructive" },
+  { key: "rejected", color: "bg-destructive" },
+  { key: "skipped", color: "bg-muted-foreground/50" },
+  { key: "late", color: "bg-orange-500" },
+  { key: "done", color: "bg-blue-500" },
+];
 
 export default function ParentTaskList() {
   const { t } = useTranslation();
@@ -24,8 +39,9 @@ export default function ParentTaskList() {
   const navigate = useNavigate();
   const [createOpen, setCreateOpen] = useState(false);
   const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [childFilter, setChildFilter] = useState<string>("all");
 
-  // A child impersonating a parent cannot perform write operations
   const isReadOnly = isImpersonating && realRole === "child";
 
   const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -38,6 +54,30 @@ export default function ParentTaskList() {
     skipped: { label: t("taskList.skipped"), variant: "outline" },
     not_done: { label: t("taskList.notDone"), variant: "destructive" },
   };
+
+  // Count tasks per status
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: tasks.length };
+    for (const task of tasks) {
+      const childMatch = childFilter === "all" || task.assigned_to_user_id === childFilter;
+      if (childMatch) {
+        counts[task.status] = (counts[task.status] || 0) + 1;
+      }
+    }
+    if (childFilter !== "all") {
+      counts.all = tasks.filter((t) => t.assigned_to_user_id === childFilter).length;
+    }
+    return counts;
+  }, [tasks, childFilter]);
+
+  // Filtered tasks
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      const statusMatch = statusFilter === "all" || task.status === statusFilter;
+      const childMatch = childFilter === "all" || task.assigned_to_user_id === childFilter;
+      return statusMatch && childMatch;
+    });
+  }, [tasks, statusFilter, childFilter]);
 
   const handleValidate = async (instanceId: string, approved: boolean) => {
     try {
@@ -71,6 +111,11 @@ export default function ParentTaskList() {
     if (data?.signedUrl) setPreviewPhoto(data.signedUrl);
   };
 
+  const getStatusFilterLabel = (key: StatusFilter): string => {
+    if (key === "all") return t("common.all");
+    return STATUS_MAP[key]?.label ?? key;
+  };
+
   return (
     <>
       <Card id="section-tasks" className="shadow-card">
@@ -85,7 +130,61 @@ export default function ParentTaskList() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {/* Filters bar */}
+          {tasks.length > 0 && (
+            <div className="space-y-3">
+              {/* Child filter */}
+              {children.length > 1 && (
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <Select value={childFilter} onValueChange={setChildFilter}>
+                    <SelectTrigger className="h-8 w-auto min-w-[140px] text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t("taskList.allChildren")}</SelectItem>
+                      {children.map((child) => (
+                        <SelectItem key={child.user_id} value={child.user_id}>
+                          {child.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Status filter chips */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Filter className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                {STATUS_GROUPS.map(({ key }) => {
+                  const count = statusCounts[key] || 0;
+                  if (key !== "all" && count === 0) return null;
+                  const isActive = statusFilter === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setStatusFilter(key)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
+                        isActive
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      {getStatusFilterLabel(key)}
+                      <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-[10px] font-semibold ${
+                        isActive ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted-foreground/10 text-muted-foreground"
+                      }`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Task list */}
           {isLoading ? (
             <div className="flex justify-center py-4"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" /></div>
           ) : tasks.length === 0 ? (
@@ -94,9 +193,14 @@ export default function ParentTaskList() {
               <p className="text-sm">{t("taskList.noTasks")}</p>
               <p className="text-xs">{t("taskList.noTasksHint")}</p>
             </div>
+          ) : filteredTasks.length === 0 ? (
+            <div className="text-center py-6 text-muted-foreground">
+              <Filter className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">{t("taskList.noFilterResults")}</p>
+            </div>
           ) : (
-            <div className="space-y-3">
-              {tasks.map((task) => {
+            <div className="space-y-2">
+              {filteredTasks.map((task) => {
                 const status = STATUS_MAP[task.status] ?? STATUS_MAP.pending;
                 const tmpl = task.task_template as any;
                 const evidence = (task.evidence as any[]) ?? [];
