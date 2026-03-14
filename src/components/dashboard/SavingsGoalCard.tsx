@@ -11,14 +11,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { PiggyBank, Plus, Trash2, CheckCircle2, Target } from "lucide-react";
+import { PiggyBank, Plus, Trash2, CheckCircle2, Target, MoreVertical, Pencil } from "lucide-react";
 import { useSavingsGoals } from "@/hooks/useSavingsGoals";
 import { useChildStats } from "@/hooks/useRewards";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import CreateSavingsGoalDialog from "./CreateSavingsGoalDialog";
+import EditSavingsGoalDialog from "./EditSavingsGoalDialog";
+import { SavingsGoal } from "@/hooks/useSavingsGoals";
 
 export default function SavingsGoalCard() {
   const { t } = useTranslation();
@@ -30,6 +34,8 @@ export default function SavingsGoalCard() {
   const { symbol } = useCurrency();
   const { toast } = useToast();
   const [createOpen, setCreateOpen] = useState(false);
+  const [editGoal, setEditGoal] = useState<SavingsGoal | null>(null);
+  const [deleteGoalConfirm, setDeleteGoalConfirm] = useState<SavingsGoal | null>(null);
 
   const walletBalance = stats?.wallet_balance ?? 0;
 
@@ -42,9 +48,11 @@ export default function SavingsGoalCard() {
     }
   };
 
-  const handleDelete = async (goalId: string) => {
+  const handleDelete = async () => {
+    if (!deleteGoalConfirm) return;
     try {
-      await deleteGoal.mutateAsync(goalId);
+      await deleteGoal.mutateAsync(deleteGoalConfirm.id);
+      setDeleteGoalConfirm(null);
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     }
@@ -115,14 +123,21 @@ export default function SavingsGoalCard() {
                       </Button>
                     )}
                     {!isImpersonating && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                        onClick={() => handleDelete(goal.id)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => setEditGoal(goal)}>
+                            <Pencil className="h-4 w-4 mr-2" />{t("common.edit")}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive" onClick={() => setDeleteGoalConfirm(goal)}>
+                            <Trash2 className="h-4 w-4 mr-2" />{t("common.delete")}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     )}
                   </div>
                 </div>
@@ -170,6 +185,22 @@ export default function SavingsGoalCard() {
       </Card>
 
       <CreateSavingsGoalDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <EditSavingsGoalDialog open={!!editGoal} onOpenChange={(o) => !o && setEditGoal(null)} goal={editGoal} />
+      
+      <AlertDialog open={!!deleteGoalConfirm} onOpenChange={(o) => !o && setDeleteGoalConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("savingsGoals.deleteConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("savingsGoals.deleteConfirmDesc", { title: deleteGoalConfirm?.title })}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {t("common.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

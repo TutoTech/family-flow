@@ -584,13 +584,17 @@
     "createTitle": "Nouvel objectif d'épargne",
     "goalName": "Nom de l'objectif",
     "goalNamePlaceholder": "Ex : Nouvelle manette, Livre...",
-    "chooseIcon": "Icône",
+    "chooseIcon": "Choisir une icône",
     "targetAmount": "Montant cible",
     "remaining": "Il te reste {{amount}}{{symbol}} à économiser",
     "claim": "Réclamer",
     "completed": "Objectif atteint ! Bravo ! 🎉",
     "created": "Objectif créé !",
-    "completedSection": "Objectifs atteints"
+    "updated": "Objectif modifié !",
+    "completedSection": "Objectifs atteints",
+    "editTitle": "Modifier l'objectif",
+    "deleteConfirmTitle": "Supprimer l'objectif ?",
+    "deleteConfirmDesc": "L'objectif \"{{title}}\" sera supprimé définitivement."
   },
   "payment": {
     "successTitle": "Paiement réussi !",

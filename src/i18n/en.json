@@ -584,13 +584,17 @@
     "createTitle": "New Savings Goal",
     "goalName": "Goal name",
     "goalNamePlaceholder": "E.g.: New controller, Book...",
-    "chooseIcon": "Icon",
+    "chooseIcon": "Choose an icon",
     "targetAmount": "Target amount",
     "remaining": "{{amount}}{{symbol}} left to save",
     "claim": "Claim",
     "completed": "Goal reached! Well done! 🎉",
     "created": "Goal created!",
-    "completedSection": "Completed goals"
+    "updated": "Goal updated!",
+    "completedSection": "Completed goals",
+    "editTitle": "Edit goal",
+    "deleteConfirmTitle": "Delete goal?",
+    "deleteConfirmDesc": "The goal \"{{title}}\" will be permanently deleted."
   },
   "payment": {
     "successTitle": "Payment successful!",
