@@ -96,7 +96,7 @@ export function ManualAdjustmentDialog({
             <Label>{t("common.child")}</Label>
             <Select value={childId} onValueChange={setChildId}>
               <SelectTrigger>
-                <SelectValue placeholder={t("rewards.selectChildPlaceholder")} />
+                <SelectValue placeholder={t("createTask.selectChild")} />
               </SelectTrigger>
               <SelectContent>
                 {childrenList.map((child) => (

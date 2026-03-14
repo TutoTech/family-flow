@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFamilyRewards, usePendingRedemptions } from "@/hooks/useRewards";
+import { useFamilyChildren } from "@/hooks/usePenalties";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,22 +23,8 @@ export default function ParentRewardList() {
   const { isImpersonating } = useProfileSwitch();
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: pendingRedemptions = [] } = usePendingRedemptions();
+  const { data: children = [] } = useFamilyChildren();
   
-  // Fetch children for manual adjustment form
-  const { data: children = [] } = useQuery({
-    queryKey: ["children", profile?.family_id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("user_id, name, avatar_url")
-        .eq("family_id", profile?.family_id)
-        .eq("role", "child");
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!profile?.family_id,
-  });
-
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
