@@ -205,22 +205,22 @@ export default function ParentTaskList() {
                 const tmpl = task.task_template as any;
                 const evidence = (task.evidence as any[]) ?? [];
                 return (
-                  <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg border bg-card">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-foreground truncate">{tmpl?.title}</span>
+                  <div key={task.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border bg-card">
+                    <div className="flex-1 min-w-0 w-full text-left">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium text-sm text-foreground break-words whitespace-normal">{tmpl?.title}</span>
                         {tmpl?.requires_photo && <Camera className="h-3 w-3 text-muted-foreground flex-shrink-0" />}
                       </div>
                       {childNameMap[task.assigned_to_user_id] && (
                         <p className="text-xs text-primary/70 font-medium">{childNameMap[task.assigned_to_user_id]}</p>
                       )}
-                      {tmpl?.description && <p className="text-xs text-muted-foreground truncate">{tmpl.description}</p>}
+                      {tmpl?.description && <p className="text-xs text-muted-foreground break-words whitespace-normal mt-1 leading-tight">{tmpl.description}</p>}
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
                         <span className="text-xs text-muted-foreground">{tmpl?.is_obligatory ? t("createTask.obligatoryBadge") : `${tmpl?.points_reward} ${t("common.pts")}`}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
+                    <div className="flex flex-wrap items-center gap-1 flex-shrink-0 w-full sm:w-auto sm:justify-end mt-2 sm:mt-0">
                       {evidence.length > 0 && (
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => viewPhoto(evidence[0].storage_key)}>
                           <Eye className="h-4 w-4" />

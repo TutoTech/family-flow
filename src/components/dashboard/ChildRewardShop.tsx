@@ -56,7 +56,7 @@ export default function ChildRewardShop() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 min-w-0">
             <ShoppingCart className="h-5 w-5 text-primary flex-shrink-0" />
-            <span className="truncate">{t("rewards.shop")}</span>
+            <span className="break-words whitespace-normal leading-tight">{t("rewards.shop")}</span>
           </CardTitle>
           <Badge variant="secondary" className="text-xs flex-shrink-0">
             <Star className="h-3 w-3 mr-1" />
@@ -82,9 +82,9 @@ export default function ChildRewardShop() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="flex-shrink-0">{reward.icon ?? "🎁"}</span>
-                        <span className="font-medium text-sm text-foreground truncate">{reward.title}</span>
+                        <span className="font-medium text-sm text-foreground break-words whitespace-normal leading-tight">{reward.title}</span>
                       </div>
-                      {reward.description && <p className="text-xs text-muted-foreground truncate mt-0.5">{reward.description}</p>}
+                      {reward.description && <p className="text-xs text-muted-foreground break-words whitespace-normal mt-0.5 leading-tight">{reward.description}</p>}
                       <div className="flex items-center gap-1 mt-1 text-xs text-primary">
                         <Star className="h-3 w-3" />
                         {reward.cost_points} {t("common.pts")}
@@ -118,7 +118,7 @@ export default function ChildRewardShop() {
               return (
                 <div key={r.id} className="flex items-center gap-2 text-sm">
                   <span className="flex-shrink-0">{r.reward?.icon ?? "🎁"}</span>
-                  <span className="flex-1 truncate text-foreground">{r.reward?.title}</span>
+                  <span className="flex-1 break-words whitespace-normal text-foreground leading-tight">{r.reward?.title}</span>
                   <Badge variant="outline" className="text-xs flex-shrink-0">{st.label}</Badge>
                 </div>
               );

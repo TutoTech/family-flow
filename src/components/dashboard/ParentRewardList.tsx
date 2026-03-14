@@ -71,7 +71,7 @@ export default function ParentRewardList() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 min-w-0">
             <Gift className="h-5 w-5 text-primary flex-shrink-0" />
-            <span className="truncate">{t("rewards.title")}</span>
+            <span className="break-words whitespace-normal leading-tight">{t("rewards.title")}</span>
           </CardTitle>
           <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1 flex-shrink-0" disabled={isImpersonating}>
             <Plus className="h-4 w-4" />{t("common.add")}
@@ -86,7 +86,7 @@ export default function ParentRewardList() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="flex-shrink-0">{r.reward?.icon ?? "🎁"}</span>
-                      <span className="text-sm font-medium text-foreground truncate">{r.reward?.title}</span>
+                      <span className="text-sm font-medium text-foreground break-words whitespace-normal leading-tight">{r.reward?.title}</span>
                     </div>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
                       <Star className="h-3 w-3" />
@@ -122,9 +122,9 @@ export default function ParentRewardList() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="flex-shrink-0">{reward.icon ?? "🎁"}</span>
-                      <span className="text-sm font-medium text-foreground truncate">{reward.title}</span>
+                      <span className="text-sm font-medium text-foreground break-words whitespace-normal leading-tight">{reward.title}</span>
                     </div>
-                    {reward.description && <p className="text-xs text-muted-foreground truncate mt-0.5">{reward.description}</p>}
+                    {reward.description && <p className="text-xs text-muted-foreground break-words whitespace-normal mt-0.5 leading-tight">{reward.description}</p>}
                   </div>
                   <Badge variant="outline" className="text-xs flex-shrink-0">
                     <Star className="h-3 w-3 mr-1" />

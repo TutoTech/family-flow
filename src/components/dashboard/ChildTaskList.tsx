@@ -182,11 +182,11 @@ export default function ChildTaskList() {
               return (
                 <div
                   key={task.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg border ${
+                  className={`flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border ${
                     canAct ? "bg-card border-primary/20" : "bg-muted/30"
                   }`}
                 >
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 w-full text-left">
                     <div className="flex items-center gap-2">
                       <span className={`font-medium text-sm ${canAct ? "text-foreground" : "text-muted-foreground"}`}>
                         {tmpl?.title}
@@ -194,7 +194,7 @@ export default function ChildTaskList() {
                       {tmpl?.requires_photo && <Camera className="h-3 w-3 text-muted-foreground" />}
                     </div>
                     {tmpl?.description && (
-                      <p className="text-xs text-muted-foreground truncate">{tmpl.description}</p>
+                      <p className="text-xs text-muted-foreground break-words whitespace-normal leading-tight">{tmpl.description}</p>
                     )}
                     <div className="flex items-center gap-2 mt-1">
                       <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
@@ -212,7 +212,7 @@ export default function ChildTaskList() {
                     </div>
                   </div>
                   {canAct && (
-                    <div className="flex gap-2 flex-shrink-0">
+                    <div className="flex flex-wrap gap-2 flex-shrink-0 w-full sm:w-auto sm:justify-end mt-2 sm:mt-0">
                       {isPending && (
                         <Button
                           size="sm"

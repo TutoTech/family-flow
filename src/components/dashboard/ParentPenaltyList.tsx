@@ -58,7 +58,7 @@ export default function ParentPenaltyList() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 min-w-0">
             <ShieldAlert className="h-5 w-5 text-destructive flex-shrink-0" />
-            <span className="truncate">{t("penalties.rulesAndPenalties")}</span>
+            <span className="break-words whitespace-normal leading-tight">{t("penalties.rulesAndPenalties")}</span>
           </CardTitle>
           <div className="flex items-center gap-2 flex-shrink-0">
             <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isImpersonating}>
@@ -86,9 +86,9 @@ export default function ParentPenaltyList() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="flex-shrink-0">{rule.icon ?? "🚫"}</span>
-                      <span className="text-sm font-medium text-foreground truncate">{rule.label}</span>
+                      <span className="text-sm font-medium text-foreground break-words whitespace-normal leading-tight">{rule.label}</span>
                     </div>
-                    {rule.description && <p className="text-xs text-muted-foreground truncate mt-0.5">{rule.description}</p>}
+                    {rule.description && <p className="text-xs text-muted-foreground break-words whitespace-normal mt-0.5 leading-tight">{rule.description}</p>}
                   </div>
                   <Badge variant="outline" className="text-xs flex-shrink-0 text-destructive border-destructive/30">
                     <Star className="h-3 w-3 mr-1" />
@@ -122,7 +122,7 @@ export default function ParentPenaltyList() {
               {penalties.map((p: any) => (
                 <div key={p.id} className="flex items-center gap-2 p-2 rounded-lg border bg-card text-sm">
                   <span className="flex-shrink-0">{p.rule?.icon ?? "⚠️"}</span>
-                  <span className="flex-1 truncate text-foreground">
+                  <span className="flex-1 break-words whitespace-normal text-foreground leading-tight">
                     {childNameMap[p.child_id] ?? t("common.child")} — {p.rule?.label ?? p.custom_title ?? t("penalties.penalty")}
                   </span>
                   <span className="text-xs text-muted-foreground flex-shrink-0">

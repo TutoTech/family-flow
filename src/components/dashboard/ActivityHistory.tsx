@@ -36,8 +36,8 @@ function ActivityRow({
     <div className="flex items-center gap-3 py-2.5 px-2 rounded-lg hover:bg-muted/50 transition-colors">
       <span className="text-lg flex-shrink-0">{activity.icon}</span>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-foreground truncate">{activity.title}</span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm font-medium text-foreground break-words whitespace-normal leading-tight">{activity.title}</span>
           <Badge variant="outline" className={`text-[10px] px-1.5 py-0 flex-shrink-0 ${config.color}`}>
             {config.label}
           </Badge>
