@@ -41,9 +41,9 @@ export default function ChildPenaltyHistory() {
           <div className="space-y-3">
             {penalties.map((p: any) => (
               <div key={p.id} className="flex items-start gap-3 p-3 rounded-lg bg-destructive/5 border border-destructive/10">
-                <span className="text-xl mt-0.5">{p.rule?.icon ?? "🚫"}</span>
+                <span className="text-xl mt-0.5">{p.rule?.icon ?? "⚠️"}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">{p.rule?.label ?? t("penalties.penalty")}</p>
+                  <p className="text-sm font-medium text-foreground">{p.rule?.label ?? p.custom_title ?? t("penalties.penalty")}</p>
                   {p.comment && <p className="text-xs text-muted-foreground mt-0.5">{p.comment}</p>}
                   <p className="text-xs text-muted-foreground mt-1">
                     {formatDistanceToNow(new Date(p.created_at), { addSuffix: true, locale: dateFnsLocale })}
@@ -51,11 +51,11 @@ export default function ChildPenaltyHistory() {
                 </div>
                 <div className="flex flex-col gap-1 items-end flex-shrink-0">
                   <Badge variant="outline" className="text-xs text-destructive border-destructive/30">
-                    <Star className="h-3 w-3 mr-1" />-{p.rule?.points_penalty ?? 0}
+                    <Star className="h-3 w-3 mr-1" />-{p.rule?.points_penalty ?? p.points_amount ?? 0}
                   </Badge>
-                  {p.rule?.wallet_penalty > 0 && (
+                  {(p.rule?.wallet_penalty > 0 || p.wallet_amount > 0) && (
                     <Badge variant="outline" className="text-xs text-destructive border-destructive/30">
-                      <Wallet className="h-3 w-3 mr-1" />-{p.rule?.wallet_penalty}{currencySymbol}
+                      <Wallet className="h-3 w-3 mr-1" />-{p.rule?.wallet_penalty ?? p.wallet_amount}{currencySymbol}
                     </Badge>
                   )}
                 </div>

@@ -173,17 +173,41 @@ export function useTodayTasks() {
 
         const { data: stats } = await supabase
           .from("child_stats")
-          .select("current_points")
+          .select("current_points, wallet_balance")
           .eq("child_id", instance.assigned_to_user_id)
           .single();
+
+        let walletDeduction = 0;
+        if (familyId) {
+          const { data: settings } = await supabase
+            .from("family_settings")
+            .select("points_to_money_rate")
+            .eq("family_id", familyId)
+            .single();
+          if (settings) {
+            walletDeduction = Number((penaltyPoints * settings.points_to_money_rate).toFixed(2));
+          }
+        }
 
         if (stats) {
           await supabase
             .from("child_stats")
             .update({
               current_points: Math.max(0, stats.current_points - penaltyPoints),
+              wallet_balance: Math.max(0, (stats.wallet_balance || 0) - walletDeduction),
             })
             .eq("child_id", instance.assigned_to_user_id);
+        }
+
+        if (familyId && user?.id) {
+          await supabase.from("penalties_log").insert({
+            child_id: instance.assigned_to_user_id,
+            family_id: familyId,
+            logged_by_parent_id: user.id,
+            points_amount: penaltyPoints,
+            wallet_amount: walletDeduction,
+            custom_title: template.title,
+          });
         }
 
         await supabase.from("notifications").insert({
@@ -194,6 +218,7 @@ export function useTodayTasks() {
           metadata: {
             task_instance_id: instance.id,
             penalty_points: penaltyPoints,
+            wallet_amount: walletDeduction,
           },
         });
       }

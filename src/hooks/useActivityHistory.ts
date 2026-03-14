@@ -85,7 +85,7 @@ export function useActivityHistory(limit = 50) {
       // 3. Pénalités appliquées
       const penaltyQuery = supabase
         .from("penalties_log")
-        .select("id, created_at, child_id, rule:house_rules(label, icon, points_penalty)")
+        .select("id, created_at, child_id, points_amount, custom_title, rule:house_rules(label, icon, points_penalty)")
         .eq("family_id", familyId!)
         .gte("created_at", cutoff)
         .order("created_at", { ascending: false })
@@ -98,9 +98,9 @@ export function useActivityHistory(limit = 50) {
         activities.push({
           id: `penalty-${p.id}`,
           type: "penalty",
-          title: p.rule?.label ?? "Pénalité",
-          icon: p.rule?.icon ?? "🚫",
-          points: -(p.rule?.points_penalty ?? 0),
+          title: p.rule?.label ?? p.custom_title ?? "Pénalité",
+          icon: p.rule?.icon ?? "⚠️",
+          points: -(p.rule?.points_penalty ?? p.points_amount ?? 0),
           childId: p.child_id,
           timestamp: p.created_at,
         });

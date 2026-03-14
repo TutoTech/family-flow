@@ -20,6 +20,7 @@ const typeIcons: Record<string, string> = {
   reward_requested: "🎁",
   redemption_requested: "🎁",
   penalty: "⚠️",
+  overdue_penalty: "⚠️",
   info: "ℹ️",
 };
 
@@ -31,6 +32,7 @@ const typeToSection: Record<string, string> = {
   reward_requested: "section-rewards",
   redemption_requested: "section-rewards",
   penalty: "section-penalties",
+  overdue_penalty: "section-penalties",
 };
 
 function NotificationItem({
