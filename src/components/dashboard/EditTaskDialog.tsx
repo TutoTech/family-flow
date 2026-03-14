@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { useFamilyChildren } from "@/hooks/useTasks";
 import { useTaskTemplates, TaskTemplate } from "@/hooks/useTaskTemplates";
 import { useToast } from "@/hooks/use-toast";
+import { TASK_COLORS } from "@/utils/taskColors";
 
 interface Props {
   open: boolean;
@@ -45,6 +46,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
   const [overduePenaltyEnabled, setOverduePenaltyEnabled] = useState(false);
   const [overduePenaltyPoints, setOverduePenaltyPoints] = useState("5");
   const [isObligatory, setIsObligatory] = useState(false);
+  const [bgColor, setBgColor] = useState("");
 
   useEffect(() => {
     if (template) {
@@ -58,6 +60,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
       setOverduePenaltyEnabled(template.overdue_penalty_enabled);
       setOverduePenaltyPoints(String(template.overdue_penalty_points || 5));
       setIsObligatory(template.is_obligatory);
+      setBgColor(template.bg_color || "");
     }
   }, [template]);
 
@@ -77,6 +80,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
           overdue_penalty_enabled: overduePenaltyEnabled,
           overdue_penalty_points: overduePenaltyEnabled ? (parseInt(overduePenaltyPoints) || 0) : 0,
           is_obligatory: isObligatory,
+          bg_color: bgColor || null,
         },
       });
       toast({ title: t("editTask.taskUpdated"), description: t("editTask.taskUpdatedDesc", { title }) });
@@ -172,6 +176,27 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
               <Input id="edit-penalty-points" type="number" min="1" max="100" value={overduePenaltyPoints} onChange={(e) => setOverduePenaltyPoints(e.target.value)} />
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label>{t("createTask.bgColor", "Couleur de fond")}</Label>
+            <div className="flex flex-wrap gap-2">
+              {TASK_COLORS.map((color) => (
+                <button
+                  key={color.id}
+                  type="button"
+                  title={color.name}
+                  onClick={() => setBgColor(color.value)}
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${
+                    color.value
+                      ? color.value.split(" ")[0] // use the light theme color class for the button itself
+                      : "bg-background"
+                  } ${
+                    bgColor === color.value ? "border-primary scale-110 shadow-sm" : "border-border hover:scale-105"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
         <DialogFooter>

@@ -7,7 +7,9 @@ import { useTodayTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Camera, Clock, Star, Ban, Filter } from "lucide-react";
+import { CheckCircle2, Camera, Clock, Star, Ban, Filter, Palette } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { TASK_COLORS } from "@/utils/taskColors";
 
 type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
 
@@ -28,7 +30,7 @@ export default function ChildTaskList() {
   const { user } = useAuth();
   const { activeProfile, isImpersonating } = useProfileSwitch();
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
-  const { tasks, isLoading, completeTask, skipTask } = useTodayTasks();
+  const { tasks, isLoading, completeTask, skipTask, updateChildTaskColor } = useTodayTasks();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingTaskIdRef = useRef<string | null>(null);
@@ -100,6 +102,14 @@ export default function ChildTaskList() {
     try {
       await skipTask.mutateAsync(taskId);
       toast({ title: t("childTasks.skipped"), description: t("childTasks.taskSkipped") });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleColorChange = async (taskId: string, templateId: string, color: string) => {
+    try {
+      await updateChildTaskColor.mutateAsync({ templateId, color });
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     }
@@ -178,13 +188,15 @@ export default function ChildTaskList() {
               const isPending = task.status === "pending";
               const isRejected = task.status === "rejected";
               const canAct = isPending || isRejected;
+              const bgColorClass = tmpl?.child_bg_color || tmpl?.bg_color || (canAct ? "bg-card border-primary/20" : "bg-muted/30");
+              const hasCustomColor = !!(tmpl?.child_bg_color || tmpl?.bg_color);
 
               return (
                 <div
                   key={task.id}
-                  className={`flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border ${
-                    canAct ? "bg-card border-primary/20" : "bg-muted/30"
-                  }`}
+                  className={`flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border ${bgColorClass} ${
+                    !canAct && !hasCustomColor ? "bg-muted/30" : ""
+                  } ${!canAct && hasCustomColor ? "opacity-60" : ""}`}
                 >
                   <div className="flex-1 min-w-0 w-full text-left">
                     <div className="flex items-center gap-2">
@@ -192,6 +204,36 @@ export default function ChildTaskList() {
                         {tmpl?.title}
                       </span>
                       {tmpl?.requires_photo && <Camera className="h-3 w-3 text-muted-foreground" />}
+                      
+                      {/* Color Picker for Child */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto -mr-2 text-muted-foreground hover:text-primary">
+                            <Palette className="h-3.5 w-3.5" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-3" align="end">
+                          <p className="text-xs font-medium mb-2">{t("childTasks.myColor", "Ma couleur de fond")}</p>
+                          <div className="flex flex-wrap gap-1.5 max-w-[140px]">
+                            {TASK_COLORS.map((color) => (
+                              <button
+                                key={color.id}
+                                title={color.name}
+                                onClick={() => handleColorChange(task.id, tmpl.id, color.value)}
+                                className={`w-6 h-6 rounded-full border transition-all ${
+                                  color.value
+                                    ? color.value.split(" ")[0]
+                                    : "bg-background border-dashed"
+                                } ${
+                                  (tmpl.child_bg_color || "") === color.value 
+                                    ? "border-primary scale-110 shadow-sm" 
+                                    : "border-border hover:scale-105"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     {tmpl?.description && (
                       <p className="text-xs text-muted-foreground break-words whitespace-normal leading-tight">{tmpl.description}</p>

@@ -809,6 +809,13 @@ export type Database = {
           plan: string
         }[]
       }
+      update_child_task_color: {
+        Args: {
+          p_task_template_id: string
+          p_color: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "parent" | "child"

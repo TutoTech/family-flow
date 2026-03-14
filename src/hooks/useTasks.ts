@@ -7,6 +7,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileSwitch } from "./useProfileSwitch";
 import { useEffect } from "react";
 
 export function useTodayTasks() {
@@ -30,7 +31,7 @@ export function useTodayTasks() {
         .from("task_instances")
         .select(`
           *,
-          task_template:task_templates(title, description, icon, points_reward, requires_photo, is_obligatory, display_order),
+          task_template:task_templates(title, description, icon, points_reward, requires_photo, is_obligatory, display_order, bg_color, child_bg_color),
           evidence:task_evidence_photos(id, storage_key)
         `)
         .eq("family_id", familyId!)
@@ -218,7 +219,24 @@ export function useTodayTasks() {
     },
   });
 
-  return { tasks: tasksQuery.data ?? [], isLoading: tasksQuery.isLoading, completeTask, validateTask, resetTask, skipTask, markNotDone };
+  const updateChildTaskColor = useMutation({
+    mutationFn: async ({ templateId, color }: { templateId: string; color: string }) => {
+      const { error } = await supabase.rpc("update_child_task_color", {
+        p_task_template_id: templateId,
+        p_color: color,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
+    },
+  });
+
+  return { 
+    tasks: tasksQuery.data ?? [], 
+    isLoading: tasksQuery.isLoading, 
+    completeTask, validateTask, resetTask, skipTask, markNotDone, updateChildTaskColor 
+  };
 }
 
 /** Récupère la liste des enfants d'une famille (en croisant profils et rôles) */

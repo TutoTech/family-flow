@@ -204,8 +204,10 @@ export default function ParentTaskList() {
                 const status = STATUS_MAP[task.status] ?? STATUS_MAP.pending;
                 const tmpl = task.task_template as any;
                 const evidence = (task.evidence as any[]) ?? [];
+                const bgColorClass = tmpl?.bg_color || "bg-card";
+
                 return (
-                  <div key={task.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border bg-card">
+                  <div key={task.id} className={`flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border ${bgColorClass}`}>
                     <div className="flex-1 min-w-0 w-full text-left">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium text-sm text-foreground break-words whitespace-normal">{tmpl?.title}</span>

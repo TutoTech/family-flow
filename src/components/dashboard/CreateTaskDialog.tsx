@@ -13,6 +13,7 @@ import { useFamilyChildren } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import type { TaskTemplate } from "@/hooks/useTaskTemplates";
+import { TASK_COLORS } from "@/utils/taskColors";
 
 interface Props {
   open: boolean;
@@ -55,6 +56,7 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
   const [overduePenaltyEnabled, setOverduePenaltyEnabled] = useState(false);
   const [overduePenaltyPoints, setOverduePenaltyPoints] = useState("5");
   const [isObligatory, setIsObligatory] = useState(false);
+  const [bgColor, setBgColor] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Initialiser les champs à l'ouverture de la modale
@@ -84,11 +86,13 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
         setOverduePenaltyEnabled(initialData.overdue_penalty_enabled || false);
         setOverduePenaltyPoints(initialData.overdue_penalty_points ? String(initialData.overdue_penalty_points) : "5");
         setIsObligatory(initialData.is_obligatory || false);
+        setBgColor(initialData.bg_color || "");
       } else {
         setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
         setRecurrence("daily"); setWeeklyDay(String(new Date().getDay())); setSelectedChildren([]); setRequiresPhoto(false);
         setOverduePenaltyEnabled(false); setOverduePenaltyPoints("5");
         setIsObligatory(false);
+        setBgColor("");
       }
     }
   }, [open, initialData]);
@@ -125,6 +129,7 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
         overdue_penalty_enabled: overduePenaltyEnabled,
         overdue_penalty_points: overduePenaltyEnabled ? (parseInt(overduePenaltyPoints) || 0) : 0,
         is_obligatory: isObligatory,
+        bg_color: bgColor || null,
       }));
 
       const { error } = await supabase.from("task_templates").insert(rows);
@@ -259,6 +264,27 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
               <Input id="task-penalty-points" type="number" min="1" max="100" value={overduePenaltyPoints} onChange={(e) => setOverduePenaltyPoints(e.target.value)} />
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label>{t("createTask.bgColor", "Couleur de fond")}</Label>
+            <div className="flex flex-wrap gap-2">
+              {TASK_COLORS.map((color) => (
+                <button
+                  key={color.id}
+                  type="button"
+                  title={color.name}
+                  onClick={() => setBgColor(color.value)}
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${
+                    color.value
+                      ? color.value.split(" ")[0] // use the light theme color class for the button itself
+                      : "bg-background"
+                  } ${
+                    bgColor === color.value ? "border-primary scale-110 shadow-sm" : "border-border hover:scale-105"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
         <DialogFooter>
