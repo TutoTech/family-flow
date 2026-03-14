@@ -189,14 +189,16 @@
     "hiChild": "Salut, {{name}} ⭐",
     "familySummary": "Voici le résumé de votre foyer",
     "createOrJoin": "Commencez par créer ou rejoindre un foyer",
-    "childProgress": "Voici tes tâches et tes progrès",
-    "joinFamily": "Rejoins un foyer pour commencer",
-    "streak": "Série",
+    "childProgress": "Continue tes bonnes habitudes pour gagner des récompenses !",
+    "joinFamily": "Tu n'as pas encore rejoint de foyer. Demande à tes parents un code d'invitation !",
+    "streak": "Série parfaite",
     "streakDays": "{{count}} jours",
-    "tasks": "Tâches",
-    "completed": "terminées",
+    "tasks": "Tâches du jour",
+    "completed": "Complétées",
     "penalties": "Pénalités",
-    "wallet": "Portefeuille"
+    "wallet": "Portefeuille",
+    "houseRules": "Règles à respecter",
+    "todayTasks": "Tâches du jour"
   },
   "childDashboard": {
     "houseRules": "Règles de la maison",

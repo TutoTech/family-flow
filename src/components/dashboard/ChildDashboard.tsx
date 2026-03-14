@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star, Flame, CheckCircle2, AlertTriangle, Wallet } from "lucide-react";
+import { Star, Flame, CheckCircle2, AlertTriangle, Wallet, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useFamilyPlan } from "@/hooks/useFamilyPlan";
@@ -28,6 +28,7 @@ import BadgeCelebration from "./BadgeCelebration";
 import LevelCelebration from "./LevelCelebration";
 import { useChildStats } from "@/hooks/useRewards";
 import { useTodayTasks } from "@/hooks/useTasks";
+import { useFamilyRules } from "@/hooks/usePenalties";
 import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props { name: string; }
@@ -46,6 +47,7 @@ export default function ChildDashboard({ name }: Props) {
   const { data: stats } = useChildStats(isImpersonating ? viewUserId : undefined);
   const { symbol: currencySymbol } = useCurrency();
   const { tasks } = useTodayTasks();
+  const { data: rules = [] } = useFamilyRules();
 
   // Scroll to section if coming from notification click
   useEffect(() => {
@@ -96,7 +98,7 @@ export default function ChildDashboard({ name }: Props) {
         {!profile?.family_id && <FamilyCard />}
 
         {/* Cartes de statistiques rapides */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 xl:grid-cols-6 gap-4">
           {/* Solde du portefeuille → objectifs d'épargne */}
           <Card className="shadow-card bg-emerald-500/5 border-emerald-500/20 cursor-pointer hover:ring-2 hover:ring-emerald-500/30 transition-shadow" onClick={() => scrollToSection("section-savings")}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -133,6 +135,17 @@ export default function ChildDashboard({ name }: Props) {
             <CardContent>
               <div className="text-2xl font-bold text-foreground">{completedTasks.length}/{myTasks.length}</div>
               <p className="text-xs text-muted-foreground">{t("dashboard.completed")}</p>
+            </CardContent>
+          </Card>
+
+          {/* Règles → liste de règles */}
+          <Card className="shadow-card cursor-pointer hover:ring-2 hover:ring-muted/30 transition-shadow" onClick={() => scrollToSection("section-rules")}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.houseRules")}</CardTitle>
+              <Shield className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">{rules.length}</div>
             </CardContent>
           </Card>
 

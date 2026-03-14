@@ -189,14 +189,16 @@
     "hiChild": "Hi, {{name}} ⭐",
     "familySummary": "Here's your household summary",
     "createOrJoin": "Start by creating or joining a household",
-    "childProgress": "Here are your tasks and progress",
-    "joinFamily": "Join a household to get started",
-    "streak": "Streak",
+    "childProgress": "Keep up your good habits to earn rewards!",
+    "joinFamily": "You haven't joined a family yet. Ask your parents for an invite code!",
+    "wallet": "Wallet",
+    "streak": "Perfect streak",
     "streakDays": "{{count}} days",
-    "tasks": "Tasks",
-    "completed": "completed",
+    "tasks": "Today's tasks",
+    "completed": "Completed",
     "penalties": "Penalties",
-    "wallet": "Wallet"
+    "houseRules": "Active rules",
+    "todayTasks": "Today's tasks"
   },
   "childDashboard": {
     "houseRules": "House rules",

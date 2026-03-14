@@ -23,8 +23,6 @@ export type Level = (typeof LEVELS)[number];
 
 /** Catalogue de tous les badges débloquables */
 export const BADGES = {
-  streak_7: { name: "Semaine parfaite", icon: "🔥", description: "7 jours de série" },
-  streak_30: { name: "Mois parfait", icon: "💎", description: "30 jours de série" },
   tasks_10: { name: "Premiers pas", icon: "🎯", description: "10 tâches validées" },
   tasks_50: { name: "En route", icon: "🚀", description: "50 tâches validées" },
   tasks_100: { name: "Centurion", icon: "💯", description: "100 tâches validées" },
@@ -33,6 +31,8 @@ export const BADGES = {
   points_500: { name: "Collectionneur", icon: "💎", description: "500 points cumulés" },
   points_1000: { name: "Millionnaire", icon: "👑", description: "1000 points cumulés" },
   zero_penalty_day: { name: "Journée parfaite", icon: "✨", description: "Une journée sans pénalité" },
+  streak_7: { name: "Semaine parfaite", icon: "🔥", description: "7 jours de série" },
+  streak_30: { name: "Mois parfait", icon: "💎", description: "30 jours de série" },
 } as const;
 
 export type BadgeKey = keyof typeof BADGES;
