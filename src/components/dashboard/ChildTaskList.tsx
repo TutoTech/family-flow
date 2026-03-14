@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,21 @@ import { useTodayTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Camera, Clock, Star, Ban } from "lucide-react";
+import { CheckCircle2, Camera, Clock, Star, Ban, Filter } from "lucide-react";
+
+type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
+
+const STATUS_GROUPS: { key: StatusFilter; color: string }[] = [
+  { key: "all", color: "" },
+  { key: "awaiting_validation", color: "bg-amber-500" },
+  { key: "pending", color: "bg-muted-foreground" },
+  { key: "validated", color: "bg-emerald-500" },
+  { key: "not_done", color: "bg-destructive" },
+  { key: "rejected", color: "bg-destructive" },
+  { key: "skipped", color: "bg-muted-foreground/50" },
+  { key: "late", color: "bg-orange-500" },
+  { key: "done", color: "bg-blue-500" },
+];
 
 export default function ChildTaskList() {
   const { t } = useTranslation();
@@ -27,9 +41,33 @@ export default function ChildTaskList() {
     late: { label: t("taskList.late"), variant: "destructive" },
     skipped: { label: t("childTasks.skipped"), variant: "outline" },
     not_done: { label: t("childTasks.notDone"), variant: "destructive" },
+    done: { label: t("taskList.done"), variant: "secondary" },
   };
 
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+
   const myTasks = tasks.filter((tk) => tk.assigned_to_user_id === viewUserId);
+
+  // Count tasks per status
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: myTasks.length };
+    for (const task of myTasks) {
+      counts[task.status] = (counts[task.status] || 0) + 1;
+    }
+    return counts;
+  }, [myTasks]);
+
+  // Filtered tasks
+  const filteredTasks = useMemo(() => {
+    return myTasks.filter((task) => {
+      return statusFilter === "all" || task.status === statusFilter;
+    });
+  }, [myTasks, statusFilter]);
+
+  const getStatusFilterLabel = (key: StatusFilter): string => {
+    if (key === "all") return t("common.all");
+    return STATUS_CHILD[key]?.label ?? key;
+  };
 
   const handleComplete = (taskId: string, requiresPhoto: boolean) => {
     if (requiresPhoto) {
@@ -98,74 +136,111 @@ export default function ChildTaskList() {
           <CardTitle className="text-lg">{t("childTasks.myTasks")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {myTasks.map((task) => {
-            const tmpl = task.task_template as any;
-            const status = STATUS_CHILD[task.status] ?? STATUS_CHILD.pending;
-            const isPending = task.status === "pending";
-            const isRejected = task.status === "rejected";
-            const canAct = isPending || isRejected;
+          {/* Filters bar */}
+          {myTasks.length > 0 && (
+            <div className="flex items-center gap-1.5 flex-wrap pb-2">
+              <Filter className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+              {STATUS_GROUPS.map(({ key }) => {
+                const count = statusCounts[key] || 0;
+                if (key !== "all" && count === 0) return null;
+                const isActive = statusFilter === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setStatusFilter(key)}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
+                      isActive
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                    }`}
+                  >
+                    {getStatusFilterLabel(key)}
+                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-[10px] font-semibold ${
+                      isActive ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted-foreground/10 text-muted-foreground"
+                    }`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
-            return (
-              <div
-                key={task.id}
-                className={`flex items-center gap-3 p-3 rounded-lg border ${
-                  canAct ? "bg-card border-primary/20" : "bg-muted/30"
-                }`}
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className={`font-medium text-sm ${canAct ? "text-foreground" : "text-muted-foreground"}`}>
-                      {tmpl?.title}
-                    </span>
-                    {tmpl?.requires_photo && <Camera className="h-3 w-3 text-muted-foreground" />}
+          {filteredTasks.length === 0 ? (
+            <div className="text-center py-6 text-muted-foreground">
+              <Filter className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">{t("taskList.noFilterResults")}</p>
+            </div>
+          ) : (
+            filteredTasks.map((task) => {
+              const tmpl = task.task_template as any;
+              const status = STATUS_CHILD[task.status] ?? STATUS_CHILD.pending;
+              const isPending = task.status === "pending";
+              const isRejected = task.status === "rejected";
+              const canAct = isPending || isRejected;
+
+              return (
+                <div
+                  key={task.id}
+                  className={`flex items-center gap-3 p-3 rounded-lg border ${
+                    canAct ? "bg-card border-primary/20" : "bg-muted/30"
+                  }`}
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={`font-medium text-sm ${canAct ? "text-foreground" : "text-muted-foreground"}`}>
+                        {tmpl?.title}
+                      </span>
+                      {tmpl?.requires_photo && <Camera className="h-3 w-3 text-muted-foreground" />}
+                    </div>
+                    {tmpl?.description && (
+                      <p className="text-xs text-muted-foreground truncate">{tmpl.description}</p>
+                    )}
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
+                      <span className="text-xs text-primary flex items-center gap-0.5">
+                        {tmpl?.is_obligatory ? (
+                          <Badge variant="outline" className="text-xs">{t("createTask.obligatoryBadge")}</Badge>
+                        ) : (
+                          <><Star className="h-3 w-3" />{tmpl?.points_reward}</>
+                        )}
+                      </span>
+                      <span className="text-xs text-muted-foreground flex items-center gap-0.5">
+                        <Clock className="h-3 w-3" />
+                        {new Date(task.due_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+                      </span>
+                    </div>
                   </div>
-                  {tmpl?.description && (
-                    <p className="text-xs text-muted-foreground truncate">{tmpl.description}</p>
-                  )}
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
-                    <span className="text-xs text-primary flex items-center gap-0.5">
-                      {tmpl?.is_obligatory ? (
-                        <Badge variant="outline" className="text-xs">{t("createTask.obligatoryBadge")}</Badge>
-                      ) : (
-                        <><Star className="h-3 w-3" />{tmpl?.points_reward}</>
+                  {canAct && (
+                    <div className="flex gap-2 flex-shrink-0">
+                      {isPending && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1 flex-shrink-0"
+                          onClick={() => handleSkip(task.id)}
+                          disabled={skipTask.isPending}
+                        >
+                          <Ban className="h-4 w-4" />
+                          <span className="hidden sm:inline">{t("childTasks.notToDo")}</span>
+                        </Button>
                       )}
-                    </span>
-                    <span className="text-xs text-muted-foreground flex items-center gap-0.5">
-                      <Clock className="h-3 w-3" />
-                      {new Date(task.due_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
-                    </span>
-                  </div>
-                </div>
-                {canAct && (
-                  <div className="flex gap-2 flex-shrink-0">
-                    {isPending && (
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant={isRejected ? "outline" : "default"}
                         className="gap-1 flex-shrink-0"
-                        onClick={() => handleSkip(task.id)}
-                        disabled={skipTask.isPending}
+                        onClick={() => handleComplete(task.id, tmpl?.requires_photo)}
+                        disabled={completeTask.isPending}
                       >
-                        <Ban className="h-4 w-4" />
-                        <span className="hidden sm:inline">{t("childTasks.notToDo")}</span>
+                        {tmpl?.requires_photo ? <Camera className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                        {isRejected ? t("childTasks.retry") : t("childTasks.done")}
                       </Button>
-                    )}
-                    <Button
-                      size="sm"
-                      variant={isRejected ? "outline" : "default"}
-                      className="gap-1 flex-shrink-0"
-                      onClick={() => handleComplete(task.id, tmpl?.requires_photo)}
-                      disabled={completeTask.isPending}
-                    >
-                      {tmpl?.requires_photo ? <Camera className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                      {isRejected ? t("childTasks.retry") : t("childTasks.done")}
-                    </Button>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
         </CardContent>
       </Card>
     </>
