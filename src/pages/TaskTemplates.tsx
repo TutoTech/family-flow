@@ -143,8 +143,9 @@ export default function TaskTemplatesPage() {
             {templates.map((template, index) => (
               <Card key={template.id} className={`transition-opacity ${!template.is_active ? "opacity-50" : ""}`}>
                 <CardContent className="py-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-2 flex-shrink-0 mr-2 flex-col">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div className="flex items-start gap-3 w-full sm:w-auto flex-1">
+                      <div className="flex flex-col items-center gap-0 flex-shrink-0">
                       <Button variant="ghost" size="icon" className="h-6 w-6" disabled={index === 0 || reorderTemplates.isPending} onClick={() => handleMove(index, 'up')}>
                         <ArrowUp className="h-4 w-4" />
                       </Button>
@@ -153,12 +154,12 @@ export default function TaskTemplatesPage() {
                       </Button>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-foreground truncate">{template.title}</h3>
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="font-semibold text-foreground break-words whitespace-normal leading-tight">{template.title}</span>
                         {template.requires_photo && <Camera className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />}
                         {!template.is_active && <Badge variant="secondary" className="text-xs">{t("taskTemplates.inactive")}</Badge>}
                       </div>
-                      {template.description && <p className="text-sm text-muted-foreground truncate mb-2">{template.description}</p>}
+                      {template.description && <p className="text-sm text-muted-foreground break-words whitespace-normal mb-2 leading-tight">{template.description}</p>}
                       <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                         {template.is_obligatory ? (
                           <Badge variant="outline" className="text-xs">{t("createTask.obligatoryBadge")}</Badge>
@@ -170,7 +171,8 @@ export default function TaskTemplatesPage() {
                         <span>→ {childNameMap.get(template.assigned_to_user_id) || "?"}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1 flex-shrink-0 w-full sm:w-auto sm:justify-end mt-2 sm:mt-0">
                       <Switch checked={template.is_active} onCheckedChange={() => handleToggle(template)} />
                       <Button variant="ghost" size="icon" onClick={() => { setCloneTemplate(template); setCreateOpen(true); }} title={t("common.duplicate")}><Copy className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => setEditTemplate(template)}><Pencil className="h-4 w-4" /></Button>
