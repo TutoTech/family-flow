@@ -246,6 +246,64 @@ export type Database = {
           },
         ]
       }
+      manual_adjustments: {
+        Row: {
+          id: string
+          family_id: string
+          child_id: string
+          parent_id: string
+          type: "add_points" | "add_money" | "remove_points" | "remove_money"
+          points_amount: number | null
+          wallet_amount: number | null
+          reason: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          family_id: string
+          child_id: string
+          parent_id: string
+          type: "add_points" | "add_money" | "remove_points" | "remove_money"
+          points_amount?: number | null
+          wallet_amount?: number | null
+          reason: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          family_id?: string
+          child_id?: string
+          parent_id?: string
+          type?: "add_points" | "add_money" | "remove_points" | "remove_money"
+          points_amount?: number | null
+          wallet_amount?: number | null
+          reason?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manual_adjustments_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "manual_adjustments_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manual_adjustments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string
@@ -753,7 +811,9 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "parent" | "child"
+      app_role: "admin" | "parent" | "child"
+      adjustment_type: "add_points" | "add_money" | "remove_points" | "remove_money"
+      billing_plan: "free" | "family" | "weekly" | "weekdays" | "weekends" | "custom"
       recurrence_type: "daily" | "weekly" | "weekdays" | "weekends" | "custom"
       redemption_status: "requested" | "approved" | "rejected" | "delivered"
       task_status:

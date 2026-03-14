@@ -646,5 +646,22 @@
     "child3Name": "Noah, 7 years old",
     "child3Content": "I like the app because there are colors and stars. And when I do all my tasks, my parents are happy and so am I!",
     "disclaimer": "* Fictional testimonials for illustrative purposes."
+  },
+  "adjustments": {
+    "addBonusButton": "Manual Bonus",
+    "removeBonusButton": "Manual Penalty",
+    "addTitle": "Add Bonus (Points or Money)",
+    "addDescription": "This manual addition will not affect current streaks and will appear in the history.",
+    "removeTitle": "Adjustment without penalty",
+    "removeDescription": "This removal will not impact streaks or task status, it will only appear in the history.",
+    "currencyType": "Adjustment Type",
+    "typePoints": "Points",
+    "typeMoney": "Wallet Money",
+    "amount": "Amount",
+    "reason": "Adjustment Reason",
+    "reasonPlaceholder": "Ex: Extra help, cleaning the room...",
+    "error": "An error occurred during during the adjustment. Please verify the required fields.",
+    "success_add": "The bonus has been added to the child's balance!",
+    "success_remove": "The adjustment has been removed from the child's balance!"
   }
 }

@@ -5,21 +5,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFamilyRules, useRecentPenalties, useFamilyChildren } from "@/hooks/usePenalties";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, ShieldAlert, AlertTriangle, Star, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Plus, ShieldAlert, AlertTriangle, Star, MoreVertical, Pencil, Trash2, HeartHandshake } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import CreateRuleDialog from "./CreateRuleDialog";
 import ApplyPenaltyDialog from "./ApplyPenaltyDialog";
 import EditRuleDialog from "./EditRuleDialog";
+import { ManualAdjustmentDialog } from "./ManualAdjustmentDialog";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import i18n from "@/i18n";
 
 export default function ParentPenaltyList() {
   const { t } = useTranslation();
+  const { profile } = useAuth();
   const { isImpersonating } = useProfileSwitch();
   const { data: rules = [], isLoading } = useFamilyRules();
   const { data: penalties = [] } = useRecentPenalties();
@@ -28,6 +31,7 @@ export default function ParentPenaltyList() {
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
+  const [bonusOpen, setBonusOpen] = useState(false);
   const [editRule, setEditRule] = useState<any>(null);
   const [deleteRule, setDeleteRule] = useState<any>(null);
 
@@ -61,11 +65,20 @@ export default function ParentPenaltyList() {
             <span className="break-words whitespace-normal leading-tight">{t("penalties.rulesAndPenalties")}</span>
           </CardTitle>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isImpersonating}>
-              <Plus className="h-4 w-4" /><span className="hidden sm:inline">{t("penalties.rule")}</span>
+            <Button size="sm" variant="outline" onClick={() => setBonusOpen(true)} className="gap-1 hidden sm:flex" disabled={isImpersonating}>
+              <HeartHandshake className="h-4 w-4" />{t("adjustments.removeBonusButton")}
             </Button>
-            <Button size="sm" variant="destructive" onClick={() => setApplyOpen(true)} className="gap-1" disabled={rules.length === 0 || isImpersonating}>
-              <AlertTriangle className="h-4 w-4" /><span className="hidden sm:inline">{t("penalties.penalty")}</span>
+            <Button size="icon" variant="outline" onClick={() => setBonusOpen(true)} className="flex sm:hidden" disabled={isImpersonating} title={t("adjustments.removeBonusButton")}>
+              <HeartHandshake className="h-4 w-4" />
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1 hidden sm:flex" disabled={isImpersonating}>
+              <Plus className="h-4 w-4" />{t("penalties.newRule")}
+            </Button>
+            <Button size="icon" variant="outline" onClick={() => setCreateOpen(true)} className="flex sm:hidden" disabled={isImpersonating} title={t("penalties.newRule")}>
+              <Plus className="h-4 w-4" />
+            </Button>
+            <Button size="sm" onClick={() => setApplyOpen(true)} className="gap-1" disabled={isImpersonating}>
+              <AlertTriangle className="h-4 w-4" />{t("penalties.applyPenalty")}
             </Button>
           </div>
         </CardHeader>
@@ -138,6 +151,15 @@ export default function ParentPenaltyList() {
       <CreateRuleDialog open={createOpen} onOpenChange={setCreateOpen} />
       <ApplyPenaltyDialog open={applyOpen} onOpenChange={setApplyOpen} />
       <EditRuleDialog open={!!editRule} onOpenChange={(o) => !o && setEditRule(null)} rule={editRule} />
+
+      <ManualAdjustmentDialog
+        open={bonusOpen}
+        onOpenChange={setBonusOpen}
+        childrenList={children}
+        mode="remove"
+        familyId={profile?.family_id || ""}
+        parentId={profile?.user_id || ""}
+      />
 
       <AlertDialog open={!!deleteRule} onOpenChange={(o) => !o && setDeleteRule(null)}>
         <AlertDialogContent>

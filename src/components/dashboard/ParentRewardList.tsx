@@ -6,26 +6,45 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFamilyRewards, usePendingRedemptions } from "@/hooks/useRewards";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Plus, Gift, CheckCircle2, XCircle, Star, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Plus, Gift, CheckCircle2, XCircle, Star, MoreVertical, Pencil, Trash2, Award } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import CreateRewardDialog from "./CreateRewardDialog";
 import EditRewardDialog from "./EditRewardDialog";
+import { ManualAdjustmentDialog } from "./ManualAdjustmentDialog";
+import RewardHistoryDialog from "./RewardHistoryDialog";
 
 export default function ParentRewardList() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { isImpersonating } = useProfileSwitch();
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: pendingRedemptions = [] } = usePendingRedemptions();
+  
+  // Fetch children for manual adjustment form
+  const { data: children = [] } = useQuery({
+    queryKey: ["children", profile?.family_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("user_id, name, avatar_url")
+        .eq("family_id", profile?.family_id)
+        .eq("role", "child");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!profile?.family_id,
+  });
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [editReward, setEditReward] = useState<any>(null);
   const [deleteReward, setDeleteReward] = useState<any>(null);
+  const [bonusOpen, setBonusOpen] = useState(false);
 
   const handleRedemption = async (redemptionId: string, approved: boolean) => {
     try {
@@ -73,9 +92,17 @@ export default function ParentRewardList() {
             <Gift className="h-5 w-5 text-primary flex-shrink-0" />
             <span className="break-words whitespace-normal leading-tight">{t("rewards.title")}</span>
           </CardTitle>
-          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1 flex-shrink-0" disabled={isImpersonating}>
-            <Plus className="h-4 w-4" />{t("common.add")}
-          </Button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button size="sm" variant="outline" onClick={() => setBonusOpen(true)} className="gap-1 hidden sm:flex" disabled={isImpersonating}>
+              <Award className="h-4 w-4" />{t("adjustments.addBonusButton")}
+            </Button>
+            <Button size="icon" variant="outline" onClick={() => setBonusOpen(true)} className="flex sm:hidden" disabled={isImpersonating} title={t("adjustments.addBonusButton")}>
+              <Award className="h-4 w-4" />
+            </Button>
+            <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isImpersonating}>
+              <Plus className="h-4 w-4" />{t("common.add")}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {pendingRedemptions.length > 0 && (
@@ -155,9 +182,23 @@ export default function ParentRewardList() {
       </Card>
 
       <CreateRewardDialog open={createOpen} onOpenChange={setCreateOpen} />
-      <EditRewardDialog open={!!editReward} onOpenChange={(o) => !o && setEditReward(null)} reward={editReward} />
+      <EditRewardDialog
+        open={!!editReward}
+        onOpenChange={(open) => !open && setEditReward(null)}
+        reward={editReward}
+        familyId={profile?.family_id}
+      />
 
-      <AlertDialog open={!!deleteReward} onOpenChange={(o) => !o && setDeleteReward(null)}>
+      <ManualAdjustmentDialog
+        open={bonusOpen}
+        onOpenChange={setBonusOpen}
+        childrenList={children}
+        mode="add"
+        familyId={profile?.family_id || ""}
+        parentId={profile?.user_id || ""}
+      />
+
+      <AlertDialog open={!!deleteReward} onOpenChange={(open) => !open && setDeleteReward(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("rewards.deleteConfirmTitle")}</AlertDialogTitle>

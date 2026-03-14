@@ -80,6 +80,7 @@ export default function ActivityHistory() {
     reward_rejected: { label: t("activity.rewardRejected"), color: "text-muted-foreground", category: "rewards" },
     penalty: { label: t("activity.penalty"), color: "text-destructive", category: "penalties" },
     reward_redeemed: { label: t("activity.rewardRedeemed"), color: "text-primary", category: "rewards" },
+    manual_adjustment: { label: t("adjustments.removeBonusButton"), color: "text-primary", category: "penalties" },
   };
 
   const CATEGORY_LABELS: Record<string, string> = {

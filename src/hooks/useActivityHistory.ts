@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 export interface ActivityItem {
   id: string;
-  type: "task_validated" | "reward_redeemed" | "reward_approved" | "reward_rejected" | "penalty";
+  type: "task_validated" | "reward_redeemed" | "reward_approved" | "reward_rejected" | "penalty" | "manual_adjustment";
   title: string;
   icon: string;
   points: number;
@@ -103,6 +103,44 @@ export function useActivityHistory(limit = 50) {
           points: -(p.rule?.points_penalty ?? p.points_amount ?? 0),
           childId: p.child_id,
           timestamp: p.created_at,
+        });
+      });
+
+      // 4. Ajustements manuels
+      const adjustmentQuery = supabase
+        .from("manual_adjustments")
+        .select("id, created_at, child_id, type, points_amount, wallet_amount, reason")
+        .eq("family_id", familyId!)
+        .gte("created_at", cutoff)
+        .order("created_at", { ascending: false })
+        .limit(limit);
+
+      if (!isParent) adjustmentQuery.eq("child_id", user!.id);
+
+      const { data: adjustments } = await adjustmentQuery;
+      adjustments?.forEach((adj: any) => {
+        const isPoints = adj.points_amount !== null && adj.points_amount > 0;
+        const isAdd = adj.type.startsWith("add_");
+        
+        let icon = isPoints ? (isAdd ? "➕" : "📉") : (isAdd ? "💶" : "📉");
+        if (!isPoints && !isAdd) icon = "📉";
+
+        let titleStr = "";
+        if (isPoints) {
+          titleStr = isAdd ? "Bonus de points" : "Retrait de points";
+        } else {
+          titleStr = isAdd ? "Ajout d'argent" : "Retrait d'argent";
+        }
+        if (adj.reason) titleStr += ` (${adj.reason})`;
+
+        activities.push({
+          id: `adj-${adj.id}`,
+          type: "manual_adjustment",
+          title: titleStr,
+          icon: icon,
+          points: isPoints ? (isAdd ? adj.points_amount : -adj.points_amount) : 0,
+          childId: adj.child_id,
+          timestamp: adj.created_at,
         });
       });
 

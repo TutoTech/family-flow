@@ -646,5 +646,22 @@
     "child3Name": "Noah, 7 ans",
     "child3Content": "J'aime bien l'application parce qu'il y a des couleurs et des étoiles. Et quand je fais toutes mes tâches, mes parents sont contents et moi aussi !",
     "disclaimer": "* Témoignages fictifs à titre illustratif."
+  },
+  "adjustments": {
+    "addBonusButton": "Bonus manuel",
+    "removeBonusButton": "Ajustement manuel",
+    "addTitle": "Ajouter un bonus (Points ou Argent)",
+    "addDescription": "Cet ajout manuel n'impactera pas les séries en cours et apparaîtra dans l'historique.",
+    "removeTitle": "Ajustement sans pénalité",
+    "removeDescription": "Ce retrait n'impactera pas les séries ou le statut des tâches, il apparaîtra seulement dans l'historique.",
+    "currencyType": "Type d'ajustement",
+    "typePoints": "Points",
+    "typeMoney": "Argent du portefeuille",
+    "amount": "Montant",
+    "reason": "Motif de l'ajustement",
+    "reasonPlaceholder": "Ex: Aide supplémentaire, Rangement de la chambre...",
+    "error": "Une erreur est survenue lors de l'ajustement. Vérifiez les champs obligatoires.",
+    "success_add": "Le bonus a bien été ajouté au solde de l'enfant !",
+    "success_remove": "L'ajustement a bien été retiré du solde de l'enfant !"
   }
 }
