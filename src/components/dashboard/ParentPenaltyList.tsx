@@ -22,7 +22,7 @@ import i18n from "@/i18n";
 
 export default function ParentPenaltyList() {
   const { t } = useTranslation();
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const { isImpersonating } = useProfileSwitch();
   const { data: rules = [], isLoading } = useFamilyRules();
   const { data: penalties = [] } = useRecentPenalties();
@@ -72,13 +72,13 @@ export default function ParentPenaltyList() {
               <HeartHandshake className="h-4 w-4" />
             </Button>
             <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)} className="gap-1 hidden sm:flex" disabled={isImpersonating}>
-              <Plus className="h-4 w-4" />{t("penalties.newRule")}
+              <Plus className="h-4 w-4" />{t("penalties.rule")}
             </Button>
-            <Button size="icon" variant="outline" onClick={() => setCreateOpen(true)} className="flex sm:hidden" disabled={isImpersonating} title={t("penalties.newRule")}>
+            <Button size="icon" variant="outline" onClick={() => setCreateOpen(true)} className="flex sm:hidden" disabled={isImpersonating} title={t("penalties.rule")}>
               <Plus className="h-4 w-4" />
             </Button>
             <Button size="sm" onClick={() => setApplyOpen(true)} className="gap-1" disabled={isImpersonating}>
-              <AlertTriangle className="h-4 w-4" />{t("penalties.applyPenalty")}
+              <AlertTriangle className="h-4 w-4" />{t("penalties.penalty")}
             </Button>
           </div>
         </CardHeader>
@@ -158,7 +158,7 @@ export default function ParentPenaltyList() {
         childrenList={children}
         mode="remove"
         familyId={profile?.family_id || ""}
-        parentId={profile?.user_id || ""}
+        parentId={user?.id || ""}
       />
 
       <AlertDialog open={!!deleteRule} onOpenChange={(o) => !o && setDeleteRule(null)}>

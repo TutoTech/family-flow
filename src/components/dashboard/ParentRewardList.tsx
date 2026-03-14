@@ -15,7 +15,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import CreateRewardDialog from "./CreateRewardDialog";
 import EditRewardDialog from "./EditRewardDialog";
 import { ManualAdjustmentDialog } from "./ManualAdjustmentDialog";
-import RewardHistoryDialog from "./RewardHistoryDialog";
 
 export default function ParentRewardList() {
   const { t } = useTranslation();
@@ -186,7 +185,6 @@ export default function ParentRewardList() {
         open={!!editReward}
         onOpenChange={(open) => !open && setEditReward(null)}
         reward={editReward}
-        familyId={profile?.family_id}
       />
 
       <ManualAdjustmentDialog
@@ -195,7 +193,7 @@ export default function ParentRewardList() {
         childrenList={children}
         mode="add"
         familyId={profile?.family_id || ""}
-        parentId={profile?.user_id || ""}
+        parentId={user?.id || ""}
       />
 
       <AlertDialog open={!!deleteReward} onOpenChange={(open) => !open && setDeleteReward(null)}>
