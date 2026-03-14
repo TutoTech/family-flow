@@ -102,18 +102,23 @@ Deno.serve(async (req) => {
       if (!error) generated++;
     }
 
+    // ── Step 3: Update all streaks based on yesterday's performance ──
+    const { error: streakError } = await supabase.rpc("update_all_streaks");
+    if (streakError) throw streakError;
+
     return new Response(
       JSON.stringify({
         success: true,
         families_processed: generated,
         penalties_applied: penaltiesApplied,
         overdue_tasks_checked: overdueInstances?.length ?? 0,
+        streaks_updated: true,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
     return new Response(
-      JSON.stringify({ error: err.message }),
+      JSON.stringify({ error: (err as Error).message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
