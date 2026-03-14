@@ -209,18 +209,6 @@ export function useTodayTasks() {
             custom_title: template.title,
           });
         }
-
-        await supabase.from("notifications").insert({
-          user_id: instance.assigned_to_user_id,
-          type: "overdue_penalty",
-          title: `⚠️ Pénalité automatique`,
-          body: `Tu as perdu ${penaltyPoints} points car "${template.title}" a été marquée comme non faite.`,
-          metadata: {
-            task_instance_id: instance.id,
-            penalty_points: penaltyPoints,
-            wallet_amount: walletDeduction,
-          },
-        });
       }
     },
     onSuccess: () => {
