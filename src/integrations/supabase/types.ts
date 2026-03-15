@@ -695,6 +695,8 @@ export type Database = {
       task_templates: {
         Row: {
           assigned_to_user_id: string
+          bg_color: string | null
+          child_bg_color: string | null
           created_at: string
           created_by_user_id: string
           description: string | null
@@ -716,6 +718,8 @@ export type Database = {
         }
         Insert: {
           assigned_to_user_id: string
+          bg_color?: string | null
+          child_bg_color?: string | null
           created_at?: string
           created_by_user_id: string
           description?: string | null
@@ -737,6 +741,8 @@ export type Database = {
         }
         Update: {
           assigned_to_user_id?: string
+          bg_color?: string | null
+          child_bg_color?: string | null
           created_at?: string
           created_by_user_id?: string
           description?: string | null

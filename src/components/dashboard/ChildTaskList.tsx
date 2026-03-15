@@ -204,36 +204,6 @@ export default function ChildTaskList() {
                         {tmpl?.title}
                       </span>
                       {tmpl?.requires_photo && <Camera className="h-3 w-3 text-muted-foreground" />}
-                      
-                      {/* Color Picker for Child */}
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto -mr-2 text-muted-foreground hover:text-primary">
-                            <Palette className="h-3.5 w-3.5" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-3" align="end">
-                          <p className="text-xs font-medium mb-2">{t("childTasks.myColor", "Ma couleur de fond")}</p>
-                          <div className="flex flex-wrap gap-1.5 max-w-[140px]">
-                            {TASK_COLORS.map((color) => (
-                              <button
-                                key={color.id}
-                                title={color.name}
-                                onClick={() => handleColorChange(task.id, tmpl.id, color.value)}
-                                className={`w-6 h-6 rounded-full border transition-all ${
-                                  color.value
-                                    ? color.value.split(" ")[0]
-                                    : "bg-background border-dashed"
-                                } ${
-                                  (tmpl.child_bg_color || "") === color.value 
-                                    ? "border-primary scale-110 shadow-sm" 
-                                    : "border-border hover:scale-105"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
                     </div>
                     {tmpl?.description && (
                       <p className="text-xs text-muted-foreground break-words whitespace-normal leading-tight">{tmpl.description}</p>
@@ -253,32 +223,63 @@ export default function ChildTaskList() {
                       </span>
                     </div>
                   </div>
-                  {canAct && (
-                    <div className="flex flex-wrap gap-2 flex-shrink-0 w-full sm:w-auto sm:justify-end mt-2 sm:mt-0">
-                      {isPending && (
+                  <div className="flex flex-wrap items-center gap-2 flex-shrink-0 w-full sm:w-auto sm:justify-end mt-2 sm:mt-0">
+                    {/* Color Picker for Child */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary">
+                          <Palette className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-3" align="end">
+                        <p className="text-xs font-medium mb-2">{t("childTasks.myColor", "Ma couleur de fond")}</p>
+                        <div className="flex flex-wrap gap-1.5 max-w-[140px]">
+                          {TASK_COLORS.map((color) => (
+                            <button
+                              key={color.id}
+                              title={color.name}
+                              onClick={() => handleColorChange(task.id, tmpl.id, color.value)}
+                              className={`w-6 h-6 rounded-full border transition-all ${
+                                color.value
+                                  ? color.value.split(" ")[0]
+                                  : "bg-background border-dashed"
+                              } ${
+                                (tmpl.child_bg_color || "") === color.value 
+                                  ? "border-primary scale-110 shadow-sm" 
+                                  : "border-border hover:scale-105"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                    {canAct && (
+                      <>
+                        {isPending && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="gap-1 flex-shrink-0"
+                            onClick={() => handleSkip(task.id)}
+                            disabled={skipTask.isPending}
+                          >
+                            <Ban className="h-4 w-4" />
+                            <span className="hidden sm:inline">{t("childTasks.notToDo")}</span>
+                          </Button>
+                        )}
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant={isRejected ? "outline" : "default"}
                           className="gap-1 flex-shrink-0"
-                          onClick={() => handleSkip(task.id)}
-                          disabled={skipTask.isPending}
+                          onClick={() => handleComplete(task.id, tmpl?.requires_photo)}
+                          disabled={completeTask.isPending}
                         >
-                          <Ban className="h-4 w-4" />
-                          <span className="hidden sm:inline">{t("childTasks.notToDo")}</span>
+                          {tmpl?.requires_photo ? <Camera className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                          {isRejected ? t("childTasks.retry") : t("childTasks.done")}
                         </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant={isRejected ? "outline" : "default"}
-                        className="gap-1 flex-shrink-0"
-                        onClick={() => handleComplete(task.id, tmpl?.requires_photo)}
-                        disabled={completeTask.isPending}
-                      >
-                        {tmpl?.requires_photo ? <Camera className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                        {isRejected ? t("childTasks.retry") : t("childTasks.done")}
-                      </Button>
-                    </div>
-                  )}
+                      </>
+                    )}
+                  </div>
                 </div>
               );
             })
