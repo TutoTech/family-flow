@@ -26,10 +26,15 @@ BEGIN
   END IF;
 END $$;
 
--- 2. Creer ou remplacer la fonction RPC pour permettre aux enfants de changer leur couleur
+-- 2. Supprimer toutes les versions existantes de la fonction (avec differentes signatures)
+DROP FUNCTION IF EXISTS update_child_task_color(uuid, text);
+DROP FUNCTION IF EXISTS update_child_task_color(text);
+DROP FUNCTION IF EXISTS update_child_task_color(uuid);
+
+-- 3. Creer la fonction RPC pour permettre aux enfants de changer leur couleur
 -- Cette fonction permet a un enfant de modifier UNIQUEMENT la colonne child_bg_color
 -- de ses propres taches (celles qui lui sont assignees)
-CREATE OR REPLACE FUNCTION update_child_task_color(
+CREATE FUNCTION update_child_task_color(
   p_task_template_id uuid,
   p_color text
 )
@@ -59,10 +64,10 @@ BEGIN
 END;
 $$;
 
--- 3. Accorder les permissions d'execution a tous les utilisateurs authentifies
+-- 4. Accorder les permissions d'execution a tous les utilisateurs authentifies
 GRANT EXECUTE ON FUNCTION update_child_task_color(uuid, text) TO authenticated;
 
--- 4. Verification finale - Afficher les colonnes de la table task_templates
+-- 5. Verification finale - Afficher les colonnes de la table task_templates
 SELECT column_name, data_type, is_nullable
 FROM information_schema.columns
 WHERE table_name = 'task_templates'
