@@ -5,12 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFamilyRewards, usePendingRedemptions } from "@/hooks/useRewards";
+import { useFamilySettings } from "@/hooks/useFamilySettings";
 import { useFamilyChildren } from "@/hooks/usePenalties";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Plus, Gift, CheckCircle2, XCircle, Star, MoreVertical, Pencil, Trash2, Award } from "lucide-react";
+import { Plus, Gift, CheckCircle2, XCircle, Star, MoreVertical, Pencil, Trash2, Award, Banknote } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import CreateRewardDialog from "./CreateRewardDialog";
@@ -24,6 +25,8 @@ export default function ParentRewardList() {
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: pendingRedemptions = [] } = usePendingRedemptions();
   const { data: children = [] } = useFamilyChildren();
+  const { settings } = useFamilySettings();
+  const currencySymbol = settings?.currency === "USD" ? "$" : "€";
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -101,9 +104,19 @@ export default function ParentRewardList() {
                       <span className="flex-shrink-0">{r.reward?.icon ?? "🎁"}</span>
                       <span className="text-sm font-medium text-foreground break-words whitespace-normal leading-tight">{r.reward?.title}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                      <Star className="h-3 w-3" />
-                      {r.reward?.cost_points} {t("common.pts")}
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                      {r.reward?.cost_points > 0 && (
+                        <span className="flex items-center gap-1">
+                          <Star className="h-3 w-3" />
+                          {r.reward?.cost_points} {t("common.pts")}
+                        </span>
+                      )}
+                      {r.reward?.cost_money > 0 && (
+                        <span className="flex items-center gap-1">
+                          <Banknote className="h-3 w-3" />
+                          {r.reward?.cost_money.toFixed(2)}{currencySymbol}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
@@ -139,10 +152,20 @@ export default function ParentRewardList() {
                     </div>
                     {reward.description && <p className="text-xs text-muted-foreground break-words whitespace-normal mt-0.5 leading-tight">{reward.description}</p>}
                   </div>
-                  <Badge variant="outline" className="text-xs flex-shrink-0">
-                    <Star className="h-3 w-3 mr-1" />
-                    {reward.cost_points}
-                  </Badge>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {reward.cost_points > 0 && (
+                      <Badge variant="outline" className="text-xs">
+                        <Star className="h-3 w-3 mr-1" />
+                        {reward.cost_points}
+                      </Badge>
+                    )}
+                    {reward.cost_money && reward.cost_money > 0 && (
+                      <Badge variant="outline" className="text-xs">
+                        <Banknote className="h-3 w-3 mr-1" />
+                        {reward.cost_money.toFixed(2)}{currencySymbol}
+                      </Badge>
+                    )}
+                  </div>
                   {!isImpersonating && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

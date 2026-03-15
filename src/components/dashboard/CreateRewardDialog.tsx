@@ -22,18 +22,29 @@ export default function CreateRewardDialog({ open, onOpenChange }: Props) {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [cost, setCost] = useState("10");
+  const [costPoints, setCostPoints] = useState("10");
+  const [costMoney, setCostMoney] = useState("");
   const [icon, setIcon] = useState("🎁");
   const [loading, setLoading] = useState(false);
 
   const handleCreate = async () => {
     if (!title.trim() || !profile?.family_id) return;
+    const points = parseInt(costPoints) || 0;
+    const money = costMoney ? parseFloat(costMoney) : null;
+    
+    // Au moins un cout doit etre specifie
+    if (points <= 0 && (!money || money <= 0)) {
+      toast({ title: t("common.error"), description: t("rewards.needAtLeastOneCost"), variant: "destructive" });
+      return;
+    }
+    
     setLoading(true);
     try {
       const { error } = await supabase.from("rewards").insert({
         title: title.trim(),
         description: description.trim() || null,
-        cost_points: parseInt(cost) || 10,
+        cost_points: points,
+        cost_money: money,
         icon: icon || "🎁",
         family_id: profile.family_id,
       });
@@ -41,7 +52,7 @@ export default function CreateRewardDialog({ open, onOpenChange }: Props) {
 
       toast({ title: t("rewards.rewardCreated"), description: t("rewards.rewardCreatedDesc", { title }) });
       queryClient.invalidateQueries({ queryKey: ["rewards"] });
-      setTitle(""); setDescription(""); setCost("10"); setIcon("🎁");
+      setTitle(""); setDescription(""); setCostPoints("10"); setCostMoney(""); setIcon("🎁");
       onOpenChange(false);
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
@@ -91,10 +102,17 @@ export default function CreateRewardDialog({ open, onOpenChange }: Props) {
             <Label htmlFor="reward-desc">{t("createTask.description")}</Label>
             <Input id="reward-desc" placeholder={t("createTask.descriptionPlaceholder")} value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="reward-cost">{t("rewards.costPoints")}</Label>
-            <Input id="reward-cost" type="number" min="1" value={cost} onChange={(e) => setCost(e.target.value)} />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="reward-cost-points">{t("rewards.costPoints")}</Label>
+              <Input id="reward-cost-points" type="number" min="0" value={costPoints} onChange={(e) => setCostPoints(e.target.value)} placeholder="0" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reward-cost-money">{t("rewards.costMoney")}</Label>
+              <Input id="reward-cost-money" type="number" min="0" step="0.01" value={costMoney} onChange={(e) => setCostMoney(e.target.value)} placeholder="0.00" />
+            </div>
           </div>
+          <p className="text-xs text-muted-foreground">{t("rewards.costHint")}</p>
         </div>
 
         <DialogFooter>

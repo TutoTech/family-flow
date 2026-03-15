@@ -13,6 +13,7 @@ interface Reward {
   title: string;
   description: string | null;
   cost_points: number;
+  cost_money: number | null;
   icon: string | null;
 }
 
@@ -36,7 +37,8 @@ export default function EditRewardDialog({ open, onOpenChange, reward }: Props) 
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [cost, setCost] = useState("10");
+  const [costPoints, setCostPoints] = useState("10");
+  const [costMoney, setCostMoney] = useState("");
   const [icon, setIcon] = useState("🎁");
   const [loading, setLoading] = useState(false);
 
@@ -44,19 +46,30 @@ export default function EditRewardDialog({ open, onOpenChange, reward }: Props) 
     if (reward) {
       setTitle(reward.title);
       setDescription(reward.description ?? "");
-      setCost(String(reward.cost_points));
+      setCostPoints(String(reward.cost_points));
+      setCostMoney(reward.cost_money ? String(reward.cost_money) : "");
       setIcon(reward.icon ?? "🎁");
     }
   }, [reward]);
 
   const handleSave = async () => {
     if (!title.trim() || !reward) return;
+    const points = parseInt(costPoints) || 0;
+    const money = costMoney ? parseFloat(costMoney) : null;
+    
+    // Au moins un cout doit etre specifie
+    if (points <= 0 && (!money || money <= 0)) {
+      toast({ title: t("common.error"), description: t("rewards.needAtLeastOneCost"), variant: "destructive" });
+      return;
+    }
+    
     setLoading(true);
     try {
       const { error } = await supabase.from("rewards").update({
         title: title.trim(),
         description: description.trim() || null,
-        cost_points: parseInt(cost) || 10,
+        cost_points: points,
+        cost_money: money,
         icon: icon || "🎁",
       }).eq("id", reward.id);
       if (error) throw error;
@@ -105,10 +118,17 @@ export default function EditRewardDialog({ open, onOpenChange, reward }: Props) 
             <Label htmlFor="edit-reward-desc">{t("createTask.description")}</Label>
             <Input id="edit-reward-desc" value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="edit-reward-cost">{t("rewards.costPoints")}</Label>
-            <Input id="edit-reward-cost" type="number" min="1" value={cost} onChange={(e) => setCost(e.target.value)} />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-reward-cost-points">{t("rewards.costPoints")}</Label>
+              <Input id="edit-reward-cost-points" type="number" min="0" value={costPoints} onChange={(e) => setCostPoints(e.target.value)} placeholder="0" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-reward-cost-money">{t("rewards.costMoney")}</Label>
+              <Input id="edit-reward-cost-money" type="number" min="0" step="0.01" value={costMoney} onChange={(e) => setCostMoney(e.target.value)} placeholder="0.00" />
+            </div>
           </div>
+          <p className="text-xs text-muted-foreground">{t("rewards.costHint")}</p>
         </div>
 
         <DialogFooter>

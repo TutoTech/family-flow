@@ -8,7 +8,8 @@ import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Gift, Star, ShoppingCart, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Gift, Star, ShoppingCart, Clock, CheckCircle2, XCircle, Banknote } from "lucide-react";
+import { useFamilySettings } from "@/hooks/useFamilySettings";
 
 export default function ChildRewardShop() {
   const { t } = useTranslation();
@@ -18,6 +19,8 @@ export default function ChildRewardShop() {
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: stats } = useChildStats(viewUserId ?? undefined);
   const { data: redemptions = [] } = useMyRedemptions();
+  const { settings } = useFamilySettings();
+  const currencySymbol = settings?.currency === "USD" ? "$" : "€";
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -85,9 +88,19 @@ export default function ChildRewardShop() {
                         <span className="font-medium text-sm text-foreground break-words whitespace-normal leading-tight">{reward.title}</span>
                       </div>
                       {reward.description && <p className="text-xs text-muted-foreground break-words whitespace-normal mt-0.5 leading-tight">{reward.description}</p>}
-                      <div className="flex items-center gap-1 mt-1 text-xs text-primary">
-                        <Star className="h-3 w-3" />
-                        {reward.cost_points} {t("common.pts")}
+                      <div className="flex items-center gap-2 mt-1 text-xs text-primary">
+                        {reward.cost_points > 0 && (
+                          <span className="flex items-center gap-1">
+                            <Star className="h-3 w-3" />
+                            {reward.cost_points} {t("common.pts")}
+                          </span>
+                        )}
+                        {reward.cost_money && reward.cost_money > 0 && (
+                          <span className="flex items-center gap-1">
+                            <Banknote className="h-3 w-3" />
+                            {reward.cost_money.toFixed(2)}{currencySymbol}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <Button
