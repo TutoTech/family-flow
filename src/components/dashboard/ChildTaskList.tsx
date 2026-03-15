@@ -238,7 +238,7 @@ export default function ChildTaskList() {
                             <button
                               key={color.id}
                               title={color.name}
-                              onClick={() => handleColorChange(task.id, tmpl.id, color.value)}
+                              onClick={() => handleColorChange(task.id, task.task_template_id, color.value)}
                               className={`w-6 h-6 rounded-full border transition-all ${
                                 color.value
                                   ? color.value.split(" ")[0]
