@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFamilyRewards, usePendingRedemptions } from "@/hooks/useRewards";
-import { useFamilySettings } from "@/hooks/useFamilySettings";
+import { useCurrency } from "@/hooks/useCurrency";
 import { useFamilyChildren } from "@/hooks/usePenalties";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
@@ -25,8 +25,7 @@ export default function ParentRewardList() {
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: pendingRedemptions = [] } = usePendingRedemptions();
   const { data: children = [] } = useFamilyChildren();
-  const { settings } = useFamilySettings();
-  const currencySymbol = settings?.currency === "USD" ? "$" : "€";
+  const { symbol: currencySymbol } = useCurrency();
   
   const { toast } = useToast();
   const queryClient = useQueryClient();

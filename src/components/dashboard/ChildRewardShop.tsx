@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Gift, Star, ShoppingCart, Clock, CheckCircle2, XCircle, Banknote } from "lucide-react";
-import { useFamilySettings } from "@/hooks/useFamilySettings";
+import { useCurrency } from "@/hooks/useCurrency";
 
 export default function ChildRewardShop() {
   const { t } = useTranslation();
@@ -19,8 +19,7 @@ export default function ChildRewardShop() {
   const { data: rewards = [], isLoading } = useFamilyRewards();
   const { data: stats } = useChildStats(viewUserId ?? undefined);
   const { data: redemptions = [] } = useMyRedemptions();
-  const { settings } = useFamilySettings();
-  const currencySymbol = settings?.currency === "USD" ? "$" : "€";
+  const { symbol: currencySymbol } = useCurrency();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
