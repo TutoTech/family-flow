@@ -674,5 +674,18 @@
     "error": "An error occurred during during the adjustment. Please verify the required fields.",
     "success_add": "The bonus has been added to the child's balance!",
     "success_remove": "The adjustment has been removed from the child's balance!"
+  },
+  "resetChildPassword": {
+    "buttonTooltip": "Reset password",
+    "title": "Reset Password",
+    "description": "Set a new password for {{name}}. The child will be able to log in immediately with this new password.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "minLength": "Minimum 6 characters",
+    "submit": "Reset",
+    "success": "Password for {{name}} updated successfully.",
+    "error": "Failed to reset password",
+    "mismatch": "Passwords do not match.",
+    "tooShort": "Password must be at least 6 characters."
   }
 }

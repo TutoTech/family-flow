@@ -674,5 +674,18 @@
     "error": "Une erreur est survenue lors de l'ajustement. Vérifiez les champs obligatoires.",
     "success_add": "Le bonus a bien été ajouté au solde de l'enfant !",
     "success_remove": "L'ajustement a bien été retiré du solde de l'enfant !"
+  },
+  "resetChildPassword": {
+    "buttonTooltip": "Réinitialiser le mot de passe",
+    "title": "Réinitialiser le mot de passe",
+    "description": "Définissez un nouveau mot de passe pour {{name}}. L'enfant pourra se connecter immédiatement avec ce nouveau mot de passe.",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "minLength": "Minimum 6 caractères",
+    "submit": "Réinitialiser",
+    "success": "Mot de passe de {{name}} mis à jour avec succès.",
+    "error": "Impossible de réinitialiser le mot de passe",
+    "mismatch": "Les mots de passe ne correspondent pas.",
+    "tooShort": "Le mot de passe doit contenir au moins 6 caractères."
   }
 }
