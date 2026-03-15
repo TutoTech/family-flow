@@ -66,8 +66,13 @@ $$;
 
 -- 4. Accorder les permissions d'execution a tous les utilisateurs authentifies
 GRANT EXECUTE ON FUNCTION update_child_task_color(uuid, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION update_child_task_color(uuid, text) TO anon;
 
--- 5. Verification finale - Afficher les colonnes de la table task_templates
+-- 5. Notifier PostgREST de recharger le schema cache
+-- Ceci est ESSENTIEL pour que la nouvelle fonction soit visible via l'API
+NOTIFY pgrst, 'reload schema';
+
+-- 6. Verification finale - Afficher les colonnes de la table task_templates
 SELECT column_name, data_type, is_nullable
 FROM information_schema.columns
 WHERE table_name = 'task_templates'
