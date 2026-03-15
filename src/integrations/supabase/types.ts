@@ -502,6 +502,7 @@ export type Database = {
       }
       rewards: {
         Row: {
+          cost_money: number | null
           cost_points: number
           created_at: string
           description: string | null
@@ -513,6 +514,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cost_money?: number | null
           cost_points: number
           created_at?: string
           description?: string | null
@@ -524,6 +526,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cost_money?: number | null
           cost_points?: number
           created_at?: string
           description?: string | null

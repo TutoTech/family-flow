@@ -61,7 +61,7 @@ export function useMyRedemptions() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("reward_redemptions")
-        .select("*, reward:rewards(title, icon, cost_points)")
+        .select("*, reward:rewards(title, icon, cost_points, cost_money)")
         .eq("child_id", user!.id)
         .order("created_at", { ascending: false })
         .limit(20);
@@ -82,7 +82,7 @@ export function usePendingRedemptions() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("reward_redemptions")
-        .select("*, reward:rewards(title, icon, cost_points, family_id)")
+        .select("*, reward:rewards(title, icon, cost_points, cost_money, family_id)")
         .eq("status", "requested")
         .order("created_at", { ascending: true });
       if (error) throw error;
