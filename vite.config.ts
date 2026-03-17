@@ -11,9 +11,8 @@ const FALLBACK_BACKEND_PROJECT_ID = "fzstjebbxbejypgwamqx";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "0.0.0.0",
-    port: 5000,
-    allowedHosts: true,
+    host: "::",
+    port: 8080,
     hmr: {
       overlay: false,
     },
