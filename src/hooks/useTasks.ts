@@ -16,11 +16,14 @@ export function useTodayTasks() {
   const familyId = profile?.family_id;
 
   // Génère les instances de tâches du jour au chargement (via fonction RPC)
+  // On attend la fin du RPC avant de rafraîchir la liste pour éviter un race condition
   useEffect(() => {
     if (familyId) {
-      supabase.rpc("generate_daily_task_instances", { _family_id: familyId });
+      supabase
+        .rpc("generate_daily_task_instances", { _family_id: familyId })
+        .then(() => queryClient.invalidateQueries({ queryKey: ["today-tasks"] }));
     }
-  }, [familyId]);
+  }, [familyId, queryClient]);
 
   /** Requête des tâches du jour avec les détails du template et les photos de preuve */
   const tasksQuery = useQuery({
