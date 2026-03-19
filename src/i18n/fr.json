@@ -173,14 +173,19 @@
     "resetTitle": "Nouveau mot de passe",
     "resetSubtitle": "Choisissez un nouveau mot de passe",
     "newPassword": "Nouveau mot de passe",
-    "confirmPassword": "Confirmer",
+    "confirmPassword": "Confirmer le mot de passe",
     "updating": "Mise à jour...",
     "updatePassword": "Mettre à jour le mot de passe",
     "passwordMismatch": "Les mots de passe ne correspondent pas.",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères.",
     "passwordUpdated": "Votre mot de passe a été mis à jour.",
     "invalidLink": "Lien invalide",
     "invalidLinkDesc": "Ce lien de réinitialisation est invalide ou expiré.",
-    "success": "Succès"
+    "success": "Succès",
+    "childFamilyCode": "Code du foyer",
+    "childFamilyCodePlaceholder": "Ex : a1b2c3d4",
+    "childNamePlaceholder": "Ton prénom",
+    "childNotFound": "Aucun enfant trouvé avec ce prénom dans ce foyer."
   },
   "dashboard": {
     "parentTitle": "Tableau de bord Parent",
@@ -227,7 +232,15 @@
     "invalidCode": "Code invalide",
     "invalidCodeDesc": "Aucun foyer trouvé avec ce code.",
     "welcomeJoined": "Bienvenue !",
-    "joinedDesc": "Vous avez rejoint \"{{name}}\"."
+    "joinedDesc": "Vous avez rejoint \"{{name}}\".",
+    "childNameTaken": "Un enfant portant ce prénom existe déjà dans ce foyer.",
+    "resetChildPassword": "Réinitialiser le mot de passe",
+    "resetChildPasswordTitle": "Réinitialiser le mot de passe",
+    "resetChildPasswordDesc": "Définissez un nouveau mot de passe pour {{name}}. L'enfant devra utiliser ce mot de passe pour se connecter.",
+    "resetChildPasswordButton": "Réinitialiser",
+    "resetChildPasswordSuccess": "Mot de passe réinitialisé !",
+    "resetChildPasswordSuccessDesc": "Le nouveau mot de passe de {{name}} a été enregistré.",
+    "resetChildPasswordError": "Erreur lors de la réinitialisation du mot de passe."
   },
   "taskList": {
     "todayTasks": "Tâches du jour",

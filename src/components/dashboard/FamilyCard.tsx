@@ -3,6 +3,7 @@
  * Affiche les membres de la famille, le code d'invitation,
  * ou propose de créer/rejoindre une famille si l'utilisateur
  * n'en a pas encore.
+ * Les parents peuvent réinitialiser le mot de passe des enfants.
  */
 
 import { useEffect, useState } from "react";
@@ -15,9 +16,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useToast } from "@/hooks/use-toast";
-import { Users, Copy, Check, UserPlus, Home } from "lucide-react";
+import { Users, Copy, Check, UserPlus, Home, KeyRound } from "lucide-react";
 import CreateFamilyDialog from "./CreateFamilyDialog";
 import JoinFamilyDialog from "./JoinFamilyDialog";
+import ResetChildPasswordDialog from "./ResetChildPasswordDialog";
 
 interface FamilyMember {
   user_id: string;
@@ -28,7 +30,7 @@ interface FamilyMember {
 
 export default function FamilyCard() {
   const { t } = useTranslation();
-  const { user, profile } = useAuth();
+  const { user, profile, role: currentUserRole } = useAuth();
   const { activeProfile } = useProfileSwitch();
   const { toast } = useToast();
   const [family, setFamily] = useState<{ id: string; name: string; invite_code: string } | null>(null);
@@ -37,6 +39,7 @@ export default function FamilyCard() {
   const [createOpen, setCreateOpen] = useState(false);
   const [joinOpen, setJoinOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [resetTarget, setResetTarget] = useState<{ id: string; name: string } | null>(null);
 
   const fetchFamily = async () => {
     if (!profile?.family_id) {
@@ -125,49 +128,72 @@ export default function FamilyCard() {
   }
 
   return (
-    <Card className="shadow-card">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Users className="h-5 w-5 text-primary" />
-          {family?.name}
-        </CardTitle>
-        <div className="flex items-center gap-2">
-          <code className="bg-muted px-3 py-1 rounded-md text-sm font-mono tracking-wider">
-            {family?.invite_code}
-          </code>
-          <Button variant="ghost" size="icon" onClick={copyCode} className="h-8 w-8">
-            {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          <p className="text-sm text-muted-foreground">
-            {t("family.memberCount", { count: members.length })}
-          </p>
-          <div className="grid gap-2">
-            {members.map((member) => (
-              <div
-                key={member.user_id}
-                className="flex items-center gap-3 p-2 rounded-lg bg-muted/50"
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-                    {member.name.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm font-medium text-foreground flex-1">{member.name}</span>
-                <Badge variant={member.role === "parent" ? "default" : "secondary"} className="text-xs">
-                  {member.role === "parent" ? t("common.parent") : t("common.child")}
-                </Badge>
-                {member.user_id === activeProfile?.userId && (
-                  <Badge variant="outline" className="text-xs">{t("common.you")}</Badge>
-                )}
-              </div>
-            ))}
+    <>
+      <Card className="shadow-card">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            {family?.name}
+          </CardTitle>
+          <div className="flex items-center gap-2">
+            <code className="bg-muted px-3 py-1 rounded-md text-sm font-mono tracking-wider">
+              {family?.invite_code}
+            </code>
+            <Button variant="ghost" size="icon" onClick={copyCode} className="h-8 w-8">
+              {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
+            </Button>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              {t("family.memberCount", { count: members.length })}
+            </p>
+            <div className="grid gap-2">
+              {members.map((member) => (
+                <div
+                  key={member.user_id}
+                  className="flex items-center gap-3 p-2 rounded-lg bg-muted/50"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                      {member.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium text-foreground flex-1">{member.name}</span>
+                  <Badge variant={member.role === "parent" ? "default" : "secondary"} className="text-xs">
+                    {member.role === "parent" ? t("common.parent") : t("common.child")}
+                  </Badge>
+                  {member.user_id === activeProfile?.userId && (
+                    <Badge variant="outline" className="text-xs">{t("common.you")}</Badge>
+                  )}
+                  {/* Bouton reset mot de passe visible uniquement pour les parents sur les comptes enfants */}
+                  {currentUserRole === "parent" && member.role === "child" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground hover:text-primary"
+                      title={t("family.resetChildPassword")}
+                      onClick={() => setResetTarget({ id: member.user_id, name: member.name })}
+                    >
+                      <KeyRound className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {resetTarget && (
+        <ResetChildPasswordDialog
+          open={!!resetTarget}
+          onOpenChange={(open) => { if (!open) setResetTarget(null); }}
+          childId={resetTarget.id}
+          childName={resetTarget.name}
+        />
+      )}
+    </>
   );
 }
