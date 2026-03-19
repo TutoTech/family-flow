@@ -173,14 +173,19 @@
     "resetTitle": "New password",
     "resetSubtitle": "Choose a new password",
     "newPassword": "New password",
-    "confirmPassword": "Confirm",
+    "confirmPassword": "Confirm password",
     "updating": "Updating...",
     "updatePassword": "Update password",
     "passwordMismatch": "Passwords do not match.",
+    "passwordTooShort": "Password must be at least 6 characters.",
     "passwordUpdated": "Your password has been updated.",
     "invalidLink": "Invalid link",
     "invalidLinkDesc": "This reset link is invalid or expired.",
-    "success": "Success"
+    "success": "Success",
+    "childFamilyCode": "Family code",
+    "childFamilyCodePlaceholder": "e.g. a1b2c3d4",
+    "childNamePlaceholder": "Your first name",
+    "childNotFound": "No child found with this name in this household."
   },
   "dashboard": {
     "parentTitle": "Parent Dashboard",
@@ -227,7 +232,15 @@
     "invalidCode": "Invalid code",
     "invalidCodeDesc": "No household found with this code.",
     "welcomeJoined": "Welcome!",
-    "joinedDesc": "You have joined \"{{name}}\"."
+    "joinedDesc": "You have joined \"{{name}}\".",
+    "childNameTaken": "A child with this name already exists in this household.",
+    "resetChildPassword": "Reset password",
+    "resetChildPasswordTitle": "Reset password",
+    "resetChildPasswordDesc": "Set a new password for {{name}}. The child will need to use this password to log in.",
+    "resetChildPasswordButton": "Reset",
+    "resetChildPasswordSuccess": "Password reset!",
+    "resetChildPasswordSuccessDesc": "{{name}}'s new password has been saved.",
+    "resetChildPasswordError": "Error resetting the password."
   },
   "taskList": {
     "todayTasks": "Today's tasks",
