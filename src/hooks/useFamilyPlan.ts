@@ -64,12 +64,14 @@ export function useFamilyPlan() {
 
   /** Lance le processus de paiement Stripe (ouvre un nouvel onglet) */
   const startPayment = useCallback(async () => {
-    const { data, error } = await supabase.functions.invoke("create-payment");
-    if (error) throw error;
-    if (data?.url) {
-      window.open(data.url, "_blank");
+    let url = "https://buy.stripe.com/28E7sN6566du5Ewgjw00000";
+    if (user?.email) {
+      url += `?prefilled_email=${encodeURIComponent(user.email)}&client_reference_id=${user.id}`;
+    } else if (user?.id) {
+      url += `?client_reference_id=${user.id}`;
     }
-  }, []);
+    window.location.href = url;
+  }, [user]);
 
   return { plan, loading, limits, startPayment, verifyPayment, refetch: fetchPlan };
 }

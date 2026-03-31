@@ -21,11 +21,13 @@ const PricingSection = () => {
     if (!session) return;
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("create-payment");
-      if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
-    } catch {
-      // silent
+      let url = "https://buy.stripe.com/28E7sN6566du5Ewgjw00000";
+      if (session.user?.email) {
+        url += `?prefilled_email=${encodeURIComponent(session.user.email)}&client_reference_id=${session.user.id}`;
+      } else if (session.user?.id) {
+        url += `?client_reference_id=${session.user.id}`;
+      }
+      window.location.href = url;
     } finally {
       setLoading(false);
     }
