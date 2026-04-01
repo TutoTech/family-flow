@@ -801,6 +801,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_child_streak: { Args: { child_uuid: string }; Returns: number }
       generate_daily_task_instances: {
         Args: { _family_id: string }
         Returns: undefined
@@ -825,7 +826,6 @@ export type Database = {
           plan: string
         }[]
       }
-      update_all_streaks: { Args: never; Returns: undefined }
       update_child_task_color: {
         Args: { p_color: string; p_task_template_id: string }
         Returns: undefined
