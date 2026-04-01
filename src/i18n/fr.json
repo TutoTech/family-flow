@@ -203,7 +203,16 @@
     "penalties": "Pénalités",
     "wallet": "Portefeuille",
     "houseRules": "Règles à respecter",
-    "todayTasks": "Tâches du jour"
+    "todayTasks": "Tâches du jour",
+    "tabs": {
+      "tasks": "Tâches du jour",
+      "penalties": "Pénalités",
+      "rewards": "Récompenses",
+      "rules": "Règles",
+      "history": "Historique",
+      "stats": "Statistiques",
+      "calendar": "Calendrier"
+    }
   },
   "childDashboard": {
     "houseRules": "Règles de la maison",

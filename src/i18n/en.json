@@ -199,11 +199,20 @@
     "wallet": "Wallet",
     "streak": "Perfect streak",
     "streakDays": "{{count}} days",
-    "tasks": "Today's tasks",
+    "tasks": "Today's Tasks",
     "completed": "Completed",
     "penalties": "Penalties",
-    "houseRules": "Active rules",
-    "todayTasks": "Today's tasks"
+    "houseRules": "House Rules",
+    "todayTasks": "Today's Tasks",
+    "tabs": {
+      "tasks": "Today's Tasks",
+      "penalties": "Penalties",
+      "rewards": "Rewards",
+      "rules": "Rules",
+      "history": "History",
+      "stats": "Stats",
+      "calendar": "Calendar"
+    }
   },
   "childDashboard": {
     "houseRules": "House rules",
