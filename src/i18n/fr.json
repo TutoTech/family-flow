@@ -344,7 +344,8 @@
     "active": "active",
     "inactiveStatus": "inactive",
     "custom": "Personnalisé",
-    "pageTitle": "Gestion des tâches"
+    "pageTitle": "Gestion des tâches",
+    "sortByTime": "Trier par heure limite"
   },
   "rewards": {
     "title": "Récompenses",

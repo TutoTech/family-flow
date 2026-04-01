@@ -21,7 +21,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Plus, Pencil, Trash2, Clock, Star, Camera, RotateCcw, Copy, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowLeft, Plus, Pencil, Trash2, Clock, Star, Camera, RotateCcw, Copy, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TaskTemplatesPage() {
@@ -97,6 +97,34 @@ export default function TaskTemplatesPage() {
     }
   };
 
+  /** Trie toutes les tâches par heure limite (due_time) et persiste le nouvel ordre */
+  const handleSortByTime = async () => {
+    if (templates.length < 2) return;
+
+    // Copie triée par due_time (format HH:MM:SS, comparaison alphabétique suffit)
+    const sorted = [...templates].sort((a, b) => a.due_time.localeCompare(b.due_time));
+
+    // Construire les mises à jour avec les nouveaux display_order séquentiels
+    const updates = sorted.map((tmpl, idx) => ({
+      id: tmpl.id,
+      display_order: idx,
+    }));
+
+    // Ne rien faire si l'ordre n'a pas changé
+    const orderChanged = updates.some((u, i) => {
+      const current = templates.findIndex((t) => t.id === u.id);
+      return current !== i;
+    });
+    if (!orderChanged) return;
+
+    try {
+      await reorderTemplates.mutateAsync(updates);
+      toast({ title: "✓", description: t("taskTemplates.sortByTime") });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
   return (
     <DashboardLayout title={t("taskTemplates.pageTitle")}>
       <div className="max-w-3xl mx-auto space-y-6">
@@ -114,10 +142,16 @@ export default function TaskTemplatesPage() {
               </p>
             </div>
           </div>
-          <Button onClick={() => setCreateOpen(true)} className="gap-1">
-            <Plus className="h-4 w-4" />
-            {t("taskList.newTask")}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleSortByTime} disabled={templates.length < 2 || reorderTemplates.isPending} className="gap-1">
+              <ArrowUpDown className="h-4 w-4" />
+              <span className="hidden sm:inline">{t("taskTemplates.sortByTime")}</span>
+            </Button>
+            <Button onClick={() => setCreateOpen(true)} className="gap-1">
+              <Plus className="h-4 w-4" />
+              {t("taskList.newTask")}
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (

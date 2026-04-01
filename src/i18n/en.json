@@ -344,7 +344,8 @@
     "active": "active",
     "inactiveStatus": "inactive",
     "custom": "Custom",
-    "pageTitle": "Task management"
+    "pageTitle": "Task management",
+    "sortByTime": "Sort by deadline"
   },
   "rewards": {
     "title": "Rewards",
