@@ -22,6 +22,7 @@ export interface TaskTemplate {
   overdue_penalty_points: number;
   is_obligatory: boolean;
   is_active: boolean;
+  disabled_during_vacation: boolean;
   display_order: number;
   bg_color: string | null;
   child_bg_color: string | null;

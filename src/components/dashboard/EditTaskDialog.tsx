@@ -47,6 +47,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
   const [overduePenaltyPoints, setOverduePenaltyPoints] = useState("5");
   const [isObligatory, setIsObligatory] = useState(false);
   const [bgColor, setBgColor] = useState("");
+  const [disabledDuringVacation, setDisabledDuringVacation] = useState(false);
 
   useEffect(() => {
     if (template) {
@@ -61,6 +62,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
       setOverduePenaltyPoints(String(template.overdue_penalty_points || 5));
       setIsObligatory(template.is_obligatory);
       setBgColor(template.bg_color || "");
+      setDisabledDuringVacation(template.disabled_during_vacation);
     }
   }, [template]);
 
@@ -81,6 +83,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
           overdue_penalty_points: overduePenaltyEnabled ? (parseInt(overduePenaltyPoints) || 0) : 0,
           is_obligatory: isObligatory,
           bg_color: bgColor || null,
+          disabled_during_vacation: disabledDuringVacation,
         },
       });
       toast({ title: t("editTask.taskUpdated"), description: t("editTask.taskUpdatedDesc", { title }) });
@@ -196,6 +199,14 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
                 />
               ))}
             </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div>
+              <Label>{t("createTask.disabledDuringVacation")}</Label>
+              <p className="text-xs text-muted-foreground">{t("createTask.disabledDuringVacationHint")}</p>
+            </div>
+            <Switch checked={disabledDuringVacation} onCheckedChange={setDisabledDuringVacation} />
           </div>
         </div>
 

@@ -57,6 +57,7 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
   const [overduePenaltyPoints, setOverduePenaltyPoints] = useState("5");
   const [isObligatory, setIsObligatory] = useState(false);
   const [bgColor, setBgColor] = useState("");
+  const [disabledDuringVacation, setDisabledDuringVacation] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Initialiser les champs à l'ouverture de la modale
@@ -87,12 +88,14 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
         setOverduePenaltyPoints(initialData.overdue_penalty_points ? String(initialData.overdue_penalty_points) : "5");
         setIsObligatory(initialData.is_obligatory || false);
         setBgColor(initialData.bg_color || "");
+        setDisabledDuringVacation(initialData.disabled_during_vacation || false);
       } else {
         setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
         setRecurrence("daily"); setWeeklyDay(String(new Date().getDay())); setSelectedChildren([]); setRequiresPhoto(false);
         setOverduePenaltyEnabled(false); setOverduePenaltyPoints("5");
         setIsObligatory(false);
         setBgColor("");
+        setDisabledDuringVacation(false);
       }
     }
   }, [open, initialData]);
@@ -130,6 +133,7 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
         overdue_penalty_points: overduePenaltyEnabled ? (parseInt(overduePenaltyPoints) || 0) : 0,
         is_obligatory: isObligatory,
         bg_color: bgColor || null,
+        disabled_during_vacation: disabledDuringVacation,
       }));
 
       const { error } = await supabase.from("task_templates").insert(rows);
@@ -284,6 +288,14 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
                 />
               ))}
             </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div>
+              <Label>{t("createTask.disabledDuringVacation")}</Label>
+              <p className="text-xs text-muted-foreground">{t("createTask.disabledDuringVacationHint")}</p>
+            </div>
+            <Switch checked={disabledDuringVacation} onCheckedChange={setDisabledDuringVacation} />
           </div>
         </div>
 

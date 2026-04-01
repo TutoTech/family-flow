@@ -167,6 +167,7 @@ export type Database = {
           streak_bonus_percent: number
           tts_delay_minutes: number
           updated_at: string
+          vacation_mode: boolean
         }
         Insert: {
           currency?: string
@@ -179,6 +180,7 @@ export type Database = {
           streak_bonus_percent?: number
           tts_delay_minutes?: number
           updated_at?: string
+          vacation_mode?: boolean
         }
         Update: {
           currency?: string
@@ -191,6 +193,7 @@ export type Database = {
           streak_bonus_percent?: number
           tts_delay_minutes?: number
           updated_at?: string
+          vacation_mode?: boolean
         }
         Relationships: [
           {
@@ -706,6 +709,7 @@ export type Database = {
           created_at: string
           created_by_user_id: string
           description: string | null
+          disabled_during_vacation: boolean
           display_order: number
           due_time: string
           family_id: string
@@ -729,6 +733,7 @@ export type Database = {
           created_at?: string
           created_by_user_id: string
           description?: string | null
+          disabled_during_vacation?: boolean
           display_order?: number
           due_time: string
           family_id: string
@@ -752,6 +757,7 @@ export type Database = {
           created_at?: string
           created_by_user_id?: string
           description?: string | null
+          disabled_during_vacation?: boolean
           display_order?: number
           due_time?: string
           family_id?: string
@@ -801,7 +807,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_vacation_mode: {
+        Args: { _family_id: string }
+        Returns: undefined
+      }
       calculate_child_streak: { Args: { child_uuid: string }; Returns: number }
+      deactivate_vacation_mode: {
+        Args: { _family_id: string }
+        Returns: undefined
+      }
       generate_daily_task_instances: {
         Args: { _family_id: string }
         Returns: undefined

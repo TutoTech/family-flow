@@ -332,6 +332,8 @@
     "obligatoryTaskHint": "No points earned: this is a daily duty (e.g. brushing teeth)",
     "obligatoryBadge": "Mandatory",
     "bgColor": "Background color",
+    "disabledDuringVacation": "Disable during vacation",
+    "disabledDuringVacationHint": "This task will be automatically suspended when vacation mode is active",
     "creating": "Creating…",
     "createButton": "Create task",
     "taskCreated": "Task created!",
@@ -363,7 +365,8 @@
     "inactiveStatus": "inactive",
     "custom": "Custom",
     "pageTitle": "Task management",
-    "sortByTime": "Sort by deadline"
+    "sortByTime": "Sort by deadline",
+    "vacationSuspended": "Vacation"
   },
   "rewards": {
     "title": "Rewards",
@@ -706,5 +709,14 @@
     "error": "An error occurred during during the adjustment. Please verify the required fields.",
     "success_add": "The bonus has been added to the child's balance!",
     "success_remove": "The adjustment has been removed from the child's balance!"
+  },
+  "vacationMode": {
+    "title": "Vacation mode",
+    "bannerActive": "School tasks are suspended 🏖️",
+    "bannerInactive": "Enable to automatically suspend certain tasks",
+    "activated": "Vacation mode enabled! 🏖️",
+    "activatedDesc": "Marked tasks have been automatically suspended.",
+    "deactivated": "Vacation mode disabled",
+    "deactivatedDesc": "Suspended tasks have been re-enabled."
   }
 }

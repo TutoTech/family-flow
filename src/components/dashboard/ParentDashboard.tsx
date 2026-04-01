@@ -10,8 +10,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { useFamilyPlan } from "@/hooks/useFamilyPlan";
+import { useVacationMode } from "@/hooks/useVacationMode";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Lock, CheckCircle2, AlertTriangle, Gift, ShieldAlert, History, BarChart3 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { CalendarDays, Lock, CheckCircle2, AlertTriangle, Gift, ShieldAlert, History, BarChart3, Palmtree } from "lucide-react";
 import FamilyCard from "./FamilyCard";
 import ParentTaskList from "./ParentTaskList";
 import ParentRewardList from "./ParentRewardList";
@@ -21,6 +23,7 @@ import ActivityHistory from "./ActivityHistory";
 import StatsCharts from "./StatsCharts";
 import UpgradeBanner from "./UpgradeBanner";
 import { PremiumGate } from "./PremiumBadge";
+import { useToast } from "@/hooks/use-toast";
 
 interface Props { name: string; }
 
@@ -28,8 +31,10 @@ export default function ParentDashboard({ name }: Props) {
   const { t } = useTranslation();
   const { profile } = useAuth();
   const { plan } = useFamilyPlan();
+  const { isVacationMode, toggleVacationMode } = useVacationMode();
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   const isPaid = plan === "family";
   const [activeTab, setActiveTab] = useState("tasks");
 
@@ -63,6 +68,19 @@ export default function ParentDashboard({ name }: Props) {
     }
   }, [location.state, navigate, location.pathname]);
 
+  const handleVacationToggle = async () => {
+    const newState = !isVacationMode;
+    try {
+      await toggleVacationMode.mutateAsync(newState);
+      toast({
+        title: newState ? t("vacationMode.activated") : t("vacationMode.deactivated"),
+        description: newState ? t("vacationMode.activatedDesc") : t("vacationMode.deactivatedDesc"),
+      });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
   return (
     <DashboardLayout title={t("dashboard.parentTitle")}>
       <div className="space-y-6">
@@ -86,6 +104,30 @@ export default function ParentDashboard({ name }: Props) {
 
         {profile?.family_id && (
           <>
+            {/* Bannière Mode Vacances */}
+            <div className={`flex items-center justify-between rounded-xl border-2 px-4 py-3 transition-all ${
+              isVacationMode
+                ? "border-amber-400/60 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/40 dark:to-yellow-950/30 dark:border-amber-500/40"
+                : "border-border bg-card"
+            }`}>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{isVacationMode ? "🏖️" : "🌴"}</span>
+                <div>
+                  <p className="font-semibold text-sm text-foreground">
+                    {t("vacationMode.title")}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {isVacationMode ? t("vacationMode.bannerActive") : t("vacationMode.bannerInactive")}
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={isVacationMode}
+                onCheckedChange={handleVacationToggle}
+                disabled={toggleVacationMode.isPending}
+              />
+            </div>
+
             {/* Barre de navigation horizontale (Onglets) */}
             <div className="w-full overflow-x-auto pb-2 hide-scrollbar">
               <div className="flex items-center gap-2 min-w-max">
@@ -152,3 +194,4 @@ export default function ParentDashboard({ name }: Props) {
     </DashboardLayout>
   );
 }
+

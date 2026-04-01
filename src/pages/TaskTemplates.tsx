@@ -17,12 +17,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Plus, Pencil, Trash2, Clock, Star, Camera, RotateCcw, Copy, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { ArrowLeft, Plus, Pencil, Trash2, Clock, Star, Camera, RotateCcw, Copy, ArrowUp, ArrowDown, ArrowUpDown, Palmtree } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useVacationMode } from "@/hooks/useVacationMode";
 
 export default function TaskTemplatesPage() {
   const { t } = useTranslation();
@@ -31,6 +31,7 @@ export default function TaskTemplatesPage() {
   const { toast } = useToast();
   const { templates, isLoading, deleteTemplate, toggleActive, reorderTemplates } = useTaskTemplates();
   const { data: children = [] } = useFamilyChildren();
+  const { isVacationMode } = useVacationMode();
 
   const [editTemplate, setEditTemplate] = useState<TaskTemplate | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<TaskTemplate | null>(null);
@@ -193,6 +194,7 @@ export default function TaskTemplatesPage() {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="font-semibold text-foreground break-words whitespace-normal leading-tight">{template.title}</span>
                         {template.requires_photo && <Camera className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />}
+                        {template.disabled_during_vacation && <Badge variant="outline" className="text-xs gap-1 border-amber-400/60 text-amber-600 dark:text-amber-400"><Palmtree className="h-3 w-3" />{t("taskTemplates.vacationSuspended")}</Badge>}
                         {!template.is_active && <Badge variant="secondary" className="text-xs">{t("taskTemplates.inactive")}</Badge>}
                       </div>
                       {template.description && <p className="text-sm text-muted-foreground break-words whitespace-normal mb-2 leading-tight">{template.description}</p>}

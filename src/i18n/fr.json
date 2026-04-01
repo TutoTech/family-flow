@@ -332,6 +332,8 @@
     "obligatoryTaskHint": "Pas de gain de points : c'est un devoir quotidien (ex. brossage de dents)",
     "obligatoryBadge": "Obligatoire",
     "bgColor": "Couleur de fond",
+    "disabledDuringVacation": "Désactiver en vacances",
+    "disabledDuringVacationHint": "Cette tâche sera automatiquement suspendue lorsque le mode vacances est activé",
     "creating": "Création…",
     "createButton": "Créer la tâche",
     "taskCreated": "Tâche créée !",
@@ -363,7 +365,8 @@
     "inactiveStatus": "inactive",
     "custom": "Personnalisé",
     "pageTitle": "Gestion des tâches",
-    "sortByTime": "Trier par heure limite"
+    "sortByTime": "Trier par heure limite",
+    "vacationSuspended": "Vacances"
   },
   "rewards": {
     "title": "Récompenses",
@@ -706,5 +709,14 @@
     "error": "Une erreur est survenue lors de l'ajustement. Vérifiez les champs obligatoires.",
     "success_add": "Le bonus a bien été ajouté au solde de l'enfant !",
     "success_remove": "L'ajustement a bien été retiré du solde de l'enfant !"
+  },
+  "vacationMode": {
+    "title": "Mode vacances",
+    "bannerActive": "Les tâches scolaires sont suspendues 🏖️",
+    "bannerInactive": "Activez pour suspendre automatiquement certaines tâches",
+    "activated": "Mode vacances activé ! 🏖️",
+    "activatedDesc": "Les tâches marquées ont été automatiquement suspendues.",
+    "deactivated": "Mode vacances désactivé",
+    "deactivatedDesc": "Les tâches suspendues ont été réactivées."
   }
 }
