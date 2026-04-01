@@ -17,15 +17,20 @@ export function useVacationMode() {
   const vacationQuery = useQuery({
     queryKey: ["vacation-mode", familyId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("family_settings")
-        .select("vacation_mode")
-        .eq("family_id", familyId!)
-        .single();
-      if (error) throw error;
-      return data.vacation_mode as boolean;
+      try {
+        const { data, error } = await supabase
+          .from("family_settings")
+          .select("vacation_mode")
+          .eq("family_id", familyId!)
+          .single();
+        if (error) return false;
+        return (data as any)?.vacation_mode ?? false;
+      } catch {
+        return false;
+      }
     },
     enabled: !!familyId,
+    retry: false,
   });
 
   /** Mutation pour basculer le mode vacances */
