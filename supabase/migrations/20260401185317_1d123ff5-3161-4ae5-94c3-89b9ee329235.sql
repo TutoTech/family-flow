@@ -1,0 +1,1 @@
+DELETE FROM public.task_templates WHERE family_id IN ('860cc4ee-9060-41ca-a09e-27675d3d4d19','42f701e4-8205-4f3b-af59-22624e92c00d','13f5a0d8-441c-4b73-ac5b-35913c777686','d4e192ff-607b-468b-adb7-321001920def','cd6300e1-71f8-43c3-a15d-129e64901959');
