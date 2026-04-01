@@ -1,7 +1,7 @@
 -- Real-time accurate streak computation
 
 -- Drop the old flawed function
-DROP FUNCTION IF EXISTS public.update_all_streaks();
+DROP FUNCTION IF EXISTS public.update_all_streaks() CASCADE;
 
 -- Function to dynamically calculate child streak
 CREATE OR REPLACE FUNCTION public.calculate_child_streak(child_uuid uuid)
@@ -23,7 +23,7 @@ BEGIN
     -- 1. Check for penalties on this day
     SELECT EXISTS (
       SELECT 1 FROM public.penalties_log
-      WHERE child_id = child_uuid AND DATE(created_at) = _current_date
+      WHERE child_id = child_uuid AND (created_at at time zone 'utc')::date = _current_date
     ) INTO _had_penalty;
 
     -- 2. Check for failed tasks on this day
@@ -54,8 +54,6 @@ BEGIN
     IF _tasks_exist THEN
       IF _uncompleted_tasks THEN
         -- If today, it just means they haven't finished yet. It doesn't break the streak from yesterday.
-        -- But it doesn't add to the streak.
-        -- If it's in the past, a 'pending' task means they never finished it, so the streak breaks.
         IF _current_date = CURRENT_DATE THEN
           -- Do nothing, just move to yesterday
         ELSE
@@ -68,7 +66,7 @@ BEGIN
     END IF;
 
     -- Move backward
-    _current_date := _current_date - INTERVAL '1 day';
+    _current_date := _current_date - 1;
     
     -- Safety limit to avoid infinite loops in case of extreme data or weird dates
     IF _streak > 1000 THEN 
@@ -131,18 +129,3 @@ DROP TRIGGER IF EXISTS tr_penalties_log_streak ON public.penalties_log;
 CREATE TRIGGER tr_penalties_log_streak
 AFTER INSERT OR DELETE ON public.penalties_log
 FOR EACH ROW EXECUTE FUNCTION public.trigger_update_streak();
-
--- Retroactively fix all streaks for existing children
-DO $$
-DECLARE
-  _child RECORD;
-BEGIN
-  FOR _child IN 
-    SELECT child_id FROM public.child_stats
-  LOOP
-    UPDATE public.child_stats
-    SET streak_days = public.calculate_child_streak(_child.child_id)
-    WHERE child_id = _child.child_id;
-  END LOOP;
-END;
-$$;
