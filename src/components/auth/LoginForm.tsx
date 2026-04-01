@@ -62,7 +62,7 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       // Résolution de l'email synthétique via la fonction SQL SECURITY DEFINER
-      const { data: resolvedEmail, error: rpcError } = await supabase.rpc(
+      const { data: resolvedEmail, error: rpcError } = await (supabase.rpc as any)(
         "get_child_login_email",
         { _child_name: childName.trim(), _invite_code: familyCode.trim() }
       );
@@ -78,7 +78,7 @@ export default function LoginForm() {
         return;
       }
 
-      await signIn(resolvedEmail, password);
+      await signIn(resolvedEmail as string, password);
       navigate("/dashboard");
     } catch (error: any) {
       toast({
