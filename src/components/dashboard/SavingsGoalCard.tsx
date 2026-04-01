@@ -110,7 +110,7 @@ export default function SavingsGoalCard() {
                     <span className="font-semibold text-sm text-foreground">{goal.title}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    {canAfford && !isImpersonating && (
+                    {canAfford && (
                       <Button
                         size="sm"
                         variant="default"
@@ -122,23 +122,21 @@ export default function SavingsGoalCard() {
                         {t("savingsGoals.claim")}
                       </Button>
                     )}
-                    {!isImpersonating && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => setEditGoal(goal)}>
-                            <Pencil className="h-4 w-4 mr-2" />{t("common.edit")}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive" onClick={() => setDeleteGoalConfirm(goal)}>
-                            <Trash2 className="h-4 w-4 mr-2" />{t("common.delete")}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setEditGoal(goal)}>
+                          <Pencil className="h-4 w-4 mr-2" />{t("common.edit")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => setDeleteGoalConfirm(goal)}>
+                          <Trash2 className="h-4 w-4 mr-2" />{t("common.delete")}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
 
