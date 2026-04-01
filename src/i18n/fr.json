@@ -216,7 +216,15 @@
   },
   "childDashboard": {
     "houseRules": "Règles de la maison",
-    "houseRulesDesc": "Comportements attendus et pénalités en cas de manquement."
+    "houseRulesDesc": "Comportements attendus et pénalités en cas de manquement.",
+    "tabs": {
+      "tasks": "Mes tâches",
+      "penalties": "Mes pénalités",
+      "rules": "Règles de la maison",
+      "rewards": "Boutique",
+      "savings": "Mes objectifs d'épargne",
+      "history": "Historique"
+    }
   },
   "family": {
     "createOrJoinTitle": "Créez ou rejoignez un foyer",

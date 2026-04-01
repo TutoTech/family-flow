@@ -216,7 +216,15 @@
   },
   "childDashboard": {
     "houseRules": "House rules",
-    "houseRulesDesc": "Expected behaviors and penalties for infractions."
+    "houseRulesDesc": "Expected behaviors and penalties for infractions.",
+    "tabs": {
+      "tasks": "My Tasks",
+      "penalties": "My Penalties",
+      "rules": "House Rules",
+      "rewards": "Shop",
+      "savings": "My Savings Goals",
+      "history": "History"
+    }
   },
   "family": {
     "createOrJoinTitle": "Create or join a household",

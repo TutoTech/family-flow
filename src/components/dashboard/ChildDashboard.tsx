@@ -5,12 +5,12 @@
  * les objectifs d'épargne, la boutique de récompenses et l'historique.
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star, Flame, CheckCircle2, AlertTriangle, Wallet, Shield } from "lucide-react";
+import { Star, Flame, CheckCircle2, AlertTriangle, Wallet, Shield, Gift, Target, History } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useFamilyPlan } from "@/hooks/useFamilyPlan";
@@ -27,8 +27,6 @@ import BadgesDisplay from "./BadgesDisplay";
 import BadgeCelebration from "./BadgeCelebration";
 import LevelCelebration from "./LevelCelebration";
 import { useChildStats } from "@/hooks/useRewards";
-import { useTodayTasks } from "@/hooks/useTasks";
-import { useFamilyRules } from "@/hooks/usePenalties";
 import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props { name: string; }
@@ -41,13 +39,21 @@ export default function ChildDashboard({ name }: Props) {
   const isPaid = plan === "family";
   const navigate = useNavigate();
   const location = useLocation();
+  const [activeTab, setActiveTab] = useState("tasks");
+
+  const TABS = [
+    { id: "tasks", label: t("childDashboard.tabs.tasks"), icon: CheckCircle2, emoji: "📝", colorClass: "hover:bg-emerald-100 text-emerald-700 bg-emerald-50", activeClass: "bg-emerald-500 text-white shadow-emerald-200" },
+    { id: "penalties", label: t("childDashboard.tabs.penalties"), icon: AlertTriangle, emoji: "🚨", colorClass: "hover:bg-destructive/10 text-destructive bg-destructive/5", activeClass: "bg-destructive text-white shadow-red-200" },
+    { id: "rules", label: t("childDashboard.tabs.rules"), icon: Shield, emoji: "📜", colorClass: "hover:bg-purple-100 text-purple-700 bg-purple-50", activeClass: "bg-purple-500 text-white shadow-purple-200" },
+    { id: "rewards", label: t("childDashboard.tabs.rewards"), icon: Gift, emoji: "🎁", colorClass: "hover:bg-amber-100 text-amber-700 bg-amber-50", activeClass: "bg-amber-500 text-white shadow-amber-200" },
+    { id: "savings", label: t("childDashboard.tabs.savings"), icon: Target, emoji: "🎯", colorClass: "hover:bg-blue-100 text-blue-700 bg-blue-50", activeClass: "bg-blue-500 text-white shadow-blue-200" },
+    { id: "history", label: t("childDashboard.tabs.history"), icon: History, emoji: "🕰️", colorClass: "hover:bg-gray-100 text-gray-700 bg-gray-50", activeClass: "bg-gray-700 text-white shadow-gray-200" },
+  ];
 
   // Détermine l'ID de l'enfant affiché (impersoné ou réel)
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
   const { data: stats } = useChildStats(isImpersonating ? viewUserId : undefined);
   const { symbol: currencySymbol } = useCurrency();
-  const { tasks } = useTodayTasks();
-  const { data: rules = [] } = useFamilyRules();
 
   // Scroll to section if coming from notification click
   useEffect(() => {
@@ -68,18 +74,8 @@ export default function ChildDashboard({ name }: Props) {
   }, [location.state, navigate, location.pathname]);
 
   // Filtre les tâches assignées à cet enfant
-  const myTasks = tasks.filter((t) => t.assigned_to_user_id === viewUserId);
-  const completedTasks = myTasks.filter((t) => ["validated", "awaiting_validation", "done"].includes(t.status));
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const headerOffset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - headerOffset;
-      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-    }
-  };
+
 
   return (
     <DashboardLayout title={t("dashboard.childTitle")}>
@@ -98,66 +94,31 @@ export default function ChildDashboard({ name }: Props) {
         {!profile?.family_id && <FamilyCard />}
 
         {/* Cartes de statistiques rapides */}
-        <div className="grid grid-cols-2 xl:grid-cols-6 gap-4">
-          {/* Solde du portefeuille → objectifs d'épargne */}
-          <Card className="shadow-card bg-emerald-500/5 border-emerald-500/20 cursor-pointer hover:ring-2 hover:ring-emerald-500/30 transition-shadow" onClick={() => scrollToSection("section-savings")}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.wallet")}</CardTitle>
-              <Wallet className="h-4 w-4 text-emerald-600" />
-            </CardHeader>
-            <CardContent><div className="text-2xl font-bold text-emerald-600">{(stats?.wallet_balance ?? 0).toFixed(2)}{currencySymbol}</div></CardContent>
+        <div className="grid grid-cols-3 gap-3">
+          {/* Solde du portefeuille */}
+          <Card className="shadow-card bg-emerald-500/5 border-emerald-500/20">
+            <CardContent className="p-3 flex flex-col items-center justify-center text-center">
+              <Wallet className="h-5 w-5 text-emerald-600 mb-1" />
+              <div className="text-xl font-bold text-emerald-600">{(stats?.wallet_balance ?? 0).toFixed(2)}{currencySymbol}</div>
+              <p className="text-xs font-medium text-muted-foreground">{t("dashboard.wallet")}</p>
+            </CardContent>
           </Card>
 
-          {/* Points → boutique récompenses */}
-          <Card className="shadow-card bg-primary/5 border-primary/20 cursor-pointer hover:ring-2 hover:ring-primary/30 transition-shadow" onClick={() => scrollToSection("section-rewards")}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{t("common.points")}</CardTitle>
-              <Star className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent><div className="text-2xl font-bold text-primary">{stats?.current_points ?? 0}</div></CardContent>
+          {/* Points */}
+          <Card className="shadow-card bg-primary/5 border-primary/20">
+            <CardContent className="p-3 flex flex-col items-center justify-center text-center">
+              <Star className="h-5 w-5 text-primary mb-1" />
+              <div className="text-xl font-bold text-primary">{stats?.current_points ?? 0}</div>
+              <p className="text-xs font-medium text-muted-foreground">{t("common.points")}</p>
+            </CardContent>
           </Card>
 
           {/* Série de jours consécutifs */}
           <Card className="shadow-card bg-accent/10 border-accent/20">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.streak")}</CardTitle>
-              <Flame className="h-4 w-4 text-accent-foreground" />
-            </CardHeader>
-            <CardContent><div className="text-2xl font-bold text-accent-foreground">{t("dashboard.streakDays", { count: stats?.streak_days ?? 0 })}</div></CardContent>
-          </Card>
-
-          {/* Tâches → liste des tâches */}
-          <Card className="shadow-card cursor-pointer hover:ring-2 hover:ring-secondary/30 transition-shadow" onClick={() => scrollToSection("section-tasks")}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.tasks")}</CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-secondary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">{completedTasks.length}/{myTasks.length}</div>
-              <p className="text-xs text-muted-foreground">{t("dashboard.completed")}</p>
-            </CardContent>
-          </Card>
-
-          {/* Règles → liste de règles */}
-          <Card className="shadow-card cursor-pointer hover:ring-2 hover:ring-muted/30 transition-shadow" onClick={() => scrollToSection("section-rules")}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.houseRules")}</CardTitle>
-              <Shield className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">{rules.length}</div>
-            </CardContent>
-          </Card>
-
-          {/* Pénalités → historique pénalités */}
-          <Card className="shadow-card bg-destructive/5 border-destructive/20 cursor-pointer hover:ring-2 hover:ring-destructive/30 transition-shadow" onClick={() => scrollToSection("section-penalties")}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.penalties")}</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-destructive" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-destructive">{stats?.daily_penalties ?? 0}</div>
-              <p className="text-xs text-muted-foreground">{t("common.today")}</p>
+            <CardContent className="p-3 flex flex-col items-center justify-center text-center">
+              <Flame className="h-5 w-5 text-accent-foreground mb-1" />
+              <div className="text-xl font-bold text-accent-foreground">{stats?.streak_days ?? 0}</div>
+              <p className="text-xs font-medium text-muted-foreground">{t("dashboard.streak")}</p>
             </CardContent>
           </Card>
         </div>
@@ -174,19 +135,49 @@ export default function ChildDashboard({ name }: Props) {
               <BadgesDisplay />
             </div>
 
-            {/* Liste des tâches du jour */}
-            <ChildTaskList />
+            {/* Barre de navigation horizontale (Onglets) */}
+            <div className="w-full overflow-x-auto pb-2 hide-scrollbar mt-2">
+              <div className="flex items-center gap-2 min-w-max">
+                {TABS.map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
 
-            {/* Objectifs d'épargne : premium uniquement */}
-            {isPaid ? <SavingsGoalCard /> : (
-              <PremiumGate featureLabel={t("savingsGoals.title")}><SavingsGoalCard /></PremiumGate>
-            )}
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium whitespace-nowrap transition-all duration-300 ${
+                        isActive 
+                          ? `${tab.activeClass} shadow-lg scale-105` 
+                          : `${tab.colorClass} opacity-80 hover:opacity-100`
+                      }`}
+                    >
+                      <span className="text-lg">{tab.emoji}</span>
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-            {/* Boutique de récompenses et historique */}
-            <ChildRewardShop />
-            <ChildRulesList />
-            <ChildPenaltyHistory />
-            <ActivityHistory />
+            {/* Contenu conditionnel selon l'onglet actif */}
+            <div className="pt-2 animate-in fade-in slide-in-from-bottom-2 duration-400">
+              {activeTab === "tasks" && <ChildTaskList />}
+              
+              {activeTab === "penalties" && <ChildPenaltyHistory />}
+              
+              {activeTab === "rules" && <ChildRulesList />}
+              
+              {activeTab === "rewards" && <ChildRewardShop />}
+              
+              {activeTab === "savings" && (
+                isPaid ? <SavingsGoalCard /> : (
+                  <PremiumGate featureLabel={t("savingsGoals.title")}><SavingsGoalCard /></PremiumGate>
+                )
+              )}
+
+              {activeTab === "history" && <ActivityHistory />}
+            </div>
           </>
         )}
       </div>
