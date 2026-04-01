@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 // Web Push using the web-push library
-import webpush from "npm:web-push@3.6.7";
+import webpush from "https://esm.sh/web-push@3.6.7";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
