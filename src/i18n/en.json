@@ -262,7 +262,8 @@
     "notDone": "Not done",
     "penaltyApplied": "Penalty applied!",
     "allChildren": "All children",
-    "noFilterResults": "No tasks match these filters"
+    "noFilterResults": "No tasks match these filters",
+    "sortByTime": "Sort by time"
   },
   "childTasks": {
     "toDo": "To do",

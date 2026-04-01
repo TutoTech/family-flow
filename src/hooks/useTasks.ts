@@ -42,13 +42,23 @@ export function useTodayTasks() {
 
       if (error) throw error;
       
-      // Tri côté client : d'abord par display_order, puis par heure d'échéance (due_at)
+      // Tri côté client : d'abord par task_instance.display_order,
+      // puis par task_template.display_order, et enfin par heure d'échéance (due_at).
+      // Comme la colonne display_order de task_stances vaut 0 par défaut, les éléments non ordonnés
+      // manuellement garderont leur ordre de template. S'ils sont réorganisés (0, 1, 2...), cela primera.
       const sortedData = [...(data || [])].sort((a, b) => {
-        const orderA = a.task_template?.display_order ?? 0;
-        const orderB = b.task_template?.display_order ?? 0;
+        const instOrderA = a.display_order ?? 0;
+        const instOrderB = b.display_order ?? 0;
+
+        if (instOrderA !== instOrderB) {
+          return instOrderA - instOrderB;
+        }
+
+        const tmplOrderA = a.task_template?.display_order ?? 0;
+        const tmplOrderB = b.task_template?.display_order ?? 0;
         
-        if (orderA !== orderB) {
-          return orderA - orderB;
+        if (tmplOrderA !== tmplOrderB) {
+          return tmplOrderA - tmplOrderB;
         }
         
         // En cas d'égalité sur l'ordre d'affichage, on trie par heure
@@ -235,10 +245,30 @@ export function useTodayTasks() {
     },
   });
 
+  /** Réorganise dynamiquement une liste d'instances de tâches du jour */
+  const reorderDailyTasks = useMutation({
+    mutationFn: async (updates: { id: string; display_order: number }[]) => {
+      // Exécute les promesses de mise à jour en parallèle
+      const promises = updates.map((update) => 
+        supabase
+          .from("task_instances")
+          .update({ display_order: update.display_order })
+          .eq("id", update.id)
+      );
+      
+      const results = await Promise.all(promises);
+      const firstError = results.find((r) => r.error);
+      if (firstError) throw firstError.error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
+    },
+  });
+
   return { 
     tasks: tasksQuery.data ?? [], 
     isLoading: tasksQuery.isLoading, 
-    completeTask, validateTask, resetTask, skipTask, markNotDone, updateChildTaskColor 
+    completeTask, validateTask, resetTask, skipTask, markNotDone, updateChildTaskColor, reorderDailyTasks
   };
 }
 

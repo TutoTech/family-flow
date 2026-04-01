@@ -8,7 +8,7 @@ import { useTodayTasks, useFamilyChildren } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
-import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw, Filter, Users } from "lucide-react";
+import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw, Filter, Users, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -30,7 +30,7 @@ const STATUS_GROUPS: { key: StatusFilter; color: string }[] = [
 
 export default function ParentTaskList() {
   const { t } = useTranslation();
-  const { tasks, isLoading, validateTask, resetTask, markNotDone } = useTodayTasks();
+  const { tasks, isLoading, validateTask, resetTask, markNotDone, reorderDailyTasks } = useTodayTasks();
   const { data: children = [] } = useFamilyChildren();
   const childNameMap = Object.fromEntries(children.map((c) => [c.user_id, c.name]));
   const { toast } = useToast();
@@ -111,6 +111,50 @@ export default function ParentTaskList() {
     if (data?.signedUrl) setPreviewPhoto(data.signedUrl);
   };
 
+  const handleMove = async (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === filteredTasks.length - 1) return;
+
+    const currentTask = filteredTasks[index];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const targetTask = filteredTasks[targetIndex];
+
+    try {
+      // Échange les valeurs de display_order entre les deux éléments
+      // S'ils valaient 0 (défaut), on prend les index globaux pour forcer l'ordre
+      const currentOrder = currentTask.display_order || index;
+      const targetOrder = targetTask.display_order || targetIndex;
+      
+      await reorderDailyTasks.mutateAsync([
+        { id: currentTask.id, display_order: targetOrder },
+        { id: targetTask.id, display_order: currentOrder }
+      ]);
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
+  /** Trie toutes les tâches par heure limite (due_at) et persiste le nouvel ordre */
+  const handleSortByTime = async () => {
+    if (filteredTasks.length < 2) return;
+
+    // Copie triée par due_at
+    const sorted = [...filteredTasks].sort((a, b) => (a.due_at || "").localeCompare(b.due_at || ""));
+
+    // Construire les mises à jour avec les nouveaux display_order séquentiels
+    const updates = sorted.map((tk, idx) => ({
+      id: tk.id,
+      display_order: idx,
+    }));
+
+    try {
+      await reorderDailyTasks.mutateAsync(updates);
+      toast({ title: "✓", description: t("taskList.sortByTime") });
+    } catch (err: any) {
+      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    }
+  };
+
   const getStatusFilterLabel = (key: StatusFilter): string => {
     if (key === "all") return t("common.all");
     return STATUS_MAP[key]?.label ?? key;
@@ -122,6 +166,10 @@ export default function ParentTaskList() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">{t("taskList.todayTasks")}</CardTitle>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleSortByTime} disabled={isReadOnly || filteredTasks.length < 2 || reorderDailyTasks.isPending} className="gap-1">
+              <ArrowUpDown className="h-4 w-4" />
+              <span className="hidden sm:inline">{t("taskList.sortByTime")}</span>
+            </Button>
             <Button size="sm" variant="outline" onClick={() => navigate("/tasks")} className="gap-1" disabled={isReadOnly}>
               <Settings2 className="h-4 w-4" />{t("common.manage")}
             </Button>
@@ -200,7 +248,7 @@ export default function ParentTaskList() {
             </div>
           ) : (
             <div className="space-y-2">
-              {filteredTasks.map((task) => {
+              {filteredTasks.map((task, index) => {
                 const status = STATUS_MAP[task.status] ?? STATUS_MAP.pending;
                 const tmpl = task.task_template as any;
                 const evidence = (task.evidence as any[]) ?? [];
@@ -208,6 +256,15 @@ export default function ParentTaskList() {
 
                 return (
                   <div key={task.id} className={`flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border ${bgColorClass}`}>
+                    <div className="flex flex-col items-center gap-0 flex-shrink-0">
+                      <Button variant="ghost" size="icon" className="h-6 w-6" disabled={isReadOnly || index === 0 || reorderDailyTasks.isPending} onClick={() => handleMove(index, 'up')}>
+                        <ArrowUp className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-6 w-6" disabled={isReadOnly || index === filteredTasks.length - 1 || reorderDailyTasks.isPending} onClick={() => handleMove(index, 'down')}>
+                        <ArrowDown className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
                     <div className="flex-1 min-w-0 w-full text-left">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium text-sm text-foreground break-words whitespace-normal">{tmpl?.title}</span>

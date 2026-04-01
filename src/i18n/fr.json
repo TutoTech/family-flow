@@ -262,7 +262,8 @@
     "notDone": "Pas fait",
     "penaltyApplied": "Pénalité appliquée !",
     "allChildren": "Tous les enfants",
-    "noFilterResults": "Aucune tâche ne correspond à ces filtres"
+    "noFilterResults": "Aucune tâche ne correspond à ces filtres",
+    "sortByTime": "Trier par heure"
   },
   "childTasks": {
     "toDo": "À faire",

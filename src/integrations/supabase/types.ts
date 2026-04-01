@@ -640,6 +640,7 @@ export type Database = {
           assigned_to_user_id: string
           completed_at: string | null
           created_at: string
+          display_order: number
           due_at: string
           family_id: string
           id: string
@@ -654,6 +655,7 @@ export type Database = {
           assigned_to_user_id: string
           completed_at?: string | null
           created_at?: string
+          display_order?: number
           due_at: string
           family_id: string
           id?: string
@@ -668,6 +670,7 @@ export type Database = {
           assigned_to_user_id?: string
           completed_at?: string | null
           created_at?: string
+          display_order?: number
           due_at?: string
           family_id?: string
           id?: string
