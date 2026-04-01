@@ -48,6 +48,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
   const [isObligatory, setIsObligatory] = useState(false);
   const [bgColor, setBgColor] = useState("");
   const [disabledDuringVacation, setDisabledDuringVacation] = useState(false);
+  const [routineTag, setRoutineTag] = useState<string | null>(null);
 
   useEffect(() => {
     if (template) {
@@ -63,6 +64,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
       setIsObligatory(template.is_obligatory);
       setBgColor(template.bg_color || "");
       setDisabledDuringVacation(template.disabled_during_vacation);
+      setRoutineTag(template.routine_tag);
     }
   }, [template]);
 
@@ -84,6 +86,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
           is_obligatory: isObligatory,
           bg_color: bgColor || null,
           disabled_during_vacation: disabledDuringVacation,
+          routine_tag: routineTag,
         },
       });
       toast({ title: t("editTask.taskUpdated"), description: t("editTask.taskUpdatedDesc", { title }) });
@@ -197,6 +200,31 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
                     bgColor === color.value ? "border-primary scale-110 shadow-sm" : "border-border hover:scale-105"
                   }`}
                 />
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>{t("createTask.routineTag")}</Label>
+            <div className="flex gap-2">
+              {[
+                { value: null, label: t("createTask.routineNone"), emoji: "—" },
+                { value: "morning", label: t("createTask.routineMorning"), emoji: "🌅" },
+                { value: "evening", label: t("createTask.routineEvening"), emoji: "🌙" },
+              ].map((opt) => (
+                <button
+                  key={opt.value ?? "none"}
+                  type="button"
+                  onClick={() => setRoutineTag(opt.value)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                    routineTag === opt.value
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                  }`}
+                >
+                  <span>{opt.emoji}</span>
+                  {opt.label}
+                </button>
               ))}
             </div>
           </div>

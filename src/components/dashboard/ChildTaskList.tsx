@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { TASK_COLORS } from "@/utils/taskColors";
 
 type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
+type RoutineFilter = "all" | "morning" | "evening" | "none";
 
 const STATUS_GROUPS: { key: StatusFilter; color: string }[] = [
   { key: "all", color: "" },
@@ -47,6 +48,7 @@ export default function ChildTaskList() {
   };
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [routineFilter, setRoutineFilter] = useState<RoutineFilter>("all");
 
   const myTasks = tasks.filter((tk) => tk.assigned_to_user_id === viewUserId);
 
@@ -59,12 +61,18 @@ export default function ChildTaskList() {
     return counts;
   }, [myTasks]);
 
-  // Filtered tasks
   const filteredTasks = useMemo(() => {
     return myTasks.filter((task) => {
-      return statusFilter === "all" || task.status === statusFilter;
+      const statusMatch = statusFilter === "all" || task.status === statusFilter;
+      const tmpl = task.task_template as any;
+      const tag = tmpl?.routine_tag || null;
+      const routineMatch = routineFilter === "all" 
+        || (routineFilter === "morning" && tag === "morning")
+        || (routineFilter === "evening" && tag === "evening")
+        || (routineFilter === "none" && !tag);
+      return statusMatch && routineMatch;
     });
-  }, [myTasks, statusFilter]);
+  }, [myTasks, statusFilter, routineFilter]);
 
   const getStatusFilterLabel = (key: StatusFilter): string => {
     if (key === "all") return t("common.all");
@@ -148,31 +156,59 @@ export default function ChildTaskList() {
         <CardContent className="space-y-3">
           {/* Filters bar */}
           {myTasks.length > 0 && (
-            <div className="flex items-center gap-1.5 flex-wrap pb-2">
-              <Filter className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-              {STATUS_GROUPS.map(({ key }) => {
-                const count = statusCounts[key] || 0;
-                if (key !== "all" && count === 0) return null;
-                const isActive = statusFilter === key;
-                return (
-                  <button
-                    key={key}
-                    onClick={() => setStatusFilter(key)}
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
-                      isActive
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
-                    }`}
-                  >
-                    {getStatusFilterLabel(key)}
-                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-[10px] font-semibold ${
-                      isActive ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted-foreground/10 text-muted-foreground"
-                    }`}>
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
+            <div className="space-y-2 pb-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Filter className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                {STATUS_GROUPS.map(({ key }) => {
+                  const count = statusCounts[key] || 0;
+                  if (key !== "all" && count === 0) return null;
+                  const isActive = statusFilter === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setStatusFilter(key)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
+                        isActive
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      {getStatusFilterLabel(key)}
+                      <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-[10px] font-semibold ${
+                        isActive ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted-foreground/10 text-muted-foreground"
+                      }`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Routine filter chips */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs text-muted-foreground flex-shrink-0">🕐</span>
+                {([
+                  { key: "all" as RoutineFilter, label: t("common.all"), emoji: "" },
+                  { key: "morning" as RoutineFilter, label: t("createTask.routineMorning"), emoji: "🌅" },
+                  { key: "evening" as RoutineFilter, label: t("createTask.routineEvening"), emoji: "🌙" },
+                ]).map(({ key, label, emoji }) => {
+                  const isActive = routineFilter === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setRoutineFilter(key)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
+                        isActive
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      {emoji && <span>{emoji}</span>}
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 

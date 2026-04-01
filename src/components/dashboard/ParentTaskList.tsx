@@ -8,13 +8,14 @@ import { useTodayTasks, useFamilyChildren } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
-import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw, Filter, Users, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw, Filter, Users, ArrowUpDown, ArrowUp, ArrowDown, Sunrise, Moon } from "lucide-react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
+type RoutineFilter = "all" | "morning" | "evening" | "none";
 
 const STATUS_GROUPS: { key: StatusFilter; color: string }[] = [
   { key: "all", color: "" },
@@ -41,6 +42,7 @@ export default function ParentTaskList() {
   const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [childFilter, setChildFilter] = useState<string>("all");
+  const [routineFilter, setRoutineFilter] = useState<RoutineFilter>("all");
 
   const isReadOnly = isImpersonating && realRole === "child";
 
@@ -70,14 +72,19 @@ export default function ParentTaskList() {
     return counts;
   }, [tasks, childFilter]);
 
-  // Filtered tasks
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
       const statusMatch = statusFilter === "all" || task.status === statusFilter;
       const childMatch = childFilter === "all" || task.assigned_to_user_id === childFilter;
-      return statusMatch && childMatch;
+      const tmpl = task.task_template as any;
+      const tag = tmpl?.routine_tag || null;
+      const routineMatch = routineFilter === "all" 
+        || (routineFilter === "morning" && tag === "morning")
+        || (routineFilter === "evening" && tag === "evening")
+        || (routineFilter === "none" && !tag);
+      return statusMatch && childMatch && routineMatch;
     });
-  }, [tasks, statusFilter, childFilter]);
+  }, [tasks, statusFilter, childFilter, routineFilter]);
 
   const handleValidate = async (instanceId: string, approved: boolean) => {
     try {
@@ -225,6 +232,33 @@ export default function ParentTaskList() {
                       }`}>
                         {count}
                       </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Routine filter chips */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs text-muted-foreground flex-shrink-0">🕐</span>
+                {([
+                  { key: "all" as RoutineFilter, label: t("common.all"), emoji: "" },
+                  { key: "morning" as RoutineFilter, label: t("createTask.routineMorning"), emoji: "🌅" },
+                  { key: "evening" as RoutineFilter, label: t("createTask.routineEvening"), emoji: "🌙" },
+                  { key: "none" as RoutineFilter, label: t("createTask.routineNone"), emoji: "" },
+                ]).map(({ key, label, emoji }) => {
+                  const isActive = routineFilter === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setRoutineFilter(key)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
+                        isActive
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      {emoji && <span>{emoji}</span>}
+                      {label}
                     </button>
                   );
                 })}
