@@ -42,12 +42,24 @@ export default function ChildDashboard({ name }: Props) {
   const [activeTab, setActiveTab] = useState("tasks");
 
   const TABS = [
-    { id: "tasks", label: t("childDashboard.tabs.tasks"), icon: CheckCircle2, emoji: "📝", colorClass: "hover:bg-emerald-100 text-emerald-700 bg-emerald-50", activeClass: "bg-emerald-500 text-white shadow-emerald-200" },
-    { id: "penalties", label: t("childDashboard.tabs.penalties"), icon: AlertTriangle, emoji: "🚨", colorClass: "hover:bg-destructive/10 text-destructive bg-destructive/5", activeClass: "bg-destructive text-white shadow-red-200" },
-    { id: "rules", label: t("childDashboard.tabs.rules"), icon: Shield, emoji: "📜", colorClass: "hover:bg-purple-100 text-purple-700 bg-purple-50", activeClass: "bg-purple-500 text-white shadow-purple-200" },
-    { id: "rewards", label: t("childDashboard.tabs.rewards"), icon: Gift, emoji: "🎁", colorClass: "hover:bg-amber-100 text-amber-700 bg-amber-50", activeClass: "bg-amber-500 text-white shadow-amber-200" },
-    { id: "savings", label: t("childDashboard.tabs.savings"), icon: Target, emoji: "🎯", colorClass: "hover:bg-blue-100 text-blue-700 bg-blue-50", activeClass: "bg-blue-500 text-white shadow-blue-200" },
-    { id: "history", label: t("childDashboard.tabs.history"), icon: History, emoji: "🕰️", colorClass: "hover:bg-gray-100 text-gray-700 bg-gray-50", activeClass: "bg-gray-700 text-white shadow-gray-200" },
+    { id: "tasks", label: t("childDashboard.tabs.tasks"), icon: CheckCircle2, emoji: "📝", 
+      colorClass: "text-emerald-700 dark:text-emerald-400 bg-emerald-100/60 dark:bg-emerald-500/10 hover:bg-emerald-200/60 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-800/50", 
+      activeClass: "bg-emerald-500 dark:bg-emerald-600 text-white shadow-md shadow-emerald-500/20 dark:shadow-emerald-900/50 border-transparent ring-2 ring-emerald-400/50 ring-offset-2 ring-offset-background" },
+    { id: "penalties", label: t("childDashboard.tabs.penalties"), icon: AlertTriangle, emoji: "🚨", 
+      colorClass: "text-destructive dark:text-red-400 bg-red-100/60 dark:bg-red-500/10 hover:bg-red-200/60 dark:hover:bg-red-500/20 border border-red-200 dark:border-red-800/50", 
+      activeClass: "bg-destructive dark:bg-red-600 text-white shadow-md shadow-red-500/20 dark:shadow-red-900/50 border-transparent ring-2 ring-red-400/50 ring-offset-2 ring-offset-background" },
+    { id: "rules", label: t("childDashboard.tabs.rules"), icon: Shield, emoji: "📜", 
+      colorClass: "text-purple-700 dark:text-purple-400 bg-purple-100/60 dark:bg-purple-500/10 hover:bg-purple-200/60 dark:hover:bg-purple-500/20 border border-purple-200 dark:border-purple-800/50", 
+      activeClass: "bg-purple-500 dark:bg-purple-600 text-white shadow-md shadow-purple-500/20 dark:shadow-purple-900/50 border-transparent ring-2 ring-purple-400/50 ring-offset-2 ring-offset-background" },
+    { id: "rewards", label: t("childDashboard.tabs.rewards"), icon: Gift, emoji: "🎁", 
+      colorClass: "text-amber-700 dark:text-amber-400 bg-amber-100/60 dark:bg-amber-500/10 hover:bg-amber-200/60 dark:hover:bg-amber-500/20 border border-amber-200 dark:border-amber-800/50", 
+      activeClass: "bg-amber-500 dark:bg-amber-600 text-white shadow-md shadow-amber-500/20 dark:shadow-amber-900/50 border-transparent ring-2 ring-amber-400/50 ring-offset-2 ring-offset-background" },
+    { id: "savings", label: t("childDashboard.tabs.savings"), icon: Target, emoji: "🎯", 
+      colorClass: "text-blue-700 dark:text-blue-400 bg-blue-100/60 dark:bg-blue-500/10 hover:bg-blue-200/60 dark:hover:bg-blue-500/20 border border-blue-200 dark:border-blue-800/50", 
+      activeClass: "bg-blue-500 dark:bg-blue-600 text-white shadow-md shadow-blue-500/20 dark:shadow-blue-900/50 border-transparent ring-2 ring-blue-400/50 ring-offset-2 ring-offset-background" },
+    { id: "history", label: t("childDashboard.tabs.history"), icon: History, emoji: "🕰️", 
+      colorClass: "text-gray-700 dark:text-gray-300 bg-gray-100/60 dark:bg-gray-500/10 hover:bg-gray-200/60 dark:hover:bg-gray-500/20 border border-gray-200 dark:border-gray-700/50", 
+      activeClass: "bg-gray-700 dark:bg-gray-600 text-white shadow-md shadow-gray-500/20 dark:shadow-gray-900/50 border-transparent ring-2 ring-gray-400/50 ring-offset-2 ring-offset-background" },
   ];
 
   // Détermine l'ID de l'enfant affiché (impersoné ou réel)
@@ -136,8 +148,9 @@ export default function ChildDashboard({ name }: Props) {
             </div>
 
             {/* Barre de navigation horizontale (Onglets) */}
-            <div className="w-full overflow-x-auto pb-2 hide-scrollbar mt-2">
-              <div className="flex items-center gap-2 min-w-max">
+            {/* Marges négatives et padding pour que box-shadow et transform ne soient pas coupés */}
+            <div className="w-full overflow-x-auto hide-scrollbar mt-2 -mx-4 px-4 py-3">
+              <div className="flex items-center gap-3 min-w-max">
                 {TABS.map((tab) => {
                   const Icon = tab.icon;
                   const isActive = activeTab === tab.id;
@@ -146,10 +159,10 @@ export default function ChildDashboard({ name }: Props) {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium whitespace-nowrap transition-all duration-300 ${
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-medium whitespace-nowrap transition-all duration-300 ${
                         isActive 
-                          ? `${tab.activeClass} shadow-lg scale-105` 
-                          : `${tab.colorClass} opacity-80 hover:opacity-100`
+                          ? `${tab.activeClass} scale-105` 
+                          : `${tab.colorClass} opacity-90 hover:opacity-100 hover:scale-[1.02]`
                       }`}
                     >
                       <span className="text-lg">{tab.emoji}</span>
