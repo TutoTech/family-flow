@@ -248,37 +248,37 @@ export type Database = {
       }
       manual_adjustments: {
         Row: {
-          id: string
-          family_id: string
           child_id: string
-          parent_id: string
-          type: "add_points" | "add_money" | "remove_points" | "remove_money"
-          points_amount: number | null
-          wallet_amount: number | null
-          reason: string
           created_at: string
+          family_id: string
+          id: string
+          parent_id: string
+          points_amount: number | null
+          reason: string
+          type: Database["public"]["Enums"]["adjustment_type"]
+          wallet_amount: number | null
         }
         Insert: {
-          id?: string
-          family_id: string
           child_id: string
-          parent_id: string
-          type: "add_points" | "add_money" | "remove_points" | "remove_money"
-          points_amount?: number | null
-          wallet_amount?: number | null
-          reason: string
           created_at?: string
+          family_id: string
+          id?: string
+          parent_id: string
+          points_amount?: number | null
+          reason: string
+          type: Database["public"]["Enums"]["adjustment_type"]
+          wallet_amount?: number | null
         }
         Update: {
-          id?: string
-          family_id?: string
           child_id?: string
-          parent_id?: string
-          type?: "add_points" | "add_money" | "remove_points" | "remove_money"
-          points_amount?: number | null
-          wallet_amount?: number | null
-          reason?: string
           created_at?: string
+          family_id?: string
+          id?: string
+          parent_id?: string
+          points_amount?: number | null
+          reason?: string
+          type?: Database["public"]["Enums"]["adjustment_type"]
+          wallet_amount?: number | null
         }
         Relationships: [
           {
@@ -342,37 +342,37 @@ export type Database = {
           child_id: string
           comment: string | null
           created_at: string
+          custom_title: string | null
           family_id: string
           id: string
           logged_by_parent_id: string
-          rule_id: string | null
           points_amount: number | null
+          rule_id: string | null
           wallet_amount: number | null
-          custom_title: string | null
         }
         Insert: {
           child_id: string
           comment?: string | null
           created_at?: string
+          custom_title?: string | null
           family_id: string
           id?: string
           logged_by_parent_id: string
-          rule_id?: string | null
           points_amount?: number | null
+          rule_id?: string | null
           wallet_amount?: number | null
-          custom_title?: string | null
         }
         Update: {
           child_id?: string
           comment?: string | null
           created_at?: string
+          custom_title?: string | null
           family_id?: string
           id?: string
           logged_by_parent_id?: string
-          rule_id?: string | null
           points_amount?: number | null
+          rule_id?: string | null
           wallet_amount?: number | null
-          custom_title?: string | null
         }
         Relationships: [
           {
@@ -802,6 +802,10 @@ export type Database = {
         Args: { _family_id: string }
         Returns: undefined
       }
+      get_child_login_email: {
+        Args: { _child_name: string; _invite_code: string }
+        Returns: string
+      }
       get_user_family_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
@@ -818,18 +822,19 @@ export type Database = {
           plan: string
         }[]
       }
+      update_all_streaks: { Args: never; Returns: undefined }
       update_child_task_color: {
-        Args: {
-          p_task_template_id: string
-          p_color: string
-        }
+        Args: { p_color: string; p_task_template_id: string }
         Returns: undefined
       }
     }
     Enums: {
-      app_role: "admin" | "parent" | "child"
-      adjustment_type: "add_points" | "add_money" | "remove_points" | "remove_money"
-      billing_plan: "free" | "family" | "weekly" | "weekdays" | "weekends" | "custom"
+      adjustment_type:
+        | "add_points"
+        | "add_money"
+        | "remove_points"
+        | "remove_money"
+      app_role: "parent" | "child"
       recurrence_type: "daily" | "weekly" | "weekdays" | "weekends" | "custom"
       redemption_status: "requested" | "approved" | "rejected" | "delivered"
       task_status:
@@ -968,6 +973,12 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      adjustment_type: [
+        "add_points",
+        "add_money",
+        "remove_points",
+        "remove_money",
+      ],
       app_role: ["parent", "child"],
       recurrence_type: ["daily", "weekly", "weekdays", "weekends", "custom"],
       redemption_status: ["requested", "approved", "rejected", "delivered"],
