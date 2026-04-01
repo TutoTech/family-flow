@@ -723,7 +723,6 @@ export type Database = {
           recurrence_config: Json | null
           recurrence_type: Database["public"]["Enums"]["recurrence_type"]
           requires_photo: boolean
-          routine_tag: string | null
           title: string
           updated_at: string
         }
@@ -748,7 +747,6 @@ export type Database = {
           recurrence_config?: Json | null
           recurrence_type?: Database["public"]["Enums"]["recurrence_type"]
           requires_photo?: boolean
-          routine_tag?: string | null
           title: string
           updated_at?: string
         }
@@ -773,7 +771,6 @@ export type Database = {
           recurrence_config?: Json | null
           recurrence_type?: Database["public"]["Enums"]["recurrence_type"]
           requires_photo?: boolean
-          routine_tag?: string | null
           title?: string
           updated_at?: string
         }

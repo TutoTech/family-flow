@@ -23,7 +23,6 @@ export interface TaskTemplate {
   is_obligatory: boolean;
   is_active: boolean;
   disabled_during_vacation: boolean;
-  routine_tag: string | null;
   display_order: number;
   bg_color: string | null;
   child_bg_color: string | null;

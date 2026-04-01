@@ -194,8 +194,6 @@ export default function TaskTemplatesPage() {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="font-semibold text-foreground break-words whitespace-normal leading-tight">{template.title}</span>
                         {template.requires_photo && <Camera className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />}
-                        {template.routine_tag === "morning" && <Badge variant="outline" className="text-xs gap-1 border-orange-300/60 text-orange-600 dark:text-orange-400">🌅 {t("createTask.routineMorning")}</Badge>}
-                        {template.routine_tag === "evening" && <Badge variant="outline" className="text-xs gap-1 border-indigo-300/60 text-indigo-600 dark:text-indigo-400">🌙 {t("createTask.routineEvening")}</Badge>}
                         {template.disabled_during_vacation && <Badge variant="outline" className="text-xs gap-1 border-amber-400/60 text-amber-600 dark:text-amber-400"><Palmtree className="h-3 w-3" />{t("taskTemplates.vacationSuspended")}</Badge>}
                         {!template.is_active && <Badge variant="secondary" className="text-xs">{t("taskTemplates.inactive")}</Badge>}
                       </div>
