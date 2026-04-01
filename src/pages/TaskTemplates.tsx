@@ -174,8 +174,10 @@ export default function TaskTemplatesPage() {
           </Card>
         ) : (
           <div className="space-y-3">
-            {templates.map((template, index) => (
-              <Card key={template.id} className={`transition-opacity ${!template.is_active ? "opacity-50" : ""}`}>
+            {templates.map((template, index) => {
+              const bgColorClass = template.bg_color || "bg-card";
+              return (
+              <Card key={template.id} className={`transition-opacity ${bgColorClass} ${!template.is_active ? "opacity-50" : ""}`}>
                 <CardContent className="py-4">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div className="flex items-start gap-3 w-full sm:w-auto flex-1">
@@ -215,7 +217,8 @@ export default function TaskTemplatesPage() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
