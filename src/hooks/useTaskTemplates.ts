@@ -26,6 +26,7 @@ export interface TaskTemplate {
   display_order: number;
   bg_color: string | null;
   child_bg_color: string | null;
+  auto_validate_after_midnight: boolean | null;
   created_at: string;
 }
 
