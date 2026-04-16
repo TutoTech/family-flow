@@ -114,7 +114,7 @@ export default function FamilySettingsPage() {
     setSaving(false);
   };
 
-  const updateField = (field: keyof FamilySettings, value: number | string) => {
+  const updateField = (field: keyof FamilySettings, value: number | string | boolean) => {
     setSettings((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
@@ -311,7 +311,7 @@ export default function FamilySettingsPage() {
               </div>
               <Switch
                 checked={settings.auto_validate_after_midnight}
-                onCheckedChange={(checked) => updateField("auto_validate_after_midnight", checked ? 1 : 0)}
+                onCheckedChange={(checked) => updateField("auto_validate_after_midnight", checked)}
               />
             </div>
           </CardContent>
