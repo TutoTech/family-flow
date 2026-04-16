@@ -28,6 +28,7 @@ interface FamilySettings {
   parent_alert_delay_minutes: number;
   photo_retention_days: number;
   currency: string;
+  auto_validate_after_midnight: boolean;
 }
 
 export default function FamilySettingsPage() {
@@ -75,6 +76,7 @@ export default function FamilySettingsPage() {
           parent_alert_delay_minutes: data.parent_alert_delay_minutes,
           photo_retention_days: data.photo_retention_days,
           currency: data.currency ?? "EUR",
+          auto_validate_after_midnight: (data as any).auto_validate_after_midnight ?? false,
         });
       }
       if (error) toast.error(t("settings.loadError"));
