@@ -11,12 +11,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2, KeyRound } from "lucide-react";
+import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2, KeyRound, CheckCircle2 } from "lucide-react";
 import SetPinDialog from "@/components/dashboard/SetPinDialog";
 import { CURRENCIES, CurrencyCode } from "@/hooks/useCurrency";
 
@@ -28,6 +29,7 @@ interface FamilySettings {
   parent_alert_delay_minutes: number;
   photo_retention_days: number;
   currency: string;
+  auto_validate_after_midnight: boolean;
 }
 
 export default function FamilySettingsPage() {
@@ -75,6 +77,7 @@ export default function FamilySettingsPage() {
           parent_alert_delay_minutes: data.parent_alert_delay_minutes,
           photo_retention_days: data.photo_retention_days,
           currency: data.currency ?? "EUR",
+          auto_validate_after_midnight: (data as any).auto_validate_after_midnight ?? false,
         });
       }
       if (error) toast.error(t("settings.loadError"));
@@ -111,7 +114,7 @@ export default function FamilySettingsPage() {
     setSaving(false);
   };
 
-  const updateField = (field: keyof FamilySettings, value: number | string) => {
+  const updateField = (field: keyof FamilySettings, value: number | string | boolean) => {
     setSettings((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
@@ -291,7 +294,28 @@ export default function FamilySettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Photos */}
+        {/* Auto-validation après minuit (réglage global, surchargeable par tâche) */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              {t("settings.autoValidateTitle")}
+            </CardTitle>
+            <CardDescription>{t("settings.autoValidateDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <div className="space-y-0.5">
+                <Label>{t("settings.autoValidateLabel")}</Label>
+                <p className="text-xs text-muted-foreground">{t("settings.autoValidateHint")}</p>
+              </div>
+              <Switch
+                checked={settings.auto_validate_after_midnight}
+                onCheckedChange={(checked) => updateField("auto_validate_after_midnight", checked)}
+              />
+            </div>
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">

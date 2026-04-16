@@ -106,6 +106,12 @@ Deno.serve(async (req) => {
     const { error: streakError } = await supabase.rpc("update_all_streaks");
     if (streakError) throw streakError;
 
+    // ── Step 4: Auto-validate awaiting_validation tasks from previous days ──
+    const { data: autoValidatedCount, error: autoValError } = await supabase.rpc(
+      "auto_validate_pending_tasks"
+    );
+    if (autoValError) console.error("Auto-validate error:", autoValError);
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -113,6 +119,7 @@ Deno.serve(async (req) => {
         penalties_applied: penaltiesApplied,
         overdue_tasks_checked: overdueInstances?.length ?? 0,
         streaks_updated: true,
+        auto_validated: autoValidatedCount ?? 0,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

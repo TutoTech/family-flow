@@ -58,6 +58,8 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
   const [isObligatory, setIsObligatory] = useState(false);
   const [bgColor, setBgColor] = useState("");
   const [disabledDuringVacation, setDisabledDuringVacation] = useState(false);
+  // null = use family default, true/false = override
+  const [autoValidateMode, setAutoValidateMode] = useState<"default" | "on" | "off">("default");
   const [loading, setLoading] = useState(false);
 
   // Initialiser les champs à l'ouverture de la modale
@@ -89,6 +91,8 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
         setIsObligatory(initialData.is_obligatory || false);
         setBgColor(initialData.bg_color || "");
         setDisabledDuringVacation(initialData.disabled_during_vacation || false);
+        const av = (initialData as any).auto_validate_after_midnight;
+        setAutoValidateMode(av === true ? "on" : av === false ? "off" : "default");
       } else {
         setTitle(""); setDescription(""); setPoints("1"); setDueTime("18:00");
         setRecurrence("daily"); setWeeklyDay(String(new Date().getDay())); setSelectedChildren([]); setRequiresPhoto(false);
@@ -96,6 +100,7 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
         setIsObligatory(false);
         setBgColor("");
         setDisabledDuringVacation(false);
+        setAutoValidateMode("default");
       }
     }
   }, [open, initialData]);
@@ -134,6 +139,8 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
         is_obligatory: isObligatory,
         bg_color: bgColor || null,
         disabled_during_vacation: disabledDuringVacation,
+        auto_validate_after_midnight:
+          autoValidateMode === "on" ? true : autoValidateMode === "off" ? false : null,
       }));
 
       const { error } = await supabase.from("task_templates").insert(rows);
@@ -296,6 +303,19 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
               <p className="text-xs text-muted-foreground">{t("createTask.disabledDuringVacationHint")}</p>
             </div>
             <Switch checked={disabledDuringVacation} onCheckedChange={setDisabledDuringVacation} />
+          </div>
+
+          <div className="space-y-2 rounded-lg border p-3">
+            <Label>{t("createTask.autoValidateAfterMidnight")}</Label>
+            <p className="text-xs text-muted-foreground">{t("createTask.autoValidateAfterMidnightHint")}</p>
+            <Select value={autoValidateMode} onValueChange={(v) => setAutoValidateMode(v as any)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">{t("createTask.autoValidateDefault")}</SelectItem>
+                <SelectItem value="on">{t("createTask.autoValidateOn")}</SelectItem>
+                <SelectItem value="off">{t("createTask.autoValidateOff")}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

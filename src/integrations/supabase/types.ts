@@ -157,6 +157,7 @@ export type Database = {
       }
       family_settings: {
         Row: {
+          auto_validate_after_midnight: boolean
           currency: string
           family_id: string
           id: string
@@ -170,6 +171,7 @@ export type Database = {
           vacation_mode: boolean
         }
         Insert: {
+          auto_validate_after_midnight?: boolean
           currency?: string
           family_id: string
           id?: string
@@ -183,6 +185,7 @@ export type Database = {
           vacation_mode?: boolean
         }
         Update: {
+          auto_validate_after_midnight?: boolean
           currency?: string
           family_id?: string
           id?: string
@@ -704,6 +707,7 @@ export type Database = {
       task_templates: {
         Row: {
           assigned_to_user_id: string
+          auto_validate_after_midnight: boolean | null
           bg_color: string | null
           child_bg_color: string | null
           created_at: string
@@ -729,6 +733,7 @@ export type Database = {
         }
         Insert: {
           assigned_to_user_id: string
+          auto_validate_after_midnight?: boolean | null
           bg_color?: string | null
           child_bg_color?: string | null
           created_at?: string
@@ -754,6 +759,7 @@ export type Database = {
         }
         Update: {
           assigned_to_user_id?: string
+          auto_validate_after_midnight?: boolean | null
           bg_color?: string | null
           child_bg_color?: string | null
           created_at?: string
@@ -814,6 +820,7 @@ export type Database = {
         Args: { _family_id: string }
         Returns: undefined
       }
+      auto_validate_pending_tasks: { Args: never; Returns: number }
       calculate_child_streak: { Args: { child_uuid: string }; Returns: number }
       deactivate_vacation_mode: {
         Args: { _family_id: string }
