@@ -25,20 +25,14 @@ export default function CreateFamilyDialog({ open, onOpenChange, onCreated }: Pr
     if (!name.trim() || !user) return;
     setLoading(true);
     try {
-      const { data: family, error: familyError } = await supabase
-        .from("families")
-        .insert({ name: name.trim() })
-        .select("id")
-        .single();
+      // Création atomique de la famille + rattachement du parent via RPC SECURITY DEFINER.
+      // Contourne le problème RLS où SELECT après INSERT échoue car la politique SELECT
+      // exige que le user soit déjà membre de la famille.
+      const { error: rpcError } = await supabase.rpc("create_family_and_join", {
+        _name: name.trim(),
+      });
 
-      if (familyError) throw familyError;
-
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({ family_id: family.id })
-        .eq("user_id", user.id);
-
-      if (profileError) throw profileError;
+      if (rpcError) throw rpcError;
 
       toast({ title: t("family.familyCreated"), description: t("family.familyCreatedDesc", { name }) });
       setName("");
