@@ -48,6 +48,7 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
   const [isObligatory, setIsObligatory] = useState(false);
   const [bgColor, setBgColor] = useState("");
   const [disabledDuringVacation, setDisabledDuringVacation] = useState(false);
+  const [autoValidateMode, setAutoValidateMode] = useState<"default" | "on" | "off">("default");
 
   useEffect(() => {
     if (template) {
@@ -63,6 +64,8 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
       setIsObligatory(template.is_obligatory);
       setBgColor(template.bg_color || "");
       setDisabledDuringVacation(template.disabled_during_vacation);
+      const av = template.auto_validate_after_midnight;
+      setAutoValidateMode(av === true ? "on" : av === false ? "off" : "default");
     }
   }, [template]);
 
@@ -84,6 +87,8 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
           is_obligatory: isObligatory,
           bg_color: bgColor || null,
           disabled_during_vacation: disabledDuringVacation,
+          auto_validate_after_midnight:
+            autoValidateMode === "on" ? true : autoValidateMode === "off" ? false : null,
         },
       });
       toast({ title: t("editTask.taskUpdated"), description: t("editTask.taskUpdatedDesc", { title }) });
@@ -207,6 +212,19 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
               <p className="text-xs text-muted-foreground">{t("createTask.disabledDuringVacationHint")}</p>
             </div>
             <Switch checked={disabledDuringVacation} onCheckedChange={setDisabledDuringVacation} />
+          </div>
+
+          <div className="space-y-2 rounded-lg border p-3">
+            <Label>{t("createTask.autoValidateAfterMidnight")}</Label>
+            <p className="text-xs text-muted-foreground">{t("createTask.autoValidateAfterMidnightHint")}</p>
+            <Select value={autoValidateMode} onValueChange={(v) => setAutoValidateMode(v as any)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">{t("createTask.autoValidateDefault")}</SelectItem>
+                <SelectItem value="on">{t("createTask.autoValidateOn")}</SelectItem>
+                <SelectItem value="off">{t("createTask.autoValidateOff")}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
