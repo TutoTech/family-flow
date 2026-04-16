@@ -49,7 +49,7 @@ serve(async (req) => {
     });
 
     const paidSession = sessions.data.find(
-      (s) => s.mode === "payment" && s.payment_status === "paid"
+      (s: { mode: string; payment_status: string }) => s.mode === "payment" && s.payment_status === "paid"
     );
 
     if (paidSession) {
@@ -76,7 +76,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    const message = error instanceof Error ? error.message : String(error);
+    return new Response(JSON.stringify({ error: message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
