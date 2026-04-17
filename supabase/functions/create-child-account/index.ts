@@ -126,19 +126,20 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { data: updatedRows, error: profileError } = await adminClient
-      .from("profiles")
-      .update({ family_id: family.id })
-      .eq("user_id", newUser.user.id)
-      .select("user_id");
+    // Mise à jour via RPC SECURITY DEFINER avec statement_timeout étendu (60s)
+    // car le trigger de seed (20 task_templates + instances) peut être lent.
+    const { error: profileError } = await adminClient.rpc("attach_child_to_family", {
+      _user_id: newUser.user.id,
+      _family_id: family.id,
+    });
 
-    if (profileError || !updatedRows || updatedRows.length === 0) {
+    if (profileError) {
       // Rollback : supprimer l'utilisateur créé pour éviter un compte orphelin
       await adminClient.auth.admin.deleteUser(newUser.user.id);
       return new Response(
         JSON.stringify({
           error: "profile_update_failed",
-          details: profileError?.message ?? "no_rows_updated",
+          details: profileError.message,
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
