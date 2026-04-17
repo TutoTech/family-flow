@@ -104,20 +104,42 @@ Deno.serve(async (req) => {
     }
 
     // ── Étape 6 : Associer l'enfant à la famille ──
-    // Le trigger handle_new_user() a déjà créé le profil et le rôle.
-    // On attend un court instant puis on met à jour family_id.
-    await new Promise((r) => setTimeout(r, 300));
+    // On attend que le trigger handle_new_user() ait créé le profil (polling).
+    let profileExists = false;
+    let attempts = 0;
+    while (!profileExists && attempts < 10) {
+      await new Promise((r) => setTimeout(r, 200));
+      const { data: p } = await adminClient
+        .from("profiles")
+        .select("user_id")
+        .eq("user_id", newUser.user.id)
+        .maybeSingle();
+      profileExists = !!p;
+      attempts++;
+    }
 
-    const { error: profileError } = await adminClient
-      .from("profiles")
-      .update({ family_id: family.id })
-      .eq("user_id", newUser.user.id);
-
-    if (profileError) {
-      // Rollback : supprimer l'utilisateur créé
+    if (!profileExists) {
       await adminClient.auth.admin.deleteUser(newUser.user.id);
       return new Response(
-        JSON.stringify({ error: "profile_update_failed" }),
+        JSON.stringify({ error: "profile_not_created_by_trigger" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { data: updatedRows, error: profileError } = await adminClient
+      .from("profiles")
+      .update({ family_id: family.id })
+      .eq("user_id", newUser.user.id)
+      .select("user_id");
+
+    if (profileError || !updatedRows || updatedRows.length === 0) {
+      // Rollback : supprimer l'utilisateur créé pour éviter un compte orphelin
+      await adminClient.auth.admin.deleteUser(newUser.user.id);
+      return new Response(
+        JSON.stringify({
+          error: "profile_update_failed",
+          details: profileError?.message ?? "no_rows_updated",
+        }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
