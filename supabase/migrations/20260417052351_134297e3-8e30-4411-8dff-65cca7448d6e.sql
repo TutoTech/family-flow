@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS on_child_joins_family ON public.profiles;
