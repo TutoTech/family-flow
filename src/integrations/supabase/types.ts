@@ -820,6 +820,10 @@ export type Database = {
         Args: { _family_id: string }
         Returns: undefined
       }
+      attach_child_to_family: {
+        Args: { _family_id: string; _user_id: string }
+        Returns: undefined
+      }
       auto_validate_pending_tasks: { Args: never; Returns: number }
       calculate_child_streak: { Args: { child_uuid: string }; Returns: number }
       create_family_and_join: { Args: { _name: string }; Returns: string }
