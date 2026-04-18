@@ -328,9 +328,23 @@ export default function FamilySettingsPage() {
             <div className="space-y-2">
               <Label htmlFor="photo_retention_days">{t("settings.retentionDays")}</Label>
               <div className="flex items-center gap-2">
-                <Input id="photo_retention_days" type="number" min="1" max="365" value={settings.photo_retention_days} onChange={(e) => updateField("photo_retention_days", parseInt(e.target.value) || 30)} className="max-w-32" />
+                <Input
+                  id="photo_retention_days"
+                  type="number"
+                  min="1"
+                  max="30"
+                  value={settings.photo_retention_days}
+                  onChange={(e) => {
+                    const v = parseInt(e.target.value) || 7;
+                    updateField("photo_retention_days", Math.min(30, Math.max(1, v)));
+                  }}
+                  className="max-w-32"
+                />
                 <span className="text-sm text-muted-foreground">{t("common.days")}</span>
               </div>
+              <p className="text-xs text-muted-foreground">
+                {t("settings.retentionDaysHint", "Entre 1 et 30 jours. Les photos sont supprimées automatiquement après expiration.")}
+              </p>
             </div>
           </CardContent>
         </Card>

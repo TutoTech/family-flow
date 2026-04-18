@@ -826,6 +826,7 @@ export type Database = {
       }
       auto_validate_pending_tasks: { Args: never; Returns: number }
       calculate_child_streak: { Args: { child_uuid: string }; Returns: number }
+      cleanup_expired_evidence_photos: { Args: never; Returns: number }
       create_family_and_join: { Args: { _name: string }; Returns: string }
       deactivate_vacation_mode: {
         Args: { _family_id: string }
