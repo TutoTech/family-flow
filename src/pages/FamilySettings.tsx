@@ -342,6 +342,9 @@ export default function FamilySettingsPage() {
                 />
                 <span className="text-sm text-muted-foreground">{t("common.days")}</span>
               </div>
+              <p className="text-xs text-muted-foreground">
+                {t("settings.retentionDaysHint", "Entre 1 et 30 jours. Les photos sont supprimées automatiquement après expiration.")}
+              </p>
             </div>
           </CardContent>
         </Card>
