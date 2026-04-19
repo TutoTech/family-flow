@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
         )
       `)
       .eq("scheduled_for_date", yesterdayStr)
-      .in("status", ["pending", "late"]);
+      .in("status", ["pending", "late", "skipped"]);
 
     let penaltiesApplied = 0;
 
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     const familyRates = new Map<string, number>();
 
     for (const instance of overdueInstances ?? []) {
-      // Marquer en retard si encore "pending"
+       // Marquer en retard si encore "pending"
       if (instance.status === "pending") {
         await supabase
           .from("task_instances")
