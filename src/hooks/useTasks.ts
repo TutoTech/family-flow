@@ -229,6 +229,9 @@ export function useTodayTasks() {
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["child-stats"] }); // pour mettre à jour les points si perte
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["child-penalties"] });
+      queryClient.invalidateQueries({ queryKey: ["recent-penalties"] });
+      queryClient.invalidateQueries({ queryKey: ["activity-history"] });
     },
   });
 

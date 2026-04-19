@@ -7,6 +7,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 
 export interface ActivityItem {
   id: string;
@@ -21,8 +22,11 @@ export interface ActivityItem {
 
 export function useActivityHistory(limit = 50) {
   const { profile, role, user } = useAuth();
+  const { activeProfile, isImpersonating } = useProfileSwitch();
   const familyId = profile?.family_id;
-  const isParent = role === "parent";
+  const effectiveRole = isImpersonating ? activeProfile?.role : role;
+  const effectiveUserId = isImpersonating ? activeProfile?.userId : user?.id;
+  const isParent = effectiveRole === "parent";
 
   return useQuery({
     queryKey: ["activity-history", familyId, user?.id, role],
@@ -43,7 +47,7 @@ export function useActivityHistory(limit = 50) {
         .limit(limit);
 
       // Les enfants ne voient que leurs propres activités
-      if (!isParent) taskQuery.eq("assigned_to_user_id", user!.id);
+      if (!isParent) taskQuery.eq("assigned_to_user_id", effectiveUserId!);
 
       const { data: tasks } = await taskQuery;
       tasks?.forEach((t: any) => {
@@ -67,7 +71,7 @@ export function useActivityHistory(limit = 50) {
         .order("updated_at", { ascending: false })
         .limit(limit);
 
-      if (!isParent) rewardQuery.eq("child_id", user!.id);
+      if (!isParent) rewardQuery.eq("child_id", effectiveUserId!);
 
       const { data: redemptions } = await rewardQuery;
       redemptions?.forEach((r: any) => {
@@ -91,7 +95,7 @@ export function useActivityHistory(limit = 50) {
         .order("created_at", { ascending: false })
         .limit(limit);
 
-      if (!isParent) penaltyQuery.eq("child_id", user!.id);
+      if (!isParent) penaltyQuery.eq("child_id", effectiveUserId!);
 
       const { data: penalties } = await penaltyQuery;
       penalties?.forEach((p: any) => {
@@ -115,7 +119,7 @@ export function useActivityHistory(limit = 50) {
         .order("created_at", { ascending: false })
         .limit(limit);
 
-      if (!isParent) adjustmentQuery.eq("child_id", user!.id);
+      if (!isParent) adjustmentQuery.eq("child_id", effectiveUserId!);
 
       const { data: adjustments } = await adjustmentQuery;
       adjustments?.forEach((adj: any) => {
@@ -163,6 +167,6 @@ export function useActivityHistory(limit = 50) {
       activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
       return activities.slice(0, limit);
     },
-    enabled: !!familyId && !!user,
+    enabled: !!familyId && !!effectiveUserId,
   });
 }
