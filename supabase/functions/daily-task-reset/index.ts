@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-    // Fetch uncompleted task instances from yesterday with their template penalty config
+    // Récupère les instances de tâches non complétées d'hier avec leur config de pénalité
     const { data: overdueInstances } = await supabase
       .from("task_instances")
       .select(`
@@ -41,8 +41,29 @@ Deno.serve(async (req) => {
 
     let penaltiesApplied = 0;
 
+    // Récupère un parent par famille (nécessaire pour logged_by_parent_id)
+    const familyIds = Array.from(
+      new Set((overdueInstances ?? []).map((i: any) => i.family_id))
+    );
+    const familyParents = new Map<string, string>();
+    if (familyIds.length > 0) {
+      const { data: parentRows } = await supabase
+        .from("profiles")
+        .select("user_id, family_id, user_roles!inner(role)")
+        .in("family_id", familyIds)
+        .eq("user_roles.role", "parent");
+      for (const p of (parentRows ?? []) as any[]) {
+        if (!familyParents.has(p.family_id)) {
+          familyParents.set(p.family_id, p.user_id);
+        }
+      }
+    }
+
+    // Cache des taux de conversion points -> argent par famille
+    const familyRates = new Map<string, number>();
+
     for (const instance of overdueInstances ?? []) {
-      // Mark as late if still pending
+      // Marquer en retard si encore "pending"
       if (instance.status === "pending") {
         await supabase
           .from("task_instances")
@@ -50,40 +71,70 @@ Deno.serve(async (req) => {
           .eq("id", instance.id);
       }
 
-      // Apply automatic penalty if configured on the template
+      // Appliquer la pénalité automatique si configurée sur le template
       const template = instance.task_template as any;
       if (template?.overdue_penalty_enabled && template?.overdue_penalty_points > 0) {
         const penaltyPoints = template.overdue_penalty_points;
+        const familyId = instance.family_id;
 
-        // Deduct points from child_stats
-        const { data: stats } = await supabase
-          .from("child_stats")
-          .select("current_points")
+        // Idempotence : ne pas créer la pénalité si elle existe déjà pour cette tâche
+        const { data: existing } = await supabase
+          .from("penalties_log")
+          .select("id")
+          .eq("family_id", familyId)
           .eq("child_id", instance.assigned_to_user_id)
-          .single();
+          .eq("custom_title", template.title)
+          .gte("created_at", `${yesterdayStr}T00:00:00Z`)
+          .lte("created_at", `${yesterdayStr}T23:59:59Z`)
+          .maybeSingle();
 
-        if (stats) {
-          await supabase
-            .from("child_stats")
-            .update({
-              current_points: Math.max(0, stats.current_points - penaltyPoints),
-            })
-            .eq("child_id", instance.assigned_to_user_id);
+        if (existing) continue;
+
+        const parentId = familyParents.get(familyId);
+        if (!parentId) continue;
+
+        // Calcule la déduction wallet via le taux de conversion de la famille
+        let rate = familyRates.get(familyId);
+        if (rate === undefined) {
+          const { data: settings } = await supabase
+            .from("family_settings")
+            .select("points_to_money_rate")
+            .eq("family_id", familyId)
+            .single();
+          rate = settings?.points_to_money_rate ?? 0.1;
+          familyRates.set(familyId, rate);
         }
+        const walletDeduction = Number((penaltyPoints * rate).toFixed(2));
 
-        // Create a notification for the child
-        await supabase.from("notifications").insert({
-          user_id: instance.assigned_to_user_id,
-          type: "overdue_penalty",
-          title: `⚠️ Pénalité automatique`,
-          body: `Tu as perdu ${penaltyPoints} points car "${template.title}" n'a pas été faite à temps.`,
-          metadata: {
-            task_instance_id: instance.id,
-            penalty_points: penaltyPoints,
-          },
+        // Insertion dans penalties_log : les triggers s'occupent
+        // de déduire les points/wallet et de créer la notification.
+        const { error: penaltyError } = await supabase.from("penalties_log").insert({
+          child_id: instance.assigned_to_user_id,
+          family_id: familyId,
+          logged_by_parent_id: parentId,
+          points_amount: penaltyPoints,
+          wallet_amount: walletDeduction,
+          custom_title: template.title,
         });
 
-        penaltiesApplied++;
+        if (!penaltyError) {
+          // Déduction manuelle car le trigger handle_penalty_logged ne traite que rule_id
+          const { data: stats } = await supabase
+            .from("child_stats")
+            .select("current_points, wallet_balance")
+            .eq("child_id", instance.assigned_to_user_id)
+            .single();
+          if (stats) {
+            await supabase
+              .from("child_stats")
+              .update({
+                current_points: Math.max(0, stats.current_points - penaltyPoints),
+                wallet_balance: Math.max(0, Number(stats.wallet_balance) - walletDeduction),
+              })
+              .eq("child_id", instance.assigned_to_user_id);
+          }
+          penaltiesApplied++;
+        }
       }
     }
 
