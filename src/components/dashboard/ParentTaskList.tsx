@@ -8,11 +8,12 @@ import { useTodayTasks, useFamilyChildren } from "@/hooks/useTasks";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
-import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw, Filter, Users, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Clock, CheckCircle2, XCircle, Camera, Eye, Settings2, RotateCcw, Filter, Users, ArrowUpDown, ArrowUp, ArrowDown, AlertTriangle } from "lucide-react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
 
@@ -279,44 +280,74 @@ export default function ParentTaskList() {
                         <span className="text-xs text-muted-foreground">{tmpl?.is_obligatory ? t("createTask.obligatoryBadge") : `${tmpl?.points_reward} ${t("common.pts")}`}</span>
                       </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-1 flex-shrink-0 w-full sm:w-auto sm:justify-end mt-2 sm:mt-0">
-                      {evidence.length > 0 && (
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => viewPhoto(evidence[0].storage_key)}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      )}
-                      {task.status === "awaiting_validation" && !isReadOnly && (
-                        <>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-success hover:text-success" onClick={() => handleValidate(task.id, true)}>
-                            <CheckCircle2 className="h-5 w-5" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleValidate(task.id, false)}>
-                            <XCircle className="h-5 w-5" />
-                          </Button>
-                        </>
-                      )}
-                      {task.status === "pending" && !isReadOnly && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-destructive hover:text-destructive"
-                          onClick={() => handleMarkNotDone(task.id)}
-                          title={t("taskList.notDone")}
-                        >
-                          <XCircle className="h-5 w-5" />
-                        </Button>
-                      )}
-                      {["validated", "rejected", "awaiting_validation", "done", "late", "skipped", "not_done"].includes(task.status) && !isReadOnly && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-primary"
-                          onClick={() => handleReset(task.id)}
-                          title={t("taskList.resetTask")}
-                        >
-                          <RotateCcw className="h-4 w-4" />
-                        </Button>
-                      )}
+                    <div className="flex flex-wrap items-center gap-1.5 flex-shrink-0 w-full sm:w-auto sm:justify-end mt-2 sm:mt-0">
+                      <TooltipProvider delayDuration={200}>
+                        {evidence.length > 0 && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="outline" size="sm" className="h-8 gap-1" onClick={() => viewPhoto(evidence[0].storage_key)}>
+                                <Eye className="h-4 w-4" />
+                                <span className="text-xs">{t("taskList.btnViewPhoto")}</span>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t("taskList.btnViewPhotoTooltip")}</TooltipContent>
+                          </Tooltip>
+                        )}
+                        {task.status === "awaiting_validation" && !isReadOnly && (
+                          <>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="outline" size="sm" className="h-8 gap-1 border-success/40 text-success hover:bg-success/10 hover:text-success" onClick={() => handleValidate(task.id, true)}>
+                                  <CheckCircle2 className="h-4 w-4" />
+                                  <span className="text-xs">✅ {t("taskList.btnApprove")}</span>
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>{t("taskList.btnApproveTooltip")}</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="outline" size="sm" className="h-8 gap-1 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => handleValidate(task.id, false)}>
+                                  <XCircle className="h-4 w-4" />
+                                  <span className="text-xs">🚫 {t("taskList.btnReject")}</span>
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>{t("taskList.btnRejectTooltip")}</TooltipContent>
+                            </Tooltip>
+                          </>
+                        )}
+                        {task.status === "pending" && !isReadOnly && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 gap-1 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                onClick={() => handleMarkNotDone(task.id)}
+                              >
+                                <AlertTriangle className="h-4 w-4" />
+                                <span className="text-xs">⚠️ {t("taskList.btnNotDone")}</span>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t("taskList.btnNotDoneTooltip")}</TooltipContent>
+                          </Tooltip>
+                        )}
+                        {["validated", "rejected", "awaiting_validation", "done", "late", "skipped", "not_done"].includes(task.status) && !isReadOnly && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 gap-1 text-muted-foreground hover:text-primary"
+                                onClick={() => handleReset(task.id)}
+                              >
+                                <RotateCcw className="h-4 w-4" />
+                                <span className="text-xs">🔄 {t("taskList.btnReset")}</span>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t("taskList.btnResetTooltip")}</TooltipContent>
+                          </Tooltip>
+                        )}
+                      </TooltipProvider>
                     </div>
                   </div>
                 );
