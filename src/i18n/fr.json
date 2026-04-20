@@ -454,7 +454,11 @@
     "applyButton": "Appliquer la pénalité",
     "penaltyApplied": "Pénalité appliquée",
     "myPenalties": "Mes pénalités",
-    "noPenalties": "Aucune pénalité, bravo !"
+    "noPenalties": "Aucune pénalité, bravo !",
+    "penalties": "Pénalités",
+    "rules": "Règles",
+    "penaltiesContext": "Pénalités récentes",
+    "noRecentPenalties": "Aucune pénalité récente"
   },
   "activity": {
     "title": "Historique des activités",
