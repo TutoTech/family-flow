@@ -264,6 +264,9 @@
     "noTasks": "No tasks for today",
     "noTasksHint": "Create recurring tasks for your children",
     "newTask": "New task",
+    "btnNewTaskTooltip": "Create a new recurring task",
+    "btnManageTasks": "Manage tasks",
+    "btnManageTasksTooltip": "Open the task templates management page",
     "pending": "Pending",
     "done": "Done",
     "awaitingValidation": "To validate",
@@ -291,8 +294,8 @@
     "btnResetTooltip": "Reset task to pending status",
     "btnViewPhoto": "View",
     "btnViewPhotoTooltip": "View the photo proof",
-    "btnReorder": "Reorder",
-    "btnReorderTooltip": "Sort tasks by deadline"
+    "btnReorder": "Sort by time",
+    "btnReorderTooltip": "Sort all tasks by their deadline time"
   },
   "childTasks": {
     "toDo": "To do",
