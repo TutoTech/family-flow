@@ -280,7 +280,17 @@
     "penaltyApplied": "Penalty applied!",
     "allChildren": "All children",
     "noFilterResults": "No tasks match these filters",
-    "sortByTime": "Sort by time"
+    "sortByTime": "Sort by time",
+    "btnApprove": "Approve",
+    "btnApproveTooltip": "Approve = reward points",
+    "btnReject": "Reject",
+    "btnRejectTooltip": "Reject = no points awarded",
+    "btnNotDone": "Not done = penalty",
+    "btnNotDoneTooltip": "Mark as not done and apply the penalty",
+    "btnReset": "Reset",
+    "btnResetTooltip": "Reset task to pending status",
+    "btnViewPhoto": "View",
+    "btnViewPhotoTooltip": "View the photo proof"
   },
   "childTasks": {
     "toDo": "To do",
