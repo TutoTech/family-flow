@@ -294,8 +294,8 @@
     "btnResetTooltip": "Reset task to pending status",
     "btnViewPhoto": "View",
     "btnViewPhotoTooltip": "View the photo proof",
-    "btnReorder": "Reorder",
-    "btnReorderTooltip": "Sort tasks by deadline"
+    "btnReorder": "Sort by time",
+    "btnReorderTooltip": "Sort all tasks by their deadline time"
   },
   "childTasks": {
     "toDo": "To do",
