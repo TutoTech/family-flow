@@ -454,7 +454,11 @@
     "applyButton": "Apply penalty",
     "penaltyApplied": "Penalty applied",
     "myPenalties": "My penalties",
-    "noPenalties": "No penalties, well done!"
+    "noPenalties": "No penalties, well done!",
+    "penalties": "Penalties",
+    "rules": "Rules",
+    "penaltiesContext": "Recent penalties",
+    "noRecentPenalties": "No recent penalties"
   },
   "activity": {
     "title": "Activity history",
