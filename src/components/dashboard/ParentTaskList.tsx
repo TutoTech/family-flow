@@ -178,14 +178,26 @@ export default function ParentTaskList() {
                 <TooltipContent>{t("taskList.btnReorderTooltip")}</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <Button size="sm" variant="outline" onClick={() => navigate("/tasks")} className="gap-1" disabled={isReadOnly}>
-              <Settings2 className="h-4 w-4" />
-              <span className="text-xs">{t("common.manage")}</span>
-            </Button>
-            <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isReadOnly}>
-              <Plus className="h-4 w-4" />
-              <span className="text-xs">{t("taskList.newTask")}</span>
-            </Button>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="sm" variant="outline" onClick={() => navigate("/tasks")} className="gap-1" disabled={isReadOnly}>
+                    <Settings2 className="h-4 w-4" />
+                    <span className="text-xs">{t("taskList.btnManageTasks")}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{t("taskList.btnManageTasksTooltip")}</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isReadOnly}>
+                    <Plus className="h-4 w-4" />
+                    <span className="text-xs">{t("taskList.newTask")}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{t("taskList.btnNewTaskTooltip")}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
