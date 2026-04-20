@@ -264,6 +264,9 @@
     "noTasks": "Aucune tâche pour aujourd'hui",
     "noTasksHint": "Créez des tâches récurrentes pour vos enfants",
     "newTask": "Nouvelle tâche",
+    "btnNewTaskTooltip": "Créer une nouvelle tâche récurrente",
+    "btnManageTasks": "Gérer les tâches",
+    "btnManageTasksTooltip": "Ouvrir la page de gestion des modèles de tâches",
     "pending": "En attente",
     "done": "Fait",
     "awaitingValidation": "À valider",
@@ -291,8 +294,8 @@
     "btnResetTooltip": "Remettre la tâche en attente",
     "btnViewPhoto": "Voir",
     "btnViewPhotoTooltip": "Voir la preuve photo",
-    "btnReorder": "Réorganiser",
-    "btnReorderTooltip": "Trier les tâches par heure limite"
+    "btnReorder": "Trier par heure",
+    "btnReorderTooltip": "Trier toutes les tâches par leur heure limite"
   },
   "childTasks": {
     "toDo": "À faire",
