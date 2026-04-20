@@ -153,23 +153,29 @@ export function useTodayTasks() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["today-tasks"] }),
   });
 
-  /** Mutation pour clôturer manuellement une tâche ("Pas fait") et appliquer d'éventuelles pénalités */
+  /** Mutation pour clôturer manuellement une tâche ("Pas fait") et appliquer la pénalité associée.
+   *  Si la pénalité automatique n'est pas activée sur le template, on applique par défaut
+   *  une pénalité équivalente aux points de récompense (afin que "Pas fait" ait toujours un effet).
+   *  Le retrait des points/argent et la notification sont gérés automatiquement par les triggers
+   *  Postgres sur penalties_log + child_stats. */
   const markNotDone = useMutation({
     mutationFn: async (instanceId: string) => {
+      if (!familyId || !user?.id) throw new Error("Family or user not found");
+
       // 1. Récupérer l'instance et sa configuration de pénalité
       const { data: instance, error: instanceError } = await supabase
         .from("task_instances")
         .select(`
           id,
           assigned_to_user_id,
-          task_template:task_templates(title, overdue_penalty_enabled, overdue_penalty_points)
+          task_template:task_templates(title, points_reward, overdue_penalty_enabled, overdue_penalty_points)
         `)
         .eq("id", instanceId)
         .single();
-      
+
       if (instanceError) throw instanceError;
 
-      // 2. Mettre à jour le statut
+      // 2. Mettre à jour le statut de la tâche
       const { error: updateError } = await supabase
         .from("task_instances")
         .update({
@@ -180,49 +186,63 @@ export function useTodayTasks() {
 
       if (updateError) throw updateError;
 
-      // 3. Appliquer la pénalité si nécessaire
+      // 3. Déterminer le montant de la pénalité (avec fallback sur points_reward)
       const template = instance.task_template as any;
-      if (template?.overdue_penalty_enabled && template?.overdue_penalty_points > 0) {
-        const penaltyPoints = template.overdue_penalty_points;
+      const penaltyPoints =
+        template?.overdue_penalty_enabled && template?.overdue_penalty_points > 0
+          ? template.overdue_penalty_points
+          : Math.max(1, template?.points_reward ?? 1);
 
-        const { data: stats } = await supabase
+      // 4. Calculer le retrait monétaire à partir du taux famille
+      const { data: settings } = await supabase
+        .from("family_settings")
+        .select("points_to_money_rate")
+        .eq("family_id", familyId)
+        .single();
+      const rate = settings?.points_to_money_rate ?? 0.1;
+      const walletDeduction = Number((penaltyPoints * rate).toFixed(2));
+
+      // 5. Vérifier qu'une pénalité n'a pas déjà été enregistrée pour cette instance (idempotence)
+      const { data: existing } = await supabase
+        .from("penalties_log")
+        .select("id")
+        .eq("child_id", instance.assigned_to_user_id)
+        .eq("family_id", familyId)
+        .eq("custom_title", template.title)
+        .gte("created_at", new Date(Date.now() - 60_000).toISOString())
+        .maybeSingle();
+
+      if (existing) return; // déjà loggée dans la dernière minute
+
+      // 6. Insérer la pénalité — les triggers Postgres se chargent de la notification
+      //    et du retrait des points/argent côté child_stats.
+      const { error: penaltyError } = await supabase.from("penalties_log").insert({
+        child_id: instance.assigned_to_user_id,
+        family_id: familyId,
+        logged_by_parent_id: user.id,
+        points_amount: penaltyPoints,
+        wallet_amount: walletDeduction,
+        custom_title: template.title,
+      });
+
+      if (penaltyError) throw penaltyError;
+
+      // 7. Le trigger handle_penalty_logged ne déduit que pour les pénalités liées à une rule.
+      //    Pour les pénalités custom (sans rule_id), on déduit manuellement child_stats.
+      const { data: stats } = await supabase
+        .from("child_stats")
+        .select("current_points, wallet_balance")
+        .eq("child_id", instance.assigned_to_user_id)
+        .single();
+
+      if (stats) {
+        await supabase
           .from("child_stats")
-          .select("current_points, wallet_balance")
-          .eq("child_id", instance.assigned_to_user_id)
-          .single();
-
-        let walletDeduction = 0;
-        if (familyId) {
-          const { data: settings } = await supabase
-            .from("family_settings")
-            .select("points_to_money_rate")
-            .eq("family_id", familyId)
-            .single();
-          if (settings) {
-            walletDeduction = Number((penaltyPoints * settings.points_to_money_rate).toFixed(2));
-          }
-        }
-
-        if (stats) {
-          await supabase
-            .from("child_stats")
-            .update({
-              current_points: Math.max(0, stats.current_points - penaltyPoints),
-              wallet_balance: Math.max(0, (stats.wallet_balance || 0) - walletDeduction),
-            })
-            .eq("child_id", instance.assigned_to_user_id);
-        }
-
-        if (familyId && user?.id) {
-          await supabase.from("penalties_log").insert({
-            child_id: instance.assigned_to_user_id,
-            family_id: familyId,
-            logged_by_parent_id: user.id,
-            points_amount: penaltyPoints,
-            wallet_amount: walletDeduction,
-            custom_title: template.title,
-          });
-        }
+          .update({
+            current_points: Math.max(0, stats.current_points - penaltyPoints),
+            wallet_balance: Math.max(0, Number(stats.wallet_balance || 0) - walletDeduction),
+          })
+          .eq("child_id", instance.assigned_to_user_id);
       }
     },
     onSuccess: () => {
