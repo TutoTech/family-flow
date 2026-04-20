@@ -280,7 +280,17 @@
     "penaltyApplied": "Pénalité appliquée !",
     "allChildren": "Tous les enfants",
     "noFilterResults": "Aucune tâche ne correspond à ces filtres",
-    "sortByTime": "Trier par heure"
+    "sortByTime": "Trier par heure",
+    "btnApprove": "Valider",
+    "btnApproveTooltip": "Valider = points récompense",
+    "btnReject": "Rejeter",
+    "btnRejectTooltip": "Rejeter = aucun point attribué",
+    "btnNotDone": "Pas fait = pénalité",
+    "btnNotDoneTooltip": "Marquer comme non fait et appliquer la pénalité",
+    "btnReset": "Réinitialiser",
+    "btnResetTooltip": "Remettre la tâche en attente",
+    "btnViewPhoto": "Voir",
+    "btnViewPhotoTooltip": "Voir la preuve photo"
   },
   "childTasks": {
     "toDo": "À faire",
