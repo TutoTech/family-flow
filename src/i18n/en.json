@@ -290,7 +290,9 @@
     "btnReset": "Reset",
     "btnResetTooltip": "Reset task to pending status",
     "btnViewPhoto": "View",
-    "btnViewPhotoTooltip": "View the photo proof"
+    "btnViewPhotoTooltip": "View the photo proof",
+    "btnReorder": "Reorder",
+    "btnReorderTooltip": "Sort tasks by deadline"
   },
   "childTasks": {
     "toDo": "To do",

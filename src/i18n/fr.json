@@ -290,7 +290,9 @@
     "btnReset": "Réinitialiser",
     "btnResetTooltip": "Remettre la tâche en attente",
     "btnViewPhoto": "Voir",
-    "btnViewPhotoTooltip": "Voir la preuve photo"
+    "btnViewPhotoTooltip": "Voir la preuve photo",
+    "btnReorder": "Réorganiser",
+    "btnReorderTooltip": "Trier les tâches par heure limite"
   },
   "childTasks": {
     "toDo": "À faire",

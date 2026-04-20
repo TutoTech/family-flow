@@ -164,18 +164,27 @@ export default function ParentTaskList() {
   return (
     <>
       <Card id="section-tasks" className="shadow-card">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-lg">{t("taskList.todayTasks")}</CardTitle>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleSortByTime} disabled={isReadOnly || filteredTasks.length < 2 || reorderDailyTasks.isPending} className="gap-1">
-              <ArrowUpDown className="h-4 w-4" />
-              <span className="hidden sm:inline">{t("taskList.sortByTime")}</span>
-            </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="sm" onClick={handleSortByTime} disabled={isReadOnly || filteredTasks.length < 2 || reorderDailyTasks.isPending} className="gap-1">
+                    <ArrowUpDown className="h-4 w-4" />
+                    <span className="text-xs">{t("taskList.btnReorder")}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{t("taskList.btnReorderTooltip")}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Button size="sm" variant="outline" onClick={() => navigate("/tasks")} className="gap-1" disabled={isReadOnly}>
-              <Settings2 className="h-4 w-4" />{t("common.manage")}
+              <Settings2 className="h-4 w-4" />
+              <span className="text-xs">{t("common.manage")}</span>
             </Button>
             <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1" disabled={isReadOnly}>
-              <Plus className="h-4 w-4" />{t("taskList.newTask")}
+              <Plus className="h-4 w-4" />
+              <span className="text-xs">{t("taskList.newTask")}</span>
             </Button>
           </div>
         </CardHeader>
@@ -297,18 +306,18 @@ export default function ParentTaskList() {
                           <>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8 gap-1 border-success/40 text-success hover:bg-success/10 hover:text-success" onClick={() => handleValidate(task.id, true)}>
+                              <Button variant="outline" size="sm" className="h-8 gap-1 border-success/40 text-success hover:bg-success/10 hover:text-success" onClick={() => handleValidate(task.id, true)}>
                                   <CheckCircle2 className="h-4 w-4" />
-                                  <span className="text-xs">✅ {t("taskList.btnApprove")}</span>
+                                  <span className="text-xs">{t("taskList.btnApprove")}</span>
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>{t("taskList.btnApproveTooltip")}</TooltipContent>
                             </Tooltip>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8 gap-1 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => handleValidate(task.id, false)}>
+                              <Button variant="outline" size="sm" className="h-8 gap-1 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => handleValidate(task.id, false)}>
                                   <XCircle className="h-4 w-4" />
-                                  <span className="text-xs">🚫 {t("taskList.btnReject")}</span>
+                                  <span className="text-xs">{t("taskList.btnReject")}</span>
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>{t("taskList.btnRejectTooltip")}</TooltipContent>
@@ -325,7 +334,7 @@ export default function ParentTaskList() {
                                 onClick={() => handleMarkNotDone(task.id)}
                               >
                                 <AlertTriangle className="h-4 w-4" />
-                                <span className="text-xs">⚠️ {t("taskList.btnNotDone")}</span>
+                                <span className="text-xs">{t("taskList.btnNotDone")}</span>
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t("taskList.btnNotDoneTooltip")}</TooltipContent>
@@ -341,7 +350,7 @@ export default function ParentTaskList() {
                                 onClick={() => handleReset(task.id)}
                               >
                                 <RotateCcw className="h-4 w-4" />
-                                <span className="text-xs">🔄 {t("taskList.btnReset")}</span>
+                                <span className="text-xs">{t("taskList.btnReset")}</span>
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t("taskList.btnResetTooltip")}</TooltipContent>
