@@ -217,7 +217,7 @@ export default function LoginForm() {
               <Button type="button" variant="outline" className="w-full" onClick={async () => {
                 const { error } = await supabase.auth.signInWithOAuth({
                   provider: "google",
-                  options: { redirectTo: window.location.origin + "/auth/callback" },
+                  options: { redirectTo: window.location.origin + "/" },
                 });
                 if (error) toast({ title: t("common.error"), description: String(error.message ?? error), variant: "destructive" });
               }}>
