@@ -37,7 +37,9 @@ export default defineConfig(({ mode }) => ({
         org: process.env.SENTRY_ORG,
         project: process.env.SENTRY_PROJECT,
         authToken: process.env.SENTRY_AUTH_TOKEN,
-        release: { name: process.env.VITE_SENTRY_RELEASE },
+        ...(process.env.VITE_SENTRY_RELEASE
+          ? { release: { name: process.env.VITE_SENTRY_RELEASE } }
+          : {}),
         sourcemaps: { filesToDeleteAfterUpload: ["./dist/**/*.map"] },
       }),
   ].filter(Boolean),
