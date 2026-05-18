@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 const FALLBACK_BACKEND_URL = "https://fzstjebbxbejypgwamqx.supabase.co";
 const FALLBACK_BACKEND_PUBLISHABLE_KEY =
@@ -28,7 +29,21 @@ export default defineConfig(({ mode }) => ({
       process.env.VITE_SUPABASE_PROJECT_ID ?? FALLBACK_BACKEND_PROJECT_ID
     ),
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [
+    react(),
+    mode === "development" && componentTagger(),
+    process.env.SENTRY_AUTH_TOKEN &&
+      sentryVitePlugin({
+        org: process.env.SENTRY_ORG,
+        project: process.env.SENTRY_PROJECT,
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        release: { name: process.env.VITE_SENTRY_RELEASE },
+        sourcemaps: { filesToDeleteAfterUpload: ["./dist/**/*.map"] },
+      }),
+  ].filter(Boolean),
+  build: {
+    sourcemap: true,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
