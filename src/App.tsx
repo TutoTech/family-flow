@@ -28,7 +28,6 @@ import CGV from "./pages/CGV";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
-import SentryDebugButton from "./components/SentryDebugButton";
 
 /** Client React Query pour la gestion du cache et des requêtes asynchrones */
 const queryClient = new QueryClient();
@@ -41,7 +40,6 @@ const App = () => (
         {/* Systèmes de notifications toast (shadcn + sonner) */}
         <Toaster />
         <Sonner />
-        <SentryDebugButton />
 
         <BrowserRouter>
           {/* Fournisseur d'authentification (session, profil, rôle) */}
