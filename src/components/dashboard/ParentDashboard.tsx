@@ -4,7 +4,7 @@
  * les tâches du jour, les récompenses, les pénalités et l'historique.
  */
 
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
@@ -41,7 +41,7 @@ export default function ParentDashboard({ name }: Props) {
   const isPaid = plan === "family";
   const [activeTab, setActiveTab] = useState("tasks");
 
-  const TABS = [
+  const TABS = useMemo(() => [
     { id: "tasks", label: t("dashboard.tabs.tasks"), icon: CheckCircle2 },
     { id: "penalties", label: t("dashboard.tabs.penalties"), icon: AlertTriangle },
     { id: "rewards", label: t("dashboard.tabs.rewards"), icon: Gift },
@@ -49,7 +49,7 @@ export default function ParentDashboard({ name }: Props) {
     { id: "history", label: t("dashboard.tabs.history"), icon: History },
     { id: "stats", label: t("dashboard.tabs.stats"), icon: BarChart3 },
     { id: "calendar", label: t("dashboard.tabs.calendar"), icon: CalendarDays },
-  ];
+  ], [t]);
 
   // Scroll to section if coming from notification click
   useEffect(() => {
