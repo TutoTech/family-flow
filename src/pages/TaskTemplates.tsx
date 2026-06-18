@@ -23,6 +23,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
 import { ArrowLeft, Plus, Pencil, Trash2, Clock, Star, Camera, RotateCcw, Copy, ArrowUp, ArrowDown, ArrowUpDown, Palmtree } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useVacationMode } from "@/hooks/useVacationMode";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function TaskTemplatesPage() {
   const { t } = useTranslation();
@@ -61,8 +62,8 @@ export default function TaskTemplatesPage() {
     try {
       await deleteTemplate.mutateAsync(deleteTarget.id);
       toast({ title: t("taskTemplates.taskDeleted"), description: t("taskTemplates.taskDeletedDesc", { title: deleteTarget.title }) });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
     setDeleteTarget(null);
   };
@@ -74,8 +75,8 @@ export default function TaskTemplatesPage() {
         title: template.is_active ? t("taskTemplates.taskDisabled") : t("taskTemplates.taskEnabled"),
         description: t("taskTemplates.toggleDesc", { title: template.title, status: template.is_active ? t("taskTemplates.inactiveStatus") : t("taskTemplates.active") }),
       });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -93,8 +94,8 @@ export default function TaskTemplatesPage() {
         { id: currentTemplate.id, display_order: targetTemplate.display_order },
         { id: targetTemplate.id, display_order: currentTemplate.display_order }
       ]);
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -121,8 +122,8 @@ export default function TaskTemplatesPage() {
     try {
       await reorderTemplates.mutateAsync(updates);
       toast({ title: "✓", description: t("taskTemplates.sortByTime") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 

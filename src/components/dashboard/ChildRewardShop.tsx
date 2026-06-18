@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Gift, Star, ShoppingCart, Clock, CheckCircle2, XCircle, Banknote } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function ChildRewardShop() {
   const { t } = useTranslation();
@@ -40,8 +41,8 @@ export default function ChildRewardShop() {
 
       toast({ title: t("rewards.requestSent"), description: t("rewards.requestSentDesc", { title }) });
       queryClient.invalidateQueries({ queryKey: ["redemptions"] });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 

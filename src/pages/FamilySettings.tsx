@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2, KeyRound, CheckCircle2 } from "lucide-react";
 import SetPinDialog from "@/components/dashboard/SetPinDialog";
 import { CURRENCIES, CurrencyCode } from "@/hooks/useCurrency";
+import { getErrorMessage } from "@/lib/utils";
 
 interface FamilySettings {
   points_to_money_rate: number;
@@ -395,8 +396,8 @@ export default function FamilySettingsPage() {
                   toast.success(t("auth.passwordUpdated"));
                   setNewPassword("");
                   setConfirmNewPassword("");
-                } catch (err: any) {
-                  toast.error(err.message);
+                } catch (err) {
+                  toast.error(getErrorMessage(err));
                 } finally {
                   setChangingPassword(false);
                 }
@@ -478,8 +479,8 @@ export default function FamilySettingsPage() {
                   toast.success(t("settings.deleteAccountSuccess"));
                   await supabase.auth.signOut();
                   navigate("/");
-                } catch (err: any) {
-                  toast.error(t("settings.deleteAccountError"), { description: err.message });
+                } catch (err) {
+                  toast.error(t("settings.deleteAccountError"), { description: getErrorMessage(err) });
                   setDeleting(false);
                 }
               }}

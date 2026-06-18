@@ -26,6 +26,7 @@ const StatsCharts = lazy(() => import("./StatsCharts"));
 import UpgradeBanner from "./UpgradeBanner";
 import { PremiumGate } from "./PremiumBadge";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 
 interface Props { name: string; }
 
@@ -78,8 +79,8 @@ export default function ParentDashboard({ name }: Props) {
         title: newState ? t("vacationMode.activated") : t("vacationMode.deactivated"),
         description: newState ? t("vacationMode.activatedDesc") : t("vacationMode.deactivatedDesc"),
       });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
