@@ -49,19 +49,6 @@ export function useActivityHistory(limit = 50) {
       // Les enfants ne voient que leurs propres activités
       if (!isParent) taskQuery.eq("assigned_to_user_id", effectiveUserId!);
 
-      const { data: tasks } = await taskQuery;
-      tasks?.forEach((t: any) => {
-        activities.push({
-          id: `task-${t.id}`,
-          type: "task_validated",
-          title: t.task_template?.title ?? "Tâche",
-          icon: t.task_template?.icon ?? "✅",
-          points: t.task_template?.points_reward ?? 0,
-          childId: t.assigned_to_user_id,
-          timestamp: t.validated_at,
-        });
-      });
-
       // 2. Récompenses approuvées ou rejetées
       const rewardQuery = supabase
         .from("reward_redemptions")
@@ -72,19 +59,6 @@ export function useActivityHistory(limit = 50) {
         .limit(limit);
 
       if (!isParent) rewardQuery.eq("child_id", effectiveUserId!);
-
-      const { data: redemptions } = await rewardQuery;
-      redemptions?.forEach((r: any) => {
-        activities.push({
-          id: `reward-${r.id}`,
-          type: r.status === "approved" ? "reward_approved" : "reward_rejected",
-          title: r.reward?.title ?? "Récompense",
-          icon: r.reward?.icon ?? "🎁",
-          points: -(r.reward?.cost_points ?? 0),
-          childId: r.child_id,
-          timestamp: r.updated_at,
-        });
-      });
 
       // 3. Pénalités appliquées
       const penaltyQuery = supabase
@@ -97,7 +71,50 @@ export function useActivityHistory(limit = 50) {
 
       if (!isParent) penaltyQuery.eq("child_id", effectiveUserId!);
 
-      const { data: penalties } = await penaltyQuery;
+      // 4. Ajustements manuels
+      const adjustmentQuery = supabase
+        .from("manual_adjustments")
+        .select("id, created_at, child_id, type, points_amount, wallet_amount, reason")
+        .eq("family_id", familyId!)
+        .gte("created_at", cutoff)
+        .order("created_at", { ascending: false })
+        .limit(limit);
+
+      if (!isParent) adjustmentQuery.eq("child_id", effectiveUserId!);
+
+      // Les quatre sources sont indépendantes : on les récupère en parallèle
+      // pour éviter quatre allers-retours réseau séquentiels.
+      const [
+        { data: tasks },
+        { data: redemptions },
+        { data: penalties },
+        { data: adjustments },
+      ] = await Promise.all([taskQuery, rewardQuery, penaltyQuery, adjustmentQuery]);
+
+      tasks?.forEach((t: any) => {
+        activities.push({
+          id: `task-${t.id}`,
+          type: "task_validated",
+          title: t.task_template?.title ?? "Tâche",
+          icon: t.task_template?.icon ?? "✅",
+          points: t.task_template?.points_reward ?? 0,
+          childId: t.assigned_to_user_id,
+          timestamp: t.validated_at,
+        });
+      });
+
+      redemptions?.forEach((r: any) => {
+        activities.push({
+          id: `reward-${r.id}`,
+          type: r.status === "approved" ? "reward_approved" : "reward_rejected",
+          title: r.reward?.title ?? "Récompense",
+          icon: r.reward?.icon ?? "🎁",
+          points: -(r.reward?.cost_points ?? 0),
+          childId: r.child_id,
+          timestamp: r.updated_at,
+        });
+      });
+
       penalties?.forEach((p: any) => {
         activities.push({
           id: `penalty-${p.id}`,
@@ -110,18 +127,6 @@ export function useActivityHistory(limit = 50) {
         });
       });
 
-      // 4. Ajustements manuels
-      const adjustmentQuery = supabase
-        .from("manual_adjustments")
-        .select("id, created_at, child_id, type, points_amount, wallet_amount, reason")
-        .eq("family_id", familyId!)
-        .gte("created_at", cutoff)
-        .order("created_at", { ascending: false })
-        .limit(limit);
-
-      if (!isParent) adjustmentQuery.eq("child_id", effectiveUserId!);
-
-      const { data: adjustments } = await adjustmentQuery;
       adjustments?.forEach((adj: any) => {
         const isPoints = adj.points_amount !== null && adj.points_amount > 0;
         const isAdd = adj.type.startsWith("add_");
