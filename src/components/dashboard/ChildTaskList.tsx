@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Camera, Clock, Star, Ban, Filter, Palette } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { TASK_COLORS } from "@/utils/taskColors";
+import { getErrorMessage } from "@/lib/utils";
 
 type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
 
@@ -84,8 +85,8 @@ export default function ChildTaskList() {
     try {
       await completeTask.mutateAsync({ instanceId: taskId, photoFile: photo });
       toast({ title: t("childTasks.wellDone"), description: t("childTasks.taskSent") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -102,16 +103,16 @@ export default function ChildTaskList() {
     try {
       await skipTask.mutateAsync(taskId);
       toast({ title: t("childTasks.skipped"), description: t("childTasks.taskSkipped") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
   const handleColorChange = async (taskId: string, templateId: string, color: string) => {
     try {
       await updateChildTaskColor.mutateAsync({ templateId, color });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 

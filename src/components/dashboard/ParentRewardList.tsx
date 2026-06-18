@@ -17,6 +17,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import CreateRewardDialog from "./CreateRewardDialog";
 import EditRewardDialog from "./EditRewardDialog";
 import { ManualAdjustmentDialog } from "./ManualAdjustmentDialog";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function ParentRewardList() {
   const { t } = useTranslation();
@@ -49,8 +50,8 @@ export default function ParentRewardList() {
       toast({ title: approved ? t("rewards.rewardApproved") : t("rewards.requestRejected") });
       queryClient.invalidateQueries({ queryKey: ["pending-redemptions"] });
       queryClient.invalidateQueries({ queryKey: ["child-stats"] });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -65,8 +66,8 @@ export default function ParentRewardList() {
 
       toast({ title: t("rewards.rewardDeleted") });
       queryClient.invalidateQueries({ queryKey: ["rewards"] });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setDeleteReward(null);
     }

@@ -23,6 +23,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import CreateSavingsGoalDialog from "./CreateSavingsGoalDialog";
 import EditSavingsGoalDialog from "./EditSavingsGoalDialog";
 import { SavingsGoal } from "@/hooks/useSavingsGoals";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function SavingsGoalCard() {
   const { t } = useTranslation();
@@ -43,8 +44,8 @@ export default function SavingsGoalCard() {
     try {
       await updateGoal.mutateAsync({ id: goalId, is_completed: true, completed_at: new Date().toISOString() });
       toast({ title: "🎉", description: t("savingsGoals.completed") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -53,8 +54,8 @@ export default function SavingsGoalCard() {
     try {
       await deleteGoal.mutateAsync(deleteGoalConfirm.id);
       setDeleteGoalConfirm(null);
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 

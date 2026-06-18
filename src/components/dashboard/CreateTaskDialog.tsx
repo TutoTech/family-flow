@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import type { TaskTemplate } from "@/hooks/useTaskTemplates";
 import { TASK_COLORS } from "@/utils/taskColors";
+import { getErrorMessage } from "@/lib/utils";
 
 interface Props {
   open: boolean;
@@ -151,8 +152,8 @@ export default function CreateTaskDialog({ open, onOpenChange, initialData }: Pr
       toast({ title: t("createTask.taskCreated"), description: t("createTask.taskCreatedDesc", { title }) });
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
       onOpenChange(false);
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setLoading(false);
     }

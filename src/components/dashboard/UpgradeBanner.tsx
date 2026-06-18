@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Crown, KeyRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function UpgradeBanner() {
   const { t } = useTranslation();
@@ -59,8 +60,8 @@ export default function UpgradeBanner() {
         setShowCodeInput(false);
         await refetch();
       }
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setActivating(false);
     }

@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { getErrorMessage } from "@/lib/utils";
 
 type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
 
@@ -84,8 +85,8 @@ export default function ParentTaskList() {
     try {
       await validateTask.mutateAsync({ instanceId, approved });
       toast({ title: approved ? t("taskList.taskValidated") : t("taskList.taskRejected") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -93,8 +94,8 @@ export default function ParentTaskList() {
     try {
       await resetTask.mutateAsync(instanceId);
       toast({ title: t("taskList.taskReset") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -102,8 +103,8 @@ export default function ParentTaskList() {
     try {
       await markNotDone.mutateAsync(instanceId);
       toast({ title: t("penalties.penaltyApplied") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -130,8 +131,8 @@ export default function ParentTaskList() {
         { id: currentTask.id, display_order: targetOrder },
         { id: targetTask.id, display_order: currentOrder }
       ]);
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -151,8 +152,8 @@ export default function ParentTaskList() {
     try {
       await reorderDailyTasks.mutateAsync(updates);
       toast({ title: "✓", description: t("taskList.sortByTime") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 

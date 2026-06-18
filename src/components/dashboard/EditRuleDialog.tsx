@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrency } from "@/hooks/useCurrency";
+import { getErrorMessage } from "@/lib/utils";
 
 interface Rule {
   id: string;
@@ -70,8 +71,8 @@ export default function EditRuleDialog({ open, onOpenChange, rule }: Props) {
       toast({ title: t("penalties.ruleUpdated") });
       queryClient.invalidateQueries({ queryKey: ["house-rules"] });
       onOpenChange(false);
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setLoading(false);
     }

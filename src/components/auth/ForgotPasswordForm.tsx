@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { Mail, ArrowLeft } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function ForgotPasswordForm() {
   const { t } = useTranslation();
@@ -30,8 +31,8 @@ export default function ForgotPasswordForm() {
       await resetPassword(email);
       setSent(true);
       toast({ title: t("auth.emailSent"), description: t("auth.checkEmail") });
-    } catch (error: any) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+    } catch (error) {
+      toast({ title: t("common.error"), description: getErrorMessage(error), variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
