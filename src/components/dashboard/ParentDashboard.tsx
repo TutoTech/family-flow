@@ -4,7 +4,7 @@
  * les tâches du jour, les récompenses, les pénalités et l'historique.
  */
 
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
@@ -20,7 +20,9 @@ import ParentRewardList from "./ParentRewardList";
 import ParentPenaltyList from "./ParentPenaltyList";
 import ParentRuleList from "./ParentRuleList";
 import ActivityHistory from "./ActivityHistory";
-import StatsCharts from "./StatsCharts";
+// Chargé à la demande : embarque recharts (lourd), inutile tant que
+// l'utilisateur n'ouvre pas l'onglet statistiques.
+const StatsCharts = lazy(() => import("./StatsCharts"));
 import UpgradeBanner from "./UpgradeBanner";
 import { PremiumGate } from "./PremiumBadge";
 import { useToast } from "@/hooks/use-toast";
@@ -183,9 +185,17 @@ export default function ParentDashboard({ name }: Props) {
               {activeTab === "history" && <ActivityHistory />}
               
               {activeTab === "stats" && (
-                isPaid ? <StatsCharts /> : (
-                  <PremiumGate featureLabel={t("dashboard.tabs.stats")}><StatsCharts /></PremiumGate>
-                )
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center py-12">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                    </div>
+                  }
+                >
+                  {isPaid ? <StatsCharts /> : (
+                    <PremiumGate featureLabel={t("dashboard.tabs.stats")}><StatsCharts /></PremiumGate>
+                  )}
+                </Suspense>
               )}
             </div>
           </>

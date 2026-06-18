@@ -10,24 +10,38 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
+import { lazy, Suspense } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileSwitchProvider } from "@/hooks/useProfileSwitch";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import Dashboard from "./pages/Dashboard";
-import FamilySettings from "./pages/FamilySettings";
-import TaskTemplates from "./pages/TaskTemplates";
-import FamilyCalendarPage from "./pages/FamilyCalendarPage";
-import MentionsLegales from "./pages/MentionsLegales";
-import CGU from "./pages/CGU";
-import CGV from "./pages/CGV";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import PaymentSuccess from "./pages/PaymentSuccess";
-import NotFound from "./pages/NotFound";
+
+/*
+ * Chaque page est chargée à la demande (code-splitting) afin de réduire
+ * la taille du bundle initial : l'utilisateur ne télécharge que le code
+ * de la page qu'il visite réellement.
+ */
+const Index = lazy(() => import("./pages/Index"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const FamilySettings = lazy(() => import("./pages/FamilySettings"));
+const TaskTemplates = lazy(() => import("./pages/TaskTemplates"));
+const FamilyCalendarPage = lazy(() => import("./pages/FamilyCalendarPage"));
+const MentionsLegales = lazy(() => import("./pages/MentionsLegales"));
+const CGU = lazy(() => import("./pages/CGU"));
+const CGV = lazy(() => import("./pages/CGV"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+/** Spinner affiché pendant le chargement différé d'une page */
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+  </div>
+);
 
 /** Client React Query pour la gestion du cache et des requêtes asynchrones */
 const queryClient = new QueryClient();
@@ -45,6 +59,7 @@ const App = () => (
           <AuthProvider>
             {/* Permet aux parents de visualiser le dashboard d'un enfant */}
             <ProfileSwitchProvider>
+            <Suspense fallback={<PageLoader />}>
             <Routes>
               {/* --- Pages publiques --- */}
               <Route path="/" element={<Index />} />
@@ -97,6 +112,7 @@ const App = () => (
               {/* Route 404 pour les URLs inconnues */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </Suspense>
             </ProfileSwitchProvider>
           </AuthProvider>
         </BrowserRouter>
