@@ -5,7 +5,7 @@
  * les objectifs d'épargne, la boutique de récompenses et l'historique.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
@@ -41,8 +41,8 @@ export default function ChildDashboard({ name }: Props) {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("tasks");
 
-  const TABS = [
-    { id: "tasks", label: t("childDashboard.tabs.tasks"), icon: CheckCircle2, emoji: "📝", 
+  const TABS = useMemo(() => [
+    { id: "tasks", label: t("childDashboard.tabs.tasks"), icon: CheckCircle2, emoji: "📝",
       colorClass: "text-emerald-700 dark:text-emerald-400 bg-emerald-100/60 dark:bg-emerald-500/10 hover:bg-emerald-200/60 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-800/50", 
       activeClass: "bg-emerald-500 dark:bg-emerald-600 text-white shadow-md shadow-emerald-500/20 dark:shadow-emerald-900/50 border-transparent ring-2 ring-emerald-400/50 ring-offset-2 ring-offset-background" },
     { id: "penalties", label: t("childDashboard.tabs.penalties"), icon: AlertTriangle, emoji: "🚨", 
@@ -60,7 +60,7 @@ export default function ChildDashboard({ name }: Props) {
     { id: "history", label: t("childDashboard.tabs.history"), icon: History, emoji: "🕰️", 
       colorClass: "text-gray-700 dark:text-gray-300 bg-gray-100/60 dark:bg-gray-500/10 hover:bg-gray-200/60 dark:hover:bg-gray-500/20 border border-gray-200 dark:border-gray-700/50", 
       activeClass: "bg-gray-700 dark:bg-gray-600 text-white shadow-md shadow-gray-500/20 dark:shadow-gray-900/50 border-transparent ring-2 ring-gray-400/50 ring-offset-2 ring-offset-background" },
-  ];
+  ], [t]);
 
   // Détermine l'ID de l'enfant affiché (impersoné ou réel)
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;

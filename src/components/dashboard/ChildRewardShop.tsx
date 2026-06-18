@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -46,12 +47,12 @@ export default function ChildRewardShop() {
     }
   };
 
-  const STATUS_MAP: Record<string, { label: string; icon: typeof Clock }> = {
+  const STATUS_MAP: Record<string, { label: string; icon: typeof Clock }> = useMemo(() => ({
     requested: { label: t("rewards.requested"), icon: Clock },
     approved: { label: t("rewards.approved"), icon: CheckCircle2 },
     rejected: { label: t("rewards.rejected"), icon: XCircle },
     delivered: { label: t("rewards.delivered"), icon: Gift },
-  };
+  }), [t]);
 
   return (
     <div className="space-y-4">

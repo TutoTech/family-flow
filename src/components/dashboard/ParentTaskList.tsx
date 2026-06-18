@@ -46,7 +46,7 @@ export default function ParentTaskList() {
 
   const isReadOnly = isImpersonating && realRole === "child";
 
-  const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = useMemo(() => ({
     pending: { label: t("taskList.pending"), variant: "outline" },
     done: { label: t("taskList.done"), variant: "secondary" },
     awaiting_validation: { label: t("taskList.awaitingValidation"), variant: "default" },
@@ -55,7 +55,7 @@ export default function ParentTaskList() {
     late: { label: t("taskList.late"), variant: "destructive" },
     skipped: { label: t("taskList.skipped"), variant: "outline" },
     not_done: { label: t("taskList.notDone"), variant: "destructive" },
-  };
+  }), [t]);
 
   // Count tasks per status
   const statusCounts = useMemo(() => {

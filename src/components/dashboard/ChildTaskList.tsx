@@ -36,7 +36,7 @@ export default function ChildTaskList() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingTaskIdRef = useRef<string | null>(null);
 
-  const STATUS_CHILD: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  const STATUS_CHILD: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = useMemo(() => ({
     pending: { label: t("childTasks.toDo"), variant: "outline" },
     awaiting_validation: { label: t("childTasks.awaiting"), variant: "default" },
     validated: { label: t("taskList.validated"), variant: "secondary" },
@@ -45,7 +45,7 @@ export default function ChildTaskList() {
     skipped: { label: t("childTasks.skipped"), variant: "outline" },
     not_done: { label: t("childTasks.notDone"), variant: "destructive" },
     done: { label: t("taskList.done"), variant: "secondary" },
-  };
+  }), [t]);
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
