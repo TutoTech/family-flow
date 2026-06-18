@@ -63,17 +63,6 @@ export function useWeeklyStats(weeksBack = 4, childId?: string | null) {
         tasksQuery = tasksQuery.eq("assigned_to_user_id", childId);
       }
 
-      const { data: tasks } = await tasksQuery;
-
-      // Construit une map template_id → points pour le calcul
-      const { data: templates } = await supabase
-        .from("task_templates")
-        .select("id, points_reward")
-        .eq("family_id", profile.family_id!);
-
-      const pointsMap = new Map<string, number>();
-      templates?.forEach((t) => pointsMap.set(t.id, t.points_reward));
-
       // Récupère les pénalités sur la période
       let penaltiesQuery = supabase
         .from("penalties_log")
@@ -86,7 +75,21 @@ export function useWeeklyStats(weeksBack = 4, childId?: string | null) {
         penaltiesQuery = penaltiesQuery.eq("child_id", childId);
       }
 
-      const { data: penalties } = await penaltiesQuery;
+      // Les trois requêtes sont indépendantes : on les exécute en parallèle
+      // pour réduire la latence (au lieu de les enchaîner séquentiellement).
+      const [{ data: tasks }, { data: templates }, { data: penalties }] =
+        await Promise.all([
+          tasksQuery,
+          supabase
+            .from("task_templates")
+            .select("id, points_reward")
+            .eq("family_id", profile.family_id!),
+          penaltiesQuery,
+        ]);
+
+      // Construit une map template_id → points pour le calcul
+      const pointsMap = new Map<string, number>();
+      templates?.forEach((t) => pointsMap.set(t.id, t.points_reward));
 
       // Construction des statistiques jour par jour
       const allDays = eachDayOfInterval({ start: startDate, end: endDate });
