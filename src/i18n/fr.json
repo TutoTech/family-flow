@@ -84,7 +84,18 @@
     "completed": "complétées",
     "streak": "Série de {{count}}j",
     "recordBroken": "record battu !",
-    "heroAlt": "Famille heureuse avec des enfants autonomes réalisant leurs tâches"
+    "heroAlt": "Famille heureuse avec des enfants autonomes réalisant leurs tâches",
+    "ledger": {
+      "name": "Livret de Léa",
+      "balanceLabel": "Solde disponible",
+      "entry1": "Ranger sa chambre",
+      "entry2": "Mettre la table",
+      "entry3": "Série de 7 jours",
+      "entry4": "Sortie vélo",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "goal": "Objectif : Lego 🚀"
+    }
   },
   "features": {
     "badge": "Fonctionnalités",
@@ -224,7 +235,10 @@
       "rewards": "Boutique",
       "savings": "Mes objectifs d'épargne",
       "history": "Historique"
-    }
+    },
+    "ledgerTitle": "Mon livret",
+    "ledgerBalance": "Solde disponible",
+    "ledgerEmpty": "Aucune écriture pour l'instant. Termine une tâche pour ouvrir ton livret !"
   },
   "family": {
     "createOrJoinTitle": "Créez ou rejoignez un foyer",

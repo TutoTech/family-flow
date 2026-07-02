@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star, Flame, CheckCircle2, AlertTriangle, Wallet, Shield, Gift, Target, History } from "lucide-react";
+import { Star, Flame, CheckCircle2, AlertTriangle, Shield, Gift, Target, History } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileSwitch } from "@/hooks/useProfileSwitch";
 import { useFamilyPlan } from "@/hooks/useFamilyPlan";
@@ -23,11 +23,11 @@ import { PremiumGate } from "./PremiumBadge";
 import ChildPenaltyHistory from "./ChildPenaltyHistory";
 import ChildRulesList from "./ChildRulesList";
 import LevelProgressCard from "./LevelProgressCard";
+import ChildLedgerCard from "./ChildLedgerCard";
 import BadgesDisplay from "./BadgesDisplay";
 import BadgeCelebration from "./BadgeCelebration";
 import LevelCelebration from "./LevelCelebration";
 import { useChildStats } from "@/hooks/useRewards";
-import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props { name: string; }
 
@@ -71,7 +71,6 @@ export default function ChildDashboard({ name }: Props) {
   // Détermine l'ID de l'enfant affiché (impersoné ou réel)
   const viewUserId = isImpersonating ? activeProfile?.userId : user?.id;
   const { data: stats } = useChildStats(isImpersonating ? viewUserId : undefined);
-  const { symbol: currencySymbol } = useCurrency();
 
   // Scroll to section if coming from notification click
   useEffect(() => {
@@ -111,17 +110,11 @@ export default function ChildDashboard({ name }: Props) {
         {/* Carte de famille si l'enfant n'a pas encore rejoint de foyer */}
         {!profile?.family_id && <FamilyCard />}
 
-        {/* Cartes de statistiques rapides */}
-        <div className="grid grid-cols-3 gap-3">
-          {/* Solde du portefeuille */}
-          <Card className="shadow-card bg-success/5 border-success/20">
-            <CardContent className="p-3 flex flex-col items-center justify-center text-center">
-              <Wallet className="h-5 w-5 text-success mb-1" />
-              <div className="text-xl font-bold text-success font-data tabular-nums">{(stats?.wallet_balance ?? 0).toFixed(2)}{currencySymbol}</div>
-              <p className="text-xs font-medium text-muted-foreground">{t("dashboard.wallet")}</p>
-            </CardContent>
-          </Card>
+        {/* Livret : solde du portefeuille + dernières écritures */}
+        <ChildLedgerCard balance={stats?.wallet_balance ?? 0} />
 
+        {/* Cartes de statistiques rapides */}
+        <div className="grid grid-cols-2 gap-3">
           {/* Points */}
           <Card className="shadow-card bg-primary/5 border-primary/20">
             <CardContent className="p-3 flex flex-col items-center justify-center text-center">

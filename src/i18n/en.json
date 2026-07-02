@@ -84,7 +84,18 @@
     "completed": "completed",
     "streak": "{{count}}-day streak",
     "recordBroken": "record broken!",
-    "heroAlt": "Happy family with independent children completing their tasks"
+    "heroAlt": "Happy family with independent children completing their tasks",
+    "ledger": {
+      "name": "Léa's passbook",
+      "balanceLabel": "Available balance",
+      "entry1": "Tidy the bedroom",
+      "entry2": "Set the table",
+      "entry3": "7-day streak",
+      "entry4": "Bike ride",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "goal": "Goal: Lego 🚀"
+    }
   },
   "features": {
     "badge": "Features",
@@ -224,7 +235,10 @@
       "rewards": "Shop",
       "savings": "My Savings Goals",
       "history": "History"
-    }
+    },
+    "ledgerTitle": "My passbook",
+    "ledgerBalance": "Available balance",
+    "ledgerEmpty": "No entries yet. Complete a task to open your passbook!"
   },
   "family": {
     "createOrJoinTitle": "Create or join a household",

@@ -7,6 +7,7 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-illustration.png";
+import HeroLedger from "./HeroLedger";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 
@@ -55,11 +56,15 @@ const HeroSection = () => {
             </div>
           </div>
           <div className="relative animate-scale-in max-w-md mx-auto lg:max-w-none" style={{ animationDelay: "200ms" }}>
-            <div className="relative rounded-3xl overflow-hidden shadow-elevated">
+            {/* Visuel du héro : livret token-driven en Maison, illustration d'origine en Classique */}
+            <div className="classique:hidden px-2 sm:px-6 py-4">
+              <HeroLedger />
+            </div>
+            <div className="hidden classique:block relative rounded-3xl overflow-hidden shadow-elevated">
               <img src={heroImage} alt={t("hero.heroAlt")} className="w-full h-auto" loading="eager" />
             </div>
             {/* Floating cards - hidden on very small screens to avoid overflow */}
-            <div className="hidden sm:block absolute -top-4 -right-4 bg-card rounded-2xl shadow-card p-3 animate-float border border-border/50">
+            <div className="hidden classique:sm:block absolute -top-4 -right-4 bg-card rounded-2xl shadow-card p-3 animate-float border border-border/50">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
                   <span className="text-success text-lg">✓</span>
@@ -70,7 +75,7 @@ const HeroSection = () => {
                 </div>
               </div>
             </div>
-            <div className="hidden sm:block absolute -bottom-4 -left-4 bg-card rounded-2xl shadow-card p-3 animate-float border border-border/50" style={{ animationDelay: "1.5s" }}>
+            <div className="hidden classique:sm:block absolute -bottom-4 -left-4 bg-card rounded-2xl shadow-card p-3 animate-float border border-border/50" style={{ animationDelay: "1.5s" }}>
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-accent/30 flex items-center justify-center">
                   <span className="text-lg">🏆</span>
