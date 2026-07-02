@@ -5,6 +5,29 @@
 @tailwind utilities;
 
 @layer base {
+  /*
+   * ============================================================
+   * SYSTÈME DE DOUBLE THÈME (« skin »)
+   * ============================================================
+   * Deux axes indépendants :
+   *   - le MODE clair/sombre est géré par next-themes via la classe `.dark`
+   *   - le SKIN (Maison / Classique) est porté par `data-skin` sur <html>,
+   *     posé avant le premier paint par le script inline de index.html
+   *     et géré ensuite par le SkinProvider (src/hooks/useSkin.tsx).
+   *
+   * L'ORDRE DES 4 BLOCS CI-DESSOUS EST PORTEUR DE SENS — ne pas réordonner :
+   *   1. :root                       → Maison clair (défaut, jeu COMPLET de tokens)
+   *   2. .dark                       → Maison sombre
+   *   3. [data-skin="classique"]     → Classique clair (jeu COMPLET, écrase 1 et 2
+   *                                    par ordre source à spécificité égale)
+   *   4. [data-skin="classique"].dark → Classique sombre (spécificité supérieure)
+   *
+   * INVARIANT : tout token déclaré dans le bloc 2 doit aussi être déclaré
+   * dans le bloc 4 (sinon un utilisateur Classique+sombre hériterait d'une
+   * valeur Maison). Idem entre les blocs 1 et 3.
+   */
+
+  /* --- 1. Skin « Maison », mode clair (défaut) --- */
   :root {
     --background: 30 50% 98%;
     --foreground: 220 30% 15%;
@@ -50,6 +73,7 @@
 
     --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'Nunito', sans-serif;
+    --font-data: 'Space Grotesk', monospace;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -61,7 +85,111 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* --- 2. Skin « Maison », mode sombre --- */
   .dark {
+    --background: 220 25% 8%;
+    --foreground: 30 20% 92%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 30 20% 92%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 30 20% 92%;
+
+    --primary: 16 85% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 16 90% 68%;
+
+    --secondary: 172 45% 46%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 15% 60%;
+
+    --accent: 45 95% 62%;
+    --accent-foreground: 45 90% 85%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 55% 48%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 16 85% 60%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+    --gradient-card: linear-gradient(180deg, hsl(220 25% 14%), hsl(220 25% 10%));
+  }
+
+  /* --- 3. Skin « Classique », mode clair (thème historique, conservé verbatim) --- */
+  [data-skin="classique"] {
+    --background: 30 50% 98%;
+    --foreground: 220 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 15%;
+
+    --primary: 16 85% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 16 90% 68%;
+
+    --secondary: 172 45% 46%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 30 30% 94%;
+    --muted-foreground: 220 15% 50%;
+
+    --accent: 45 95% 62%;
+    --accent-foreground: 30 60% 20%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 55% 48%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 30 20% 90%;
+    --input: 30 20% 90%;
+    --ring: 16 85% 60%;
+
+    --radius: 0.75rem;
+
+    --gradient-hero: linear-gradient(135deg, hsl(16 85% 55%), hsl(0 72% 55%), hsl(340 70% 50%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(30 40% 97%));
+    --gradient-teal: linear-gradient(135deg, hsl(172 45% 46%), hsl(172 55% 56%));
+
+    --shadow-soft: 0 4px 20px -4px hsl(16 85% 60% / 0.15);
+    --shadow-card: 0 8px 30px -8px hsl(220 30% 15% / 0.08);
+    --shadow-elevated: 0 16px 50px -12px hsl(220 30% 15% / 0.12);
+
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+    --font-data: 'Space Grotesk', monospace;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* --- 4. Skin « Classique », mode sombre --- */
+  [data-skin="classique"].dark {
     --background: 220 25% 8%;
     --foreground: 30 20% 92%;
 

@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
@@ -111,5 +112,18 @@ export default {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [
+    tailwindcssAnimate,
+    /*
+     * Variantes par skin (voir src/index.css pour le système de double thème).
+     * Règle d'usage : préférer les tokens CSS ; une variante `maison:`/`classique:`
+     * dans un composant est l'exception, réservée aux différences structurelles.
+     * `maison` est défini comme « non-classique » pour rester correct même si
+     * le script inline n'a pas pu poser l'attribut data-skin.
+     */
+    plugin(({ addVariant }) => {
+      addVariant("classique", '[data-skin="classique"] &');
+      addVariant("maison", ':root:not([data-skin="classique"]) &');
+    }),
+  ],
 } satisfies Config;
