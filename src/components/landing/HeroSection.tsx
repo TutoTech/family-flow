@@ -25,7 +25,7 @@ const HeroSection = () => {
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display text-foreground leading-tight animate-fade-up" style={{ animationDelay: "100ms" }}>
               {t("hero.titleStart")}{" "}
-              <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, hsl(16 85% 55%), hsl(0 72% 55%), hsl(340 70% 50%))" }}>{t("hero.titleHighlight")}</span>
+              <span className="text-gradient-hero">{t("hero.titleHighlight")}</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-body leading-relaxed max-w-lg mx-auto lg:mx-0 animate-fade-up" style={{ animationDelay: "200ms" }}>
               {t("hero.description")}
@@ -65,7 +65,7 @@ const HeroSection = () => {
                   <span className="text-success text-lg">✓</span>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold font-display text-foreground">{t("hero.tasksCompleted", { count: 12 })}</p>
+                  <p className="text-xs font-semibold font-display text-foreground tabular-nums">{t("hero.tasksCompleted", { count: 12 })}</p>
                   <p className="text-xs text-muted-foreground">{t("hero.completed")}</p>
                 </div>
               </div>

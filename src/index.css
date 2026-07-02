@@ -318,6 +318,14 @@
   .gradient-hero {
     background: var(--gradient-hero);
   }
+  /* Texte en dégradé héro : background-image (pas le shorthand `background`,
+     qui réinitialiserait background-clip) + clip sur le texte. */
+  .text-gradient-hero {
+    background-image: var(--gradient-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
   .gradient-card {
     background: var(--gradient-card);
   }
