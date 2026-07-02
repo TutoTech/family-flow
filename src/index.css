@@ -68,6 +68,12 @@
     --spark: 15 72% 56%;
     --spark-foreground: 0 0% 100%;
 
+    /* Statuts : en attente (ocre) et information (bleu ardoise) */
+    --warning: 35 70% 44%;
+    --warning-foreground: 0 0% 100%;
+    --info: 211 40% 42%;
+    --info-foreground: 0 0% 100%;
+
     --destructive: 4 60% 44%;
     --destructive-foreground: 0 0% 100%;
 
@@ -133,6 +139,11 @@
     --spark: 15 70% 62%;
     --spark-foreground: 15 50% 10%;
 
+    --warning: 38 55% 55%;
+    --warning-foreground: 38 50% 10%;
+    --info: 211 45% 62%;
+    --info-foreground: 215 40% 10%;
+
     --destructive: 4 55% 50%;
     --destructive-foreground: 0 0% 100%;
 
@@ -187,6 +198,12 @@
 
     --spark: 16 85% 60%;
     --spark-foreground: 0 0% 100%;
+
+    /* Calés sur amber-500 / blue-500 utilisés jusqu'ici : no-op visuel */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
 
     --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
@@ -251,6 +268,11 @@
 
     --spark: 16 85% 60%;
     --spark-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;

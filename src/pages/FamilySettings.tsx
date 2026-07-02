@@ -276,7 +276,7 @@ export default function FamilySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Flame className="h-5 w-5 text-orange-500" />
+              <Flame className="h-5 w-5 text-spark" />
               {t("settings.streaksBonus")}
             </CardTitle>
             <CardDescription>{t("settings.streaksBonusDesc")}</CardDescription>
@@ -317,7 +317,7 @@ export default function FamilySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Clock className="h-5 w-5 text-blue-500" />
+              <Clock className="h-5 w-5 text-info" />
               {t("settings.delaysTitle")}
             </CardTitle>
             <CardDescription>{t("settings.delaysDesc")}</CardDescription>
@@ -347,7 +347,7 @@ export default function FamilySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <CheckCircle2 className="h-5 w-5 text-success" />
               {t("settings.autoValidateTitle")}
             </CardTitle>
             <CardDescription>{t("settings.autoValidateDesc")}</CardDescription>

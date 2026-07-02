@@ -32,7 +32,7 @@ export default function BadgesDisplay() {
       <CardHeader className="pb-2">
         <CardTitle className="text-lg flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-amber-500" />
+            <Award className="h-5 w-5 text-brass" />
             {t("badges.title")}
           </div>
           <Badge variant="secondary" className="text-xs">

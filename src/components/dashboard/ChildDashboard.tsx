@@ -41,25 +41,31 @@ export default function ChildDashboard({ name }: Props) {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("tasks");
 
+  /*
+   * Chips de navigation : chaque section est codée par un token sémantique
+   * (les couleurs suivent donc automatiquement le skin actif).
+   * tâches → success, pénalités → destructive, règles → secondary,
+   * récompenses → brass, épargne → info, historique → neutre.
+   */
   const TABS = useMemo(() => [
     { id: "tasks", label: t("childDashboard.tabs.tasks"), icon: CheckCircle2, emoji: "📝",
-      colorClass: "text-emerald-700 dark:text-emerald-400 bg-emerald-100/60 dark:bg-emerald-500/10 hover:bg-emerald-200/60 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-800/50", 
-      activeClass: "bg-emerald-500 dark:bg-emerald-600 text-white shadow-md shadow-emerald-500/20 dark:shadow-emerald-900/50 border-transparent ring-2 ring-emerald-400/50 ring-offset-2 ring-offset-background" },
-    { id: "penalties", label: t("childDashboard.tabs.penalties"), icon: AlertTriangle, emoji: "🚨", 
-      colorClass: "text-destructive dark:text-red-400 bg-red-100/60 dark:bg-red-500/10 hover:bg-red-200/60 dark:hover:bg-red-500/20 border border-red-200 dark:border-red-800/50", 
-      activeClass: "bg-destructive dark:bg-red-600 text-white shadow-md shadow-red-500/20 dark:shadow-red-900/50 border-transparent ring-2 ring-red-400/50 ring-offset-2 ring-offset-background" },
-    { id: "rules", label: t("childDashboard.tabs.rules"), icon: Shield, emoji: "📜", 
-      colorClass: "text-purple-700 dark:text-purple-400 bg-purple-100/60 dark:bg-purple-500/10 hover:bg-purple-200/60 dark:hover:bg-purple-500/20 border border-purple-200 dark:border-purple-800/50", 
-      activeClass: "bg-purple-500 dark:bg-purple-600 text-white shadow-md shadow-purple-500/20 dark:shadow-purple-900/50 border-transparent ring-2 ring-purple-400/50 ring-offset-2 ring-offset-background" },
-    { id: "rewards", label: t("childDashboard.tabs.rewards"), icon: Gift, emoji: "🎁", 
-      colorClass: "text-amber-700 dark:text-amber-400 bg-amber-100/60 dark:bg-amber-500/10 hover:bg-amber-200/60 dark:hover:bg-amber-500/20 border border-amber-200 dark:border-amber-800/50", 
-      activeClass: "bg-amber-500 dark:bg-amber-600 text-white shadow-md shadow-amber-500/20 dark:shadow-amber-900/50 border-transparent ring-2 ring-amber-400/50 ring-offset-2 ring-offset-background" },
-    { id: "savings", label: t("childDashboard.tabs.savings"), icon: Target, emoji: "🎯", 
-      colorClass: "text-blue-700 dark:text-blue-400 bg-blue-100/60 dark:bg-blue-500/10 hover:bg-blue-200/60 dark:hover:bg-blue-500/20 border border-blue-200 dark:border-blue-800/50", 
-      activeClass: "bg-blue-500 dark:bg-blue-600 text-white shadow-md shadow-blue-500/20 dark:shadow-blue-900/50 border-transparent ring-2 ring-blue-400/50 ring-offset-2 ring-offset-background" },
-    { id: "history", label: t("childDashboard.tabs.history"), icon: History, emoji: "🕰️", 
-      colorClass: "text-gray-700 dark:text-gray-300 bg-gray-100/60 dark:bg-gray-500/10 hover:bg-gray-200/60 dark:hover:bg-gray-500/20 border border-gray-200 dark:border-gray-700/50", 
-      activeClass: "bg-gray-700 dark:bg-gray-600 text-white shadow-md shadow-gray-500/20 dark:shadow-gray-900/50 border-transparent ring-2 ring-gray-400/50 ring-offset-2 ring-offset-background" },
+      colorClass: "text-success bg-success/10 hover:bg-success/20 border border-success/25",
+      activeClass: "bg-success text-success-foreground shadow-md shadow-success/20 border-transparent ring-2 ring-success/50 ring-offset-2 ring-offset-background" },
+    { id: "penalties", label: t("childDashboard.tabs.penalties"), icon: AlertTriangle, emoji: "🚨",
+      colorClass: "text-destructive bg-destructive/10 hover:bg-destructive/20 border border-destructive/25",
+      activeClass: "bg-destructive text-destructive-foreground shadow-md shadow-destructive/20 border-transparent ring-2 ring-destructive/50 ring-offset-2 ring-offset-background" },
+    { id: "rules", label: t("childDashboard.tabs.rules"), icon: Shield, emoji: "📜",
+      colorClass: "text-secondary bg-secondary/10 hover:bg-secondary/20 border border-secondary/25",
+      activeClass: "bg-secondary text-secondary-foreground shadow-md shadow-secondary/20 border-transparent ring-2 ring-secondary/50 ring-offset-2 ring-offset-background" },
+    { id: "rewards", label: t("childDashboard.tabs.rewards"), icon: Gift, emoji: "🎁",
+      colorClass: "text-brass bg-brass/10 hover:bg-brass/20 border border-brass/25",
+      activeClass: "bg-brass text-brass-foreground shadow-md shadow-brass/20 border-transparent ring-2 ring-brass/50 ring-offset-2 ring-offset-background" },
+    { id: "savings", label: t("childDashboard.tabs.savings"), icon: Target, emoji: "🎯",
+      colorClass: "text-info bg-info/10 hover:bg-info/20 border border-info/25",
+      activeClass: "bg-info text-info-foreground shadow-md shadow-info/20 border-transparent ring-2 ring-info/50 ring-offset-2 ring-offset-background" },
+    { id: "history", label: t("childDashboard.tabs.history"), icon: History, emoji: "🕰️",
+      colorClass: "text-muted-foreground bg-muted/60 hover:bg-muted border border-border",
+      activeClass: "bg-foreground text-background shadow-md border-transparent ring-2 ring-ring/40 ring-offset-2 ring-offset-background" },
   ], [t]);
 
   // Détermine l'ID de l'enfant affiché (impersoné ou réel)
@@ -108,10 +114,10 @@ export default function ChildDashboard({ name }: Props) {
         {/* Cartes de statistiques rapides */}
         <div className="grid grid-cols-3 gap-3">
           {/* Solde du portefeuille */}
-          <Card className="shadow-card bg-emerald-500/5 border-emerald-500/20">
+          <Card className="shadow-card bg-success/5 border-success/20">
             <CardContent className="p-3 flex flex-col items-center justify-center text-center">
-              <Wallet className="h-5 w-5 text-emerald-600 mb-1" />
-              <div className="text-xl font-bold text-emerald-600">{(stats?.wallet_balance ?? 0).toFixed(2)}{currencySymbol}</div>
+              <Wallet className="h-5 w-5 text-success mb-1" />
+              <div className="text-xl font-bold text-success font-data tabular-nums">{(stats?.wallet_balance ?? 0).toFixed(2)}{currencySymbol}</div>
               <p className="text-xs font-medium text-muted-foreground">{t("dashboard.wallet")}</p>
             </CardContent>
           </Card>

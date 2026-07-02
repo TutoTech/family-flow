@@ -47,6 +47,14 @@ export default {
           DEFAULT: "hsl(var(--brass))",
           foreground: "hsl(var(--brass-foreground))",
         },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
         spark: {
           DEFAULT: "hsl(var(--spark))",
           foreground: "hsl(var(--spark-foreground))",
