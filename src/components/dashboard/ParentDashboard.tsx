@@ -110,7 +110,7 @@ export default function ParentDashboard({ name }: Props) {
             {/* Bannière Mode Vacances */}
             <div className={`flex items-center justify-between rounded-xl border-2 px-4 py-3 transition-all ${
               isVacationMode
-                ? "border-amber-400/60 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/40 dark:to-yellow-950/30 dark:border-amber-500/40"
+                ? "border-warning/50 bg-warning/10"
                 : "border-border bg-card"
             }`}>
               <div className="flex items-center gap-3">

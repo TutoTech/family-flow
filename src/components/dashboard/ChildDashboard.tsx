@@ -126,7 +126,7 @@ export default function ChildDashboard({ name }: Props) {
           <Card className="shadow-card bg-primary/5 border-primary/20">
             <CardContent className="p-3 flex flex-col items-center justify-center text-center">
               <Star className="h-5 w-5 text-primary mb-1" />
-              <div className="text-xl font-bold text-primary">{stats?.current_points ?? 0}</div>
+              <div className="text-xl font-bold text-primary font-data tabular-nums">{stats?.current_points ?? 0}</div>
               <p className="text-xs font-medium text-muted-foreground">{t("common.points")}</p>
             </CardContent>
           </Card>
@@ -135,7 +135,7 @@ export default function ChildDashboard({ name }: Props) {
           <Card className="shadow-card bg-accent/10 border-accent/20">
             <CardContent className="p-3 flex flex-col items-center justify-center text-center">
               <Flame className="h-5 w-5 text-accent-foreground mb-1" />
-              <div className="text-xl font-bold text-accent-foreground">{stats?.streak_days ?? 0}</div>
+              <div className="text-xl font-bold text-accent-foreground font-data tabular-nums">{stats?.streak_days ?? 0}</div>
               <p className="text-xs font-medium text-muted-foreground">{t("dashboard.streak")}</p>
             </CardContent>
           </Card>
