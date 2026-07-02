@@ -18,6 +18,7 @@ export default {
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
+        data: ["var(--font-data)", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -41,6 +42,14 @@ export default {
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
+        },
+        brass: {
+          DEFAULT: "hsl(var(--brass))",
+          foreground: "hsl(var(--brass-foreground))",
+        },
+        spark: {
+          DEFAULT: "hsl(var(--spark))",
+          foreground: "hsl(var(--spark-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
