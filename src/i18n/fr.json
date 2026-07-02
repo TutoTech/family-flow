@@ -495,9 +495,23 @@
     "noNotifications": "Aucune notification",
     "penaltyForNotDone": "Pénalité pour tâche non faite"
   },
+  "theme": {
+    "toggle": "Changer le thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
   "settings": {
     "pageTitle": "Paramètres du foyer",
     "subtitle": "Configurez les règles et paramètres de votre famille",
+    "appearance": "Apparence",
+    "appearanceDesc": "Choisissez le style visuel de l'application sur cet appareil",
+    "skinLabel": "Style de l'interface",
+    "skinMaison": "Maison",
+    "skinMaisonHint": "Le nouveau design, sobre et élégant",
+    "skinClassique": "Classique",
+    "skinClassiqueHint": "Le design d'origine, coloré et ludique",
+    "modeLabel": "Mode d'affichage",
     "pointsMoney": "Points & Argent",
     "pointsMoneyDesc": "Définissez le taux de conversion entre les points gagnés et l'argent réel",
     "conversionRate": "Taux de conversion ({{symbol}} par point)",

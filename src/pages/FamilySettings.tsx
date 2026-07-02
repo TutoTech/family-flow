@@ -17,9 +17,11 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2, KeyRound, CheckCircle2 } from "lucide-react";
+import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2, KeyRound, CheckCircle2, Palette } from "lucide-react";
 import SetPinDialog from "@/components/dashboard/SetPinDialog";
 import { CURRENCIES, CurrencyCode } from "@/hooks/useCurrency";
+import { useSkin, type Skin } from "@/hooks/useSkin";
+import { useTheme } from "next-themes";
 import { getErrorMessage } from "@/lib/utils";
 
 interface FamilySettings {
@@ -35,6 +37,8 @@ interface FamilySettings {
 
 export default function FamilySettingsPage() {
   const { t, i18n } = useTranslation();
+  const { skin, setSkin } = useSkin();
+  const { theme, setTheme } = useTheme();
   const { profile, role, user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -157,6 +161,50 @@ export default function FamilySettingsPage() {
             <p className="text-sm text-muted-foreground">{t("settings.subtitle")}</p>
           </div>
         </div>
+
+        {/* Apparence : skin (Maison/Classique) + mode d'affichage — préférences locales à l'appareil */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Palette className="h-5 w-5 text-primary" />
+              {t("settings.appearance")}
+            </CardTitle>
+            <CardDescription>{t("settings.appearanceDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t("settings.skinLabel")}</Label>
+              <Select value={skin} onValueChange={(value) => setSkin(value as Skin)}>
+                <SelectTrigger className="max-w-64">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="maison">
+                    {t("settings.skinMaison")}
+                    <span className="ml-2 text-xs text-muted-foreground">{t("settings.skinMaisonHint")}</span>
+                  </SelectItem>
+                  <SelectItem value="classique">
+                    {t("settings.skinClassique")}
+                    <span className="ml-2 text-xs text-muted-foreground">{t("settings.skinClassiqueHint")}</span>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>{t("settings.modeLabel")}</Label>
+              <Select value={theme ?? "system"} onValueChange={setTheme}>
+                <SelectTrigger className="max-w-64">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">{t("theme.light")}</SelectItem>
+                  <SelectItem value="dark">{t("theme.dark")}</SelectItem>
+                  <SelectItem value="system">{t("theme.system")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Language */}
         <Card>

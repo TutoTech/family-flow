@@ -495,9 +495,23 @@
     "noNotifications": "No notifications",
     "penaltyForNotDone": "Penalty for task not done"
   },
+  "theme": {
+    "toggle": "Change theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
   "settings": {
     "pageTitle": "Household settings",
     "subtitle": "Configure your family's rules and settings",
+    "appearance": "Appearance",
+    "appearanceDesc": "Choose the app's visual style on this device",
+    "skinLabel": "Interface style",
+    "skinMaison": "Maison",
+    "skinMaisonHint": "The new design, understated and elegant",
+    "skinClassique": "Classic",
+    "skinClassiqueHint": "The original design, colorful and playful",
+    "modeLabel": "Display mode",
     "pointsMoney": "Points & Money",
     "pointsMoneyDesc": "Set the conversion rate between earned points and real money",
     "conversionRate": "Conversion rate ({{symbol}} per point)",
