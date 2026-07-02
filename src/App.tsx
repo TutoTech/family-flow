@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { lazy, Suspense } from "react";
+import { SkinProvider } from "@/hooks/useSkin";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileSwitchProvider } from "@/hooks/useProfileSwitch";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -49,6 +50,8 @@ const queryClient = new QueryClient();
 const App = () => (
   /* Provider de thème clair/sombre, détection automatique du système */
   <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    {/* Provider du skin visuel (Maison / Classique), axe indépendant du mode */}
+    <SkinProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         {/* Systèmes de notifications toast (shadcn + sonner) */}
@@ -118,6 +121,7 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
+    </SkinProvider>
   </ThemeProvider>
 );
 

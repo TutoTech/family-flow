@@ -33,17 +33,17 @@ const CHILD_COLORS = [
   "bg-secondary/80 text-secondary-foreground",
   "bg-accent/80 text-accent-foreground",
   "bg-destructive/80 text-destructive-foreground",
-  "bg-emerald-500/80 text-white",
-  "bg-amber-500/80 text-white",
+  "bg-success/80 text-success-foreground",
+  "bg-warning/80 text-warning-foreground",
 ];
 
 const STATUS_DOT: Record<string, string> = {
   pending: "bg-muted-foreground",
-  awaiting_validation: "bg-amber-500",
-  validated: "bg-emerald-500",
+  awaiting_validation: "bg-warning",
+  validated: "bg-success",
   rejected: "bg-destructive",
   late: "bg-destructive",
-  done: "bg-emerald-500",
+  done: "bg-success",
 };
 
 export default function FamilyCalendar() {

@@ -50,7 +50,7 @@ const PricingSection = () => {
           <div className="rounded-2xl border border-border bg-card p-8 flex flex-col">
             <h3 className="text-xl font-bold text-foreground mb-1">{t("pricing.free.name")}</h3>
             <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-4xl font-extrabold text-foreground">0€</span>
+              <span className="text-4xl font-extrabold text-foreground font-data tabular-nums tracking-tight">0€</span>
               <span className="text-muted-foreground text-sm">{t("pricing.free.period")}</span>
             </div>
             <p className="text-muted-foreground text-sm mb-6">{t("pricing.free.description")}</p>
@@ -75,7 +75,7 @@ const PricingSection = () => {
             </div>
             <h3 className="text-xl font-bold text-foreground mb-1">{t("pricing.family.name")}</h3>
             <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-4xl font-extrabold text-primary">10€</span>
+              <span className="text-4xl font-extrabold text-primary font-data tabular-nums tracking-tight">10€</span>
               <span className="text-muted-foreground text-sm">{t("pricing.family.period")}</span>
             </div>
             <p className="text-muted-foreground text-sm mb-6">{t("pricing.family.description")}</p>

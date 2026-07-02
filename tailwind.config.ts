@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
@@ -17,6 +18,7 @@ export default {
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
+        data: ["var(--font-data)", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -40,6 +42,22 @@ export default {
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
+        },
+        brass: {
+          DEFAULT: "hsl(var(--brass))",
+          foreground: "hsl(var(--brass-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        spark: {
+          DEFAULT: "hsl(var(--spark))",
+          foreground: "hsl(var(--spark-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -97,8 +115,8 @@ export default {
           to: { opacity: "1", transform: "scale(1)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 0 0 hsl(16 85% 60% / 0.3)" },
-          "50%": { boxShadow: "0 0 0 12px hsl(16 85% 60% / 0)" },
+          "0%, 100%": { boxShadow: "0 0 0 0 hsl(var(--primary) / 0.3)" },
+          "50%": { boxShadow: "0 0 0 12px hsl(var(--primary) / 0)" },
         },
       },
       animation: {
@@ -111,5 +129,18 @@ export default {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [
+    tailwindcssAnimate,
+    /*
+     * Variantes par skin (voir src/index.css pour le système de double thème).
+     * Règle d'usage : préférer les tokens CSS ; une variante `maison:`/`classique:`
+     * dans un composant est l'exception, réservée aux différences structurelles.
+     * `maison` est défini comme « non-classique » pour rester correct même si
+     * le script inline n'a pas pu poser l'attribut data-skin.
+     */
+    plugin(({ addVariant }) => {
+      addVariant("classique", '[data-skin="classique"] &');
+      addVariant("maison", ':root:not([data-skin="classique"]) &');
+    }),
+  ],
 } satisfies Config;

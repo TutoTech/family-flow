@@ -62,7 +62,7 @@ export default function ChildRewardShop() {
             <ShoppingCart className="h-5 w-5 text-primary flex-shrink-0" />
             <span className="break-words whitespace-normal leading-tight">{t("rewards.shop")}</span>
           </CardTitle>
-          <Badge variant="secondary" className="text-xs flex-shrink-0">
+          <Badge variant="secondary" className="text-xs flex-shrink-0 font-data tabular-nums">
             <Star className="h-3 w-3 mr-1" />
             {currentPoints} {t("common.pts")}
           </Badge>
@@ -91,13 +91,13 @@ export default function ChildRewardShop() {
                       {reward.description && <p className="text-xs text-muted-foreground break-words whitespace-normal mt-0.5 leading-tight">{reward.description}</p>}
                       <div className="flex items-center gap-2 mt-1 text-xs text-primary">
                         {reward.cost_points > 0 && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 font-data tabular-nums">
                             <Star className="h-3 w-3" />
                             {reward.cost_points} {t("common.pts")}
                           </span>
                         )}
                         {reward.cost_money && reward.cost_money > 0 && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 font-data tabular-nums">
                             <Banknote className="h-3 w-3" />
                             {reward.cost_money.toFixed(2)}{currencySymbol}
                           </span>

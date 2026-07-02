@@ -91,7 +91,7 @@ const TestimonialsSection = () => {
                   </h3>
                   <div className="flex gap-0.5 mt-1">
                     {[...Array(5)].map((_, j) => (
-                      <Star key={j} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <Star key={j} className="w-4 h-4 fill-brass text-brass" />
                     ))}
                   </div>
                 </div>

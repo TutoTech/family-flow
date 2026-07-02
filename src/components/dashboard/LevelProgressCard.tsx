@@ -44,7 +44,7 @@ export default function LevelProgressCard() {
                 {t("level.levelN", { n: currentLevel.level })}
               </span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground font-data tabular-nums">
               {totalPoints} {t("level.totalPoints")}
             </p>
           </div>
@@ -69,7 +69,7 @@ export default function LevelProgressCard() {
         {/* Max level reached */}
         {!nextLevel && (
           <div className="text-center py-2">
-            <span className="text-lg font-bold bg-gradient-to-r from-amber-500 to-rose-500 bg-clip-text text-transparent">
+            <span className="text-lg font-bold bg-gradient-to-r from-brass to-spark bg-clip-text text-transparent">
               {t("level.maxReached")}
             </span>
           </div>

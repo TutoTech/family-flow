@@ -144,10 +144,10 @@ export default function SavingsGoalCard() {
                 <div className="space-y-1.5">
                   <Progress value={progress} className="h-3" />
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>
+                    <span className="font-data tabular-nums">
                       {walletBalance.toFixed(2)}{symbol} / {goal.target_amount.toFixed(2)}{symbol}
                     </span>
-                    <span className="font-medium">{Math.round(progress)}%</span>
+                    <span className="font-medium font-data tabular-nums">{Math.round(progress)}%</span>
                   </div>
                 </div>
 

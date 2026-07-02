@@ -16,14 +16,14 @@ type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "r
 
 const STATUS_GROUPS: { key: StatusFilter; color: string }[] = [
   { key: "all", color: "" },
-  { key: "awaiting_validation", color: "bg-amber-500" },
+  { key: "awaiting_validation", color: "bg-warning" },
   { key: "pending", color: "bg-muted-foreground" },
-  { key: "validated", color: "bg-emerald-500" },
+  { key: "validated", color: "bg-success" },
   { key: "not_done", color: "bg-destructive" },
   { key: "rejected", color: "bg-destructive" },
   { key: "skipped", color: "bg-muted-foreground/50" },
-  { key: "late", color: "bg-orange-500" },
-  { key: "done", color: "bg-blue-500" },
+  { key: "late", color: "bg-spark" },
+  { key: "done", color: "bg-info" },
 ];
 
 export default function ChildTaskList() {
