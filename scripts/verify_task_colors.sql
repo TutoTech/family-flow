@@ -1,5 +1,5 @@
 -- Script de verification et correction pour la fonctionnalite de couleurs de taches
--- Executez ce script dans le SQL Editor de Lovable si la fonctionnalite ne marche pas
+-- Executez ce script dans le SQL Editor de Supabase si la fonctionnalite ne marche pas
 
 -- 1. Verifier si les colonnes bg_color et child_bg_color existent
 -- Si elles n'existent pas, les ajouter

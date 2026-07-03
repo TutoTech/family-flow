@@ -3,7 +3,6 @@
 > **Application familiale de gestion des tâches, récompenses et responsabilisation des enfants.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
@@ -78,7 +77,7 @@
 
 ### 🔐 Sécurité
 - **Authentification email/mot de passe** avec vérification d'email
-- **OAuth** (Google, Apple) via Lovable Cloud
+- **OAuth** (Google, Apple) via Supabase
 - **Row Level Security (RLS)** sur toutes les tables
 - **Rôles séparés** (table `user_roles`) pour éviter l'escalade de privilèges
 - **Code PIN** pour le changement de profil
@@ -95,8 +94,8 @@
 | **Frontend** | React 18, TypeScript 5, Vite 5 |
 | **UI** | Tailwind CSS 3, shadcn/ui, Radix UI, Lucide Icons |
 | **State** | TanStack React Query, React Context |
-| **Backend** | Lovable Cloud (Supabase) |
-| **Auth** | Supabase Auth + Lovable Cloud Auth |
+| **Backend** | Supabase |
+| **Auth** | Supabase Auth |
 | **Paiement** | Stripe (via Edge Functions) |
 | **i18n** | i18next + react-i18next |
 | **Graphiques** | Recharts |
@@ -113,7 +112,7 @@ src/
 │   └── ui/              # Composants shadcn/ui réutilisables
 ├── hooks/               # Hooks métier (useAuth, useTasks, useRewards…)
 ├── i18n/                # Fichiers de traduction (fr.json, en.json)
-├── integrations/        # Clients Supabase et Lovable (auto-générés)
+├── integrations/        # Client Supabase (auto-généré)
 ├── pages/               # Pages de l'application (routes)
 └── lib/                 # Utilitaires (cn, helpers)
 
@@ -174,9 +173,9 @@ L'application sera accessible sur `http://localhost:5173`.
 
 ---
 
-## ☁️ Hébergement sur Microsoft Azure (auto-hébergement sans Lovable)
+## ☁️ Hébergement sur Microsoft Azure (auto-hébergement)
 
-Ce tutoriel détaillé vous guide **pas à pas** pour déployer votre propre instance de Stop Repeat sur **Microsoft Azure**, en remplacement complet de Lovable Cloud. Il est rédigé pour les **débutants** — chaque étape est expliquée.
+Ce tutoriel détaillé vous guide **pas à pas** pour déployer votre propre instance de Stop Repeat sur **Microsoft Azure**. Il est rédigé pour les **débutants** — chaque étape est expliquée.
 
 ### 📋 Vue d'ensemble de l'architecture cible
 
@@ -191,10 +190,10 @@ Ce tutoriel détaillé vous guide **pas à pas** pour déployer votre propre ins
 | **Notifications push** | Votre propre serveur ou Azure Functions |
 | **DNS / Domaine** | Azure DNS ou votre registrar |
 
-> **⚠️ Important** : L'application utilise actuellement Lovable Cloud (qui s'appuie sur Supabase). Pour migrer, vous devez remplacer **trois éléments clés** :
+> **⚠️ Important** : Pour héberger l'application en autonomie, vous devez configurer :
 > 1. L'hébergement du frontend (remplacé par Azure Static Web Apps)
 > 2. Le backend Supabase (auto-hébergé ou Supabase cloud gratuit)
-> 3. L'authentification OAuth Lovable (`@lovable.dev/cloud-auth-js`) qui doit être remplacée par l'OAuth natif de Supabase
+> 3. L'authentification OAuth native de Supabase (ex: Google, Apple)
 
 ---
 
@@ -817,9 +816,7 @@ Dans le dashboard Supabase → **Authentication → Providers** :
 - **Email** : activé par défaut ✅
 - Désactivez « Confirm email » si vous voulez un onboarding rapide (optionnel)
 
-#### 6.2 — OAuth Google (remplace Lovable Cloud Auth)
-
-> **⚠️ C'est le changement le plus important.** L'application utilise actuellement `@lovable.dev/cloud-auth-js` pour l'OAuth Google. Ce package **ne fonctionnera pas** en dehors de Lovable. Vous devez le remplacer par l'OAuth natif de Supabase.
+#### 6.2 — OAuth Google
 
 **A. Créer un projet Google Cloud :**
 
@@ -838,47 +835,6 @@ Dans le dashboard Supabase → **Authentication → Providers** :
 2. Activez Google
 3. Collez votre **Client ID** et **Client Secret**
 4. Sauvegardez
-
-**C. Modifier le code source :**
-
-Le fichier `src/integrations/lovable/index.ts` utilise `@lovable.dev/cloud-auth-js` qui est **spécifique à Lovable**. Remplacez son contenu par :
-
-```typescript
-// src/integrations/lovable/index.ts
-// Remplacement de l'OAuth Lovable par l'OAuth natif Supabase
-import { supabase } from "../supabase/client";
-
-type SignInOptions = {
-  redirect_uri?: string;
-  extraParams?: Record<string, string>;
-};
-
-export const lovable = {
-  auth: {
-    signInWithOAuth: async (provider: "google" | "apple", opts?: SignInOptions) => {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: opts?.redirect_uri || window.location.origin + "/dashboard",
-        },
-      });
-
-      if (error) {
-        return { error };
-      }
-
-      // Supabase gère la redirection automatiquement
-      return { redirected: true };
-    },
-  },
-};
-```
-
-Puis désinstallez le package Lovable :
-
-```bash
-npm uninstall @lovable.dev/cloud-auth-js
-```
 
 #### 6.3 — OAuth Apple (optionnel)
 
@@ -924,7 +880,7 @@ VITE_SUPABASE_PROJECT_ID=VOTRE_PROJECT_REF
 
 ### 📝 Étape 8 — Modifier la fonction `send_push_on_notification`
 
-La fonction SQL `send_push_on_notification` contient en dur l'URL du projet Supabase Lovable Cloud et la clé anon. Vous devez la mettre à jour avec **vos propres valeurs**.
+La fonction SQL `send_push_on_notification` contient en dur l'URL du projet Supabase et la clé anon. Vous devez la mettre à jour avec **vos propres valeurs**.
 
 Exécutez cette migration SQL dans le SQL Editor de votre Supabase :
 
@@ -1404,13 +1360,10 @@ Utilisez cette checklist pour vérifier que tout fonctionne :
 
 | Fichier | Modification | Raison |
 |---|---|---|
-| `src/integrations/lovable/index.ts` | Remplacer par OAuth Supabase natif | `@lovable.dev/cloud-auth-js` ne fonctionne que sur Lovable |
 | `.env` | Mettre vos propres clés Supabase | Pointe vers votre projet Supabase |
 | `supabase/functions/create-payment/index.ts` | Changer le `FAMILY_PLAN_PRICE_ID` | Price ID Stripe propre à votre compte |
 | `staticwebapp.config.json` | Créer ce fichier (routing SPA) | Nécessaire pour Azure Static Web Apps |
 | Fonction SQL `send_push_on_notification` | Mettre à jour l'URL et la clé | Pointe vers votre projet Supabase |
-| `package.json` | Retirer `@lovable.dev/cloud-auth-js` | Dépendance spécifique à Lovable |
-| `vite.config.ts` | Retirer `lovable-tagger` (optionnel) | Dépendance spécifique à Lovable |
 
 ---
 
@@ -1428,32 +1381,19 @@ Le fichier `public/sw-push.js` doit être servi depuis la racine du domaine. Azu
 #### 4. Supabase Edge Functions vs Azure Functions
 Les Edge Functions dans `supabase/functions/` sont déployées **sur Supabase**, pas sur Azure. Si vous souhaitez tout héberger sur Azure, vous devrez réécrire ces fonctions en **Azure Functions** (Node.js), ce qui est un travail conséquent. Le plus simple est de garder Supabase (Cloud ou auto-hébergé) pour les Edge Functions.
 
-#### 5. Le package `lovable-tagger`
-Le package `lovable-tagger` (devDependency) ajoute un badge "Edit in Lovable" en développement. Il est inoffensif en production (il n'est chargé qu'en mode `development`), mais vous pouvez le supprimer :
-```bash
-npm uninstall lovable-tagger
-```
-Et retirez-le de `vite.config.ts` :
-```typescript
-// Avant
-plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
-// Après
-plugins: [react()],
-```
-
-#### 6. Extension `pg_net` pour les notifications push
+#### 5. Extension `pg_net` pour les notifications push
 La fonction SQL `send_push_on_notification` utilise `net.http_post()` qui nécessite l'extension PostgreSQL `pg_net`. Cette extension est **pré-installée sur Supabase Cloud** mais devra être installée manuellement si vous auto-hébergez PostgreSQL (voir étape B.7).
 
-#### 7. Limites du plan gratuit Azure Static Web Apps
+#### 6. Limites du plan gratuit Azure Static Web Apps
 Le plan **Free** offre : 100 Go de bande passante/mois, 2 environnements de staging, 0.5 Go de stockage. Pour un usage familial, c'est largement suffisant.
 
-#### 8. Emails en spam
+#### 7. Emails en spam
 Si les emails de confirmation arrivent en spam, c'est souvent parce que votre domaine d'envoi n'a pas les enregistrements DNS corrects (SPF, DKIM, DMARC). Utilisez un service SMTP réputé comme Resend ou Brevo qui gère cela automatiquement.
 
-#### 9. Le fichier `src/integrations/supabase/client.ts`
+#### 8. Le fichier `src/integrations/supabase/client.ts`
 Ce fichier lit les variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_PUBLISHABLE_KEY` au build time. Assurez-vous que votre `.env` est correctement configuré **avant** de lancer `npm run build`.
 
-#### 10. Mode test Stripe
+#### 9. Mode test Stripe
 Pour tester le paiement sans carte réelle, utilisez les clés **test** de Stripe (commencent par `sk_test_` et `pk_test_`). Stripe fournit des numéros de carte de test comme `4242 4242 4242 4242` (date future, CVC quelconque).
 
 ---
@@ -1486,7 +1426,6 @@ Projet offert au nom de l'association **TutoTech** 🎓
 
 ## 💜 Remerciements
 
-- **[Lovable](https://lovable.dev)** — Cette application a été principalement vibe-codée grâce à Lovable, qui a généreusement rendu sa plateforme gratuite le 08/03/2026 lors de l'**International Women's Day #SheBuilds** en partenariat avec Anthropic et Stripe. Merci pour cette initiative inspirante !
 - **[shadcn/ui](https://ui.shadcn.com/)** — Pour les composants UI élégants et accessibles
 - **[Supabase](https://supabase.com/)** — Pour l'infrastructure backend open-source
 - **[TutoTech](https://tutotech.org)** — Association au service de l'inclusion numérique

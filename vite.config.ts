@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 const FALLBACK_BACKEND_URL = "https://fzstjebbxbejypgwamqx.supabase.co";
@@ -31,7 +30,6 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === "development" && componentTagger(),
     process.env.SENTRY_AUTH_TOKEN &&
       sentryVitePlugin({
         org: process.env.SENTRY_ORG,
@@ -45,13 +43,6 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   build: {
     sourcemap: true,
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  build: {
     rollupOptions: {
       output: {
         /*
@@ -64,6 +55,11 @@ export default defineConfig(({ mode }) => ({
           supabase: ["@supabase/supabase-js"],
         },
       },
+    },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 }));

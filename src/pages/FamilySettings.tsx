@@ -82,14 +82,14 @@ export default function FamilySettingsPage() {
           parent_alert_delay_minutes: data.parent_alert_delay_minutes,
           photo_retention_days: data.photo_retention_days,
           currency: data.currency ?? "EUR",
-          auto_validate_after_midnight: (data as any).auto_validate_after_midnight ?? false,
+          auto_validate_after_midnight: data.auto_validate_after_midnight ?? false,
         });
       }
       if (error) toast.error(t("settings.loadError"));
       setLoading(false);
     };
     fetchSettings();
-  }, [profile?.family_id]);
+  }, [profile?.family_id, t]);
 
   const handleSave = async () => {
     if (!profile?.family_id || !settings) return;
@@ -107,7 +107,7 @@ export default function FamilySettingsPage() {
 
     const { error } = await supabase
       .from("family_settings")
-      .update(settings as any)
+      .update(settings)
       .eq("family_id", profile.family_id!);
 
     if (error) {

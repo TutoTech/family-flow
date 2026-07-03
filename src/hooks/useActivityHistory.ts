@@ -20,6 +20,53 @@ export interface ActivityItem {
   timestamp: string;
 }
 
+interface TaskQueryResult {
+  id: string;
+  status: string;
+  validated_at: string | null;
+  assigned_to_user_id: string | null;
+  task_template: {
+    title: string;
+    icon: string | null;
+    points_reward: number;
+  } | null;
+}
+
+interface RedemptionQueryResult {
+  id: string;
+  status: string;
+  updated_at: string;
+  child_id: string;
+  reward: {
+    title: string;
+    icon: string | null;
+    cost_points: number;
+  } | null;
+}
+
+interface PenaltyQueryResult {
+  id: string;
+  created_at: string;
+  child_id: string;
+  points_amount: number | null;
+  custom_title: string | null;
+  rule: {
+    label: string;
+    icon: string | null;
+    points_penalty: number;
+  } | null;
+}
+
+interface AdjustmentQueryResult {
+  id: string;
+  created_at: string;
+  child_id: string;
+  type: string;
+  points_amount: number | null;
+  wallet_amount: number | null;
+  reason: string | null;
+}
+
 export function useActivityHistory(limit = 50) {
   const { profile, role, user } = useAuth();
   const { activeProfile, isImpersonating } = useProfileSwitch();
@@ -91,19 +138,24 @@ export function useActivityHistory(limit = 50) {
         { data: adjustments },
       ] = await Promise.all([taskQuery, rewardQuery, penaltyQuery, adjustmentQuery]);
 
-      tasks?.forEach((t: any) => {
+      const typedTasks = tasks as unknown as TaskQueryResult[] | null;
+      const typedRedemptions = redemptions as unknown as RedemptionQueryResult[] | null;
+      const typedPenalties = penalties as unknown as PenaltyQueryResult[] | null;
+      const typedAdjustments = adjustments as unknown as AdjustmentQueryResult[] | null;
+
+      typedTasks?.forEach((t) => {
         activities.push({
           id: `task-${t.id}`,
           type: "task_validated",
           title: t.task_template?.title ?? "Tâche",
           icon: t.task_template?.icon ?? "✅",
           points: t.task_template?.points_reward ?? 0,
-          childId: t.assigned_to_user_id,
-          timestamp: t.validated_at,
+          childId: t.assigned_to_user_id ?? undefined,
+          timestamp: t.validated_at ?? "",
         });
       });
 
-      redemptions?.forEach((r: any) => {
+      typedRedemptions?.forEach((r) => {
         activities.push({
           id: `reward-${r.id}`,
           type: r.status === "approved" ? "reward_approved" : "reward_rejected",
@@ -115,7 +167,7 @@ export function useActivityHistory(limit = 50) {
         });
       });
 
-      penalties?.forEach((p: any) => {
+      typedPenalties?.forEach((p) => {
         activities.push({
           id: `penalty-${p.id}`,
           type: "penalty",
@@ -127,7 +179,7 @@ export function useActivityHistory(limit = 50) {
         });
       });
 
-      adjustments?.forEach((adj: any) => {
+      typedAdjustments?.forEach((adj) => {
         const isPoints = adj.points_amount !== null && adj.points_amount > 0;
         const isAdd = adj.type.startsWith("add_");
         
@@ -147,7 +199,7 @@ export function useActivityHistory(limit = 50) {
           type: "manual_adjustment",
           title: titleStr,
           icon: icon,
-          points: isPoints ? (isAdd ? adj.points_amount : -adj.points_amount) : 0,
+          points: isPoints ? (isAdd ? (adj.points_amount ?? 0) : -(adj.points_amount ?? 0)) : 0,
           childId: adj.child_id,
           timestamp: adj.created_at,
         });
