@@ -46,9 +46,10 @@ export default function LoginForm() {
       await signIn(email, password);
       navigate("/dashboard");
     } catch (error) {
+      const message = getErrorMessage(error);
       toast({
         title: t("auth.loginError"),
-        description: getErrorMessage(error) === "Invalid login credentials" ? t("auth.invalidCredentials") : getErrorMessage(error),
+        description: message === "Invalid login credentials" ? t("auth.invalidCredentials") : message || t("auth.loginError"),
         variant: "destructive",
       });
     } finally {
@@ -81,9 +82,10 @@ export default function LoginForm() {
       await signIn(resolvedEmail as string, password);
       navigate("/dashboard");
     } catch (error) {
+      const message = getErrorMessage(error);
       toast({
         title: t("auth.loginError"),
-        description: getErrorMessage(error) === "Invalid login credentials" ? t("auth.invalidCredentials") : getErrorMessage(error),
+        description: message === "Invalid login credentials" ? t("auth.invalidCredentials") : message || t("auth.loginError"),
         variant: "destructive",
       });
     } finally {

@@ -445,7 +445,7 @@ export default function FamilySettingsPage() {
                   setNewPassword("");
                   setConfirmNewPassword("");
                 } catch (err) {
-                  toast.error(getErrorMessage(err));
+                  toast.error(getErrorMessage(err) || t("common.error"));
                 } finally {
                   setChangingPassword(false);
                 }
