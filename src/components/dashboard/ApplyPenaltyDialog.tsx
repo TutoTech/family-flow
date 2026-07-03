@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFamilyRules, useFamilyChildren } from "@/hooks/usePenalties";
 import { Star, Wallet } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
+import { getErrorMessage } from "@/lib/utils";
 
 interface Props {
   open: boolean;
@@ -51,8 +52,8 @@ export default function ApplyPenaltyDialog({ open, onOpenChange }: Props) {
       queryClient.invalidateQueries({ queryKey: ["child-penalties"] });
       onOpenChange(false);
       setChildId(""); setRuleId(""); setComment("");
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setLoading(false);
     }

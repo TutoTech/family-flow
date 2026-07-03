@@ -22,6 +22,19 @@
   <meta name="twitter:title" content="Stop Repeat — Dites-le une seule fois">
   <meta property="og:description" content="Stop Repeat permet aux parents de créer des tâches récurrentes, de suivre leur réalisation, d&#39;attribuer des récompenses et d&#39;appliquer des pénalités éducatives.">
   <meta name="twitter:description" content="Stop Repeat permet aux parents de créer des tâches récurrentes, de suivre leur réalisation, d&#39;attribuer des récompenses et d&#39;appliquer des pénalités éducatives.">
+
+  <!-- Pose le skin (Maison/Classique) avant le premier paint pour éviter tout
+       flash de thème. Le skin par défaut est « maison » (= :root du CSS) ;
+       seul un choix « classique » stocké nécessite l'attribut. -->
+  <script>
+    (function () {
+      var s = "maison";
+      try {
+        if (localStorage.getItem("sr-skin") === "classique") s = "classique";
+      } catch (e) { /* localStorage indisponible : défaut maison */ }
+      document.documentElement.dataset.skin = s;
+    })();
+  </script>
 </head>
 
   <body>

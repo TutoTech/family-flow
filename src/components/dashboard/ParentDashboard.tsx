@@ -4,7 +4,7 @@
  * les tâches du jour, les récompenses, les pénalités et l'historique.
  */
 
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
@@ -20,10 +20,13 @@ import ParentRewardList from "./ParentRewardList";
 import ParentPenaltyList from "./ParentPenaltyList";
 import ParentRuleList from "./ParentRuleList";
 import ActivityHistory from "./ActivityHistory";
-import StatsCharts from "./StatsCharts";
+// Chargé à la demande : embarque recharts (lourd), inutile tant que
+// l'utilisateur n'ouvre pas l'onglet statistiques.
+const StatsCharts = lazy(() => import("./StatsCharts"));
 import UpgradeBanner from "./UpgradeBanner";
 import { PremiumGate } from "./PremiumBadge";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 
 interface Props { name: string; }
 
@@ -38,7 +41,7 @@ export default function ParentDashboard({ name }: Props) {
   const isPaid = plan === "family";
   const [activeTab, setActiveTab] = useState("tasks");
 
-  const TABS = [
+  const TABS = useMemo(() => [
     { id: "tasks", label: t("dashboard.tabs.tasks"), icon: CheckCircle2 },
     { id: "penalties", label: t("dashboard.tabs.penalties"), icon: AlertTriangle },
     { id: "rewards", label: t("dashboard.tabs.rewards"), icon: Gift },
@@ -46,7 +49,7 @@ export default function ParentDashboard({ name }: Props) {
     { id: "history", label: t("dashboard.tabs.history"), icon: History },
     { id: "stats", label: t("dashboard.tabs.stats"), icon: BarChart3 },
     { id: "calendar", label: t("dashboard.tabs.calendar"), icon: CalendarDays },
-  ];
+  ], [t]);
 
   // Scroll to section if coming from notification click
   useEffect(() => {
@@ -76,8 +79,8 @@ export default function ParentDashboard({ name }: Props) {
         title: newState ? t("vacationMode.activated") : t("vacationMode.deactivated"),
         description: newState ? t("vacationMode.activatedDesc") : t("vacationMode.deactivatedDesc"),
       });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -107,7 +110,7 @@ export default function ParentDashboard({ name }: Props) {
             {/* Bannière Mode Vacances */}
             <div className={`flex items-center justify-between rounded-xl border-2 px-4 py-3 transition-all ${
               isVacationMode
-                ? "border-amber-400/60 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/40 dark:to-yellow-950/30 dark:border-amber-500/40"
+                ? "border-warning/50 bg-warning/10"
                 : "border-border bg-card"
             }`}>
               <div className="flex items-center gap-3">
@@ -183,9 +186,17 @@ export default function ParentDashboard({ name }: Props) {
               {activeTab === "history" && <ActivityHistory />}
               
               {activeTab === "stats" && (
-                isPaid ? <StatsCharts /> : (
-                  <PremiumGate featureLabel={t("dashboard.tabs.stats")}><StatsCharts /></PremiumGate>
-                )
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center py-12">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                    </div>
+                  }
+                >
+                  {isPaid ? <StatsCharts /> : (
+                    <PremiumGate featureLabel={t("dashboard.tabs.stats")}><StatsCharts /></PremiumGate>
+                  )}
+                </Suspense>
               )}
             </div>
           </>

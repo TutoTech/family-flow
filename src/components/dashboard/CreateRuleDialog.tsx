@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
+import { getErrorMessage } from "@/lib/utils";
 
 interface Props {
   open: boolean;
@@ -52,8 +53,8 @@ export default function CreateRuleDialog({ open, onOpenChange }: Props) {
       queryClient.invalidateQueries({ queryKey: ["house-rules"] });
       onOpenChange(false);
       setLabel(""); setDescription(""); setIcon("🚫"); setPointsPenalty("5"); setWalletPenalty("0");
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setLoading(false);
     }

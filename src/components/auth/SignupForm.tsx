@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { UserPlus, Mail, Lock, User, Users, Baby, Hash } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils";
 
 type AppRole = "parent" | "child";
 
@@ -39,8 +40,8 @@ export default function SignupForm() {
       await signUp(email, password, name, "parent");
       toast({ title: t("auth.signupSuccess"), description: t("auth.signupWelcome") });
       navigate("/dashboard");
-    } catch (error: any) {
-      toast({ title: t("auth.signupError"), description: error.message, variant: "destructive" });
+    } catch (error) {
+      toast({ title: t("auth.signupError"), description: getErrorMessage(error), variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -78,8 +79,8 @@ export default function SignupForm() {
       await signIn(data.auth_email, password);
       toast({ title: t("auth.signupSuccess"), description: t("auth.signupWelcome") });
       navigate("/dashboard");
-    } catch (error: any) {
-      toast({ title: t("auth.signupError"), description: error.message, variant: "destructive" });
+    } catch (error) {
+      toast({ title: t("auth.signupError"), description: getErrorMessage(error), variant: "destructive" });
     } finally {
       setIsLoading(false);
     }

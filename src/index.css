@@ -1,11 +1,174 @@
+/* Polices du skin Classique (Nunito + Space Grotesk) */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* Polices du skin Maison (Familjen Grotesk + Hanken Grotesk + Spline Sans Mono) */
+@import url('https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  /*
+   * ============================================================
+   * SYSTÈME DE DOUBLE THÈME (« skin »)
+   * ============================================================
+   * Deux axes indépendants :
+   *   - le MODE clair/sombre est géré par next-themes via la classe `.dark`
+   *   - le SKIN (Maison / Classique) est porté par `data-skin` sur <html>,
+   *     posé avant le premier paint par le script inline de index.html
+   *     et géré ensuite par le SkinProvider (src/hooks/useSkin.tsx).
+   *
+   * L'ORDRE DES 4 BLOCS CI-DESSOUS EST PORTEUR DE SENS — ne pas réordonner :
+   *   1. :root                       → Maison clair (défaut, jeu COMPLET de tokens)
+   *   2. .dark                       → Maison sombre
+   *   3. [data-skin="classique"]     → Classique clair (jeu COMPLET, écrase 1 et 2
+   *                                    par ordre source à spécificité égale)
+   *   4. [data-skin="classique"].dark → Classique sombre (spécificité supérieure)
+   *
+   * INVARIANT : tout token déclaré dans le bloc 2 doit aussi être déclaré
+   * dans le bloc 4 (sinon un utilisateur Classique+sombre hériterait d'une
+   * valeur Maison). Idem entre les blocs 1 et 3.
+   */
+
+  /*
+   * --- 1. Skin « Maison », mode clair (défaut) ---
+   * Direction : le carnet de comptes familial — retenue d'une banque privée,
+   * chaleur de la maison. Encre verte profonde sur papier neutre, vert sapin
+   * pour l'action, laiton pour ce qui se compte (points, badges, niveaux),
+   * corail hérité du thème historique pour l'énergie côté enfant.
+   */
   :root {
+    --background: 90 11% 96%;
+    --foreground: 164 16% 13%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 164 16% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 164 16% 13%;
+
+    --primary: 163 44% 24%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 160 35% 42%;
+
+    --secondary: 168 22% 38%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 100 8% 92%;
+    --muted-foreground: 165 8% 40%;
+
+    --accent: 150 10% 91%;
+    --accent-foreground: 164 16% 13%;
+
+    /* Laiton : pièces et médailles — points, badges, niveaux */
+    --brass: 38 46% 45%;
+    --brass-foreground: 40 50% 12%;
+
+    /* Corail : accent d'énergie côté enfant, hérité du thème Classique */
+    --spark: 15 72% 56%;
+    --spark-foreground: 0 0% 100%;
+
+    /* Statuts : en attente (ocre) et information (bleu ardoise) */
+    --warning: 35 70% 44%;
+    --warning-foreground: 0 0% 100%;
+    --info: 211 40% 42%;
+    --info-foreground: 0 0% 100%;
+
+    --destructive: 4 60% 44%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 45% 34%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 150 8% 87%;
+    --input: 150 8% 87%;
+    --ring: 163 44% 32%;
+
+    --radius: 0.5rem;
+
+    --gradient-hero: linear-gradient(135deg, hsl(163 44% 24%), hsl(168 30% 16%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(100 10% 98%));
+    --gradient-teal: linear-gradient(135deg, hsl(168 22% 38%), hsl(163 30% 45%));
+
+    --shadow-soft: 0 1px 2px hsl(164 16% 13% / 0.05), 0 4px 12px -4px hsl(164 16% 13% / 0.08);
+    --shadow-card: 0 1px 3px hsl(164 16% 13% / 0.06), 0 8px 24px -12px hsl(164 16% 13% / 0.10);
+    --shadow-elevated: 0 2px 6px hsl(164 16% 13% / 0.08), 0 20px 40px -16px hsl(164 16% 13% / 0.16);
+
+    --font-display: 'Familjen Grotesk', sans-serif;
+    --font-body: 'Hanken Grotesk', sans-serif;
+    /* Écriture comptable : chiffres tabulaires pour tout ce qui se compte */
+    --font-data: 'Spline Sans Mono', monospace;
+
+    --sidebar-background: 100 8% 97%;
+    --sidebar-foreground: 164 16% 20%;
+    --sidebar-primary: 163 44% 24%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 150 10% 91%;
+    --sidebar-accent-foreground: 164 16% 13%;
+    --sidebar-border: 150 8% 87%;
+    --sidebar-ring: 163 44% 32%;
+  }
+
+  /* --- 2. Skin « Maison », mode sombre --- */
+  .dark {
+    --background: 168 14% 8%;
+    --foreground: 100 8% 92%;
+
+    --card: 166 12% 11%;
+    --card-foreground: 100 8% 92%;
+
+    --popover: 166 12% 11%;
+    --popover-foreground: 100 8% 92%;
+
+    --primary: 158 30% 58%;
+    --primary-foreground: 168 30% 10%;
+    --primary-glow: 158 35% 70%;
+
+    --secondary: 168 15% 28%;
+    --secondary-foreground: 100 8% 92%;
+
+    --muted: 166 10% 16%;
+    --muted-foreground: 150 8% 60%;
+
+    --accent: 166 10% 18%;
+    --accent-foreground: 100 8% 92%;
+
+    --brass: 40 45% 58%;
+    --brass-foreground: 40 45% 10%;
+
+    --spark: 15 70% 62%;
+    --spark-foreground: 15 50% 10%;
+
+    --warning: 38 55% 55%;
+    --warning-foreground: 38 50% 10%;
+    --info: 211 45% 62%;
+    --info-foreground: 215 40% 10%;
+
+    --destructive: 4 55% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 40% 44%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 166 10% 20%;
+    --input: 166 10% 20%;
+    --ring: 158 30% 58%;
+
+    --sidebar-background: 168 14% 7%;
+    --sidebar-foreground: 100 8% 88%;
+    --sidebar-primary: 158 30% 58%;
+    --sidebar-primary-foreground: 168 30% 10%;
+    --sidebar-accent: 166 10% 16%;
+    --sidebar-accent-foreground: 100 8% 92%;
+    --sidebar-border: 166 10% 18%;
+    --sidebar-ring: 158 30% 58%;
+    /* En sombre, le héro suit la logique du primaire : menthe avec texte encre */
+    --gradient-hero: linear-gradient(135deg, hsl(158 32% 62%), hsl(160 30% 48%));
+    --gradient-card: linear-gradient(180deg, hsl(166 12% 13%), hsl(168 14% 9%));
+  }
+
+  /* --- 3. Skin « Classique », mode clair (thème historique, conservé verbatim) --- */
+  [data-skin="classique"] {
     --background: 30 50% 98%;
     --foreground: 220 30% 15%;
 
@@ -27,6 +190,20 @@
 
     --accent: 45 95% 62%;
     --accent-foreground: 30 60% 20%;
+
+    /* En Classique, laiton et corail retombent sur l'accent jaune et le
+       primaire orange historiques : aucun changement visuel. */
+    --brass: 45 95% 62%;
+    --brass-foreground: 30 60% 20%;
+
+    --spark: 16 85% 60%;
+    --spark-foreground: 0 0% 100%;
+
+    /* Calés sur amber-500 / blue-500 utilisés jusqu'ici : no-op visuel */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
 
     --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
@@ -50,6 +227,7 @@
 
     --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'Nunito', sans-serif;
+    --font-data: 'Space Grotesk', monospace;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -61,7 +239,8 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  .dark {
+  /* --- 4. Skin « Classique », mode sombre --- */
+  [data-skin="classique"].dark {
     --background: 220 25% 8%;
     --foreground: 30 20% 92%;
 
@@ -83,6 +262,17 @@
 
     --accent: 45 95% 62%;
     --accent-foreground: 45 90% 85%;
+
+    --brass: 45 95% 62%;
+    --brass-foreground: 30 60% 20%;
+
+    --spark: 16 85% 60%;
+    --spark-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
@@ -128,6 +318,14 @@
   .gradient-hero {
     background: var(--gradient-hero);
   }
+  /* Texte en dégradé héro : background-image (pas le shorthand `background`,
+     qui réinitialiserait background-clip) + clip sur le texte. */
+  .text-gradient-hero {
+    background-image: var(--gradient-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
   .gradient-card {
     background: var(--gradient-card);
   }
@@ -161,8 +359,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 hsl(16 85% 60% / 0.3); }
-  50% { box-shadow: 0 0 0 12px hsl(16 85% 60% / 0); }
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.3); }
+  50% { box-shadow: 0 0 0 12px hsl(var(--primary) / 0); }
 }
 
 @keyframes confetti-fall {
@@ -200,4 +398,20 @@
 }
 .animate-fade-in {
   animation: fade-up 0.3s ease-out forwards;
+}
+
+/* Accessibilité : neutralise les animations décoratives pour les utilisateurs
+   qui préfèrent un mouvement réduit. Les transitions restent quasi instantanées
+   plutôt que supprimées pour ne pas casser les états qui en dépendent. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

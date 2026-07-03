@@ -51,4 +51,19 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        /*
+         * Isole les dépendances les plus volumineuses dans des chunks
+         * séparés afin qu'elles soient mises en cache indépendamment du
+         * code applicatif et chargées seulement lorsque c'est nécessaire.
+         */
+        manualChunks: {
+          charts: ["recharts"],
+          supabase: ["@supabase/supabase-js"],
+        },
+      },
+    },
+  },
 }));

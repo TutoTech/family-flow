@@ -10,19 +10,20 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Camera, Clock, Star, Ban, Filter, Palette } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { TASK_COLORS } from "@/utils/taskColors";
+import { getErrorMessage } from "@/lib/utils";
 
 type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
 
 const STATUS_GROUPS: { key: StatusFilter; color: string }[] = [
   { key: "all", color: "" },
-  { key: "awaiting_validation", color: "bg-amber-500" },
+  { key: "awaiting_validation", color: "bg-warning" },
   { key: "pending", color: "bg-muted-foreground" },
-  { key: "validated", color: "bg-emerald-500" },
+  { key: "validated", color: "bg-success" },
   { key: "not_done", color: "bg-destructive" },
   { key: "rejected", color: "bg-destructive" },
   { key: "skipped", color: "bg-muted-foreground/50" },
-  { key: "late", color: "bg-orange-500" },
-  { key: "done", color: "bg-blue-500" },
+  { key: "late", color: "bg-spark" },
+  { key: "done", color: "bg-info" },
 ];
 
 export default function ChildTaskList() {
@@ -35,7 +36,7 @@ export default function ChildTaskList() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingTaskIdRef = useRef<string | null>(null);
 
-  const STATUS_CHILD: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  const STATUS_CHILD: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = useMemo(() => ({
     pending: { label: t("childTasks.toDo"), variant: "outline" },
     awaiting_validation: { label: t("childTasks.awaiting"), variant: "default" },
     validated: { label: t("taskList.validated"), variant: "secondary" },
@@ -44,7 +45,7 @@ export default function ChildTaskList() {
     skipped: { label: t("childTasks.skipped"), variant: "outline" },
     not_done: { label: t("childTasks.notDone"), variant: "destructive" },
     done: { label: t("taskList.done"), variant: "secondary" },
-  };
+  }), [t]);
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
@@ -84,8 +85,8 @@ export default function ChildTaskList() {
     try {
       await completeTask.mutateAsync({ instanceId: taskId, photoFile: photo });
       toast({ title: t("childTasks.wellDone"), description: t("childTasks.taskSent") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -102,16 +103,16 @@ export default function ChildTaskList() {
     try {
       await skipTask.mutateAsync(taskId);
       toast({ title: t("childTasks.skipped"), description: t("childTasks.taskSkipped") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
   const handleColorChange = async (taskId: string, templateId: string, color: string) => {
     try {
       await updateChildTaskColor.mutateAsync({ templateId, color });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
