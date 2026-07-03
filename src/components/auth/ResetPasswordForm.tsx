@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { Lock } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function ResetPasswordForm() {
   const { t } = useTranslation();
@@ -44,8 +45,8 @@ export default function ResetPasswordForm() {
       if (error) throw error;
       toast({ title: t("auth.success"), description: t("auth.passwordUpdated") });
       navigate("/dashboard");
-    } catch (error: any) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+    } catch (error) {
+      toast({ title: t("common.error"), description: getErrorMessage(error), variant: "destructive" });
     } finally {
       setIsLoading(false);
     }

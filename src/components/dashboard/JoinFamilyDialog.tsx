@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 
 interface Props {
   open: boolean;
@@ -76,8 +77,8 @@ export default function JoinFamilyDialog({ open, onOpenChange, onJoined }: Props
       setCode("");
       onOpenChange(false);
       onJoined();
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setLoading(false);
     }

@@ -16,6 +16,7 @@ import { useFamilyChildren } from "@/hooks/useTasks";
 import { useTaskTemplates, TaskTemplate } from "@/hooks/useTaskTemplates";
 import { useToast } from "@/hooks/use-toast";
 import { TASK_COLORS } from "@/utils/taskColors";
+import { getErrorMessage } from "@/lib/utils";
 
 interface Props {
   open: boolean;
@@ -93,8 +94,8 @@ export default function EditTaskDialog({ open, onOpenChange, template }: Props) 
       });
       toast({ title: t("editTask.taskUpdated"), description: t("editTask.taskUpdatedDesc", { title }) });
       onOpenChange(false);
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 

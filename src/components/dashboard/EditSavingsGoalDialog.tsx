@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useSavingsGoals, SavingsGoal } from "@/hooks/useSavingsGoals";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 
 const ICON_OPTIONS = [
   "🎮", "📱", "🎧", "👟", "🎨", "📚", "🚲", "🎯", "🧸", "🎁", "💎", "🏖️",
@@ -52,8 +53,8 @@ export default function EditSavingsGoalDialog({ open, onOpenChange, goal }: Prop
       });
       toast({ title: "✅", description: t("savingsGoals.updated") || t("savingsGoals.created") });
       onOpenChange(false);
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setLoading(false);
     }

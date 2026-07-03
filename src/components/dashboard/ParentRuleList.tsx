@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import CreateRuleDialog from "./CreateRuleDialog";
 import EditRuleDialog from "./EditRuleDialog";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function ParentRuleList() {
   const { t } = useTranslation();
@@ -35,8 +36,8 @@ export default function ParentRuleList() {
 
       toast({ title: t("penalties.ruleDeleted") });
       queryClient.invalidateQueries({ queryKey: ["house-rules"] });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setDeleteRule(null);
     }

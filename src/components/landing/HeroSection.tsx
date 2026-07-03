@@ -7,6 +7,7 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-illustration.png";
+import HeroLedger from "./HeroLedger";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 
@@ -25,7 +26,7 @@ const HeroSection = () => {
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display text-foreground leading-tight animate-fade-up" style={{ animationDelay: "100ms" }}>
               {t("hero.titleStart")}{" "}
-              <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, hsl(16 85% 55%), hsl(0 72% 55%), hsl(340 70% 50%))" }}>{t("hero.titleHighlight")}</span>
+              <span className="text-gradient-hero">{t("hero.titleHighlight")}</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-body leading-relaxed max-w-lg mx-auto lg:mx-0 animate-fade-up" style={{ animationDelay: "200ms" }}>
               {t("hero.description")}
@@ -55,22 +56,26 @@ const HeroSection = () => {
             </div>
           </div>
           <div className="relative animate-scale-in max-w-md mx-auto lg:max-w-none" style={{ animationDelay: "200ms" }}>
-            <div className="relative rounded-3xl overflow-hidden shadow-elevated">
+            {/* Visuel du héro : livret token-driven en Maison, illustration d'origine en Classique */}
+            <div className="classique:hidden px-2 sm:px-6 py-4">
+              <HeroLedger />
+            </div>
+            <div className="hidden classique:block relative rounded-3xl overflow-hidden shadow-elevated">
               <img src={heroImage} alt={t("hero.heroAlt")} className="w-full h-auto" loading="eager" />
             </div>
             {/* Floating cards - hidden on very small screens to avoid overflow */}
-            <div className="hidden sm:block absolute -top-4 -right-4 bg-card rounded-2xl shadow-card p-3 animate-float border border-border/50">
+            <div className="hidden classique:sm:block absolute -top-4 -right-4 bg-card rounded-2xl shadow-card p-3 animate-float border border-border/50">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
                   <span className="text-success text-lg">✓</span>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold font-display text-foreground">{t("hero.tasksCompleted", { count: 12 })}</p>
+                  <p className="text-xs font-semibold font-display text-foreground tabular-nums">{t("hero.tasksCompleted", { count: 12 })}</p>
                   <p className="text-xs text-muted-foreground">{t("hero.completed")}</p>
                 </div>
               </div>
             </div>
-            <div className="hidden sm:block absolute -bottom-4 -left-4 bg-card rounded-2xl shadow-card p-3 animate-float border border-border/50" style={{ animationDelay: "1.5s" }}>
+            <div className="hidden classique:sm:block absolute -bottom-4 -left-4 bg-card rounded-2xl shadow-card p-3 animate-float border border-border/50" style={{ animationDelay: "1.5s" }}>
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-accent/30 flex items-center justify-center">
                   <span className="text-lg">🏆</span>

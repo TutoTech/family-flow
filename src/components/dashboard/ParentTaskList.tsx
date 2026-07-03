@@ -14,19 +14,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { getErrorMessage } from "@/lib/utils";
 
 type StatusFilter = "all" | "pending" | "awaiting_validation" | "validated" | "rejected" | "not_done" | "skipped" | "late" | "done";
 
 const STATUS_GROUPS: { key: StatusFilter; color: string }[] = [
   { key: "all", color: "" },
-  { key: "awaiting_validation", color: "bg-amber-500" },
+  { key: "awaiting_validation", color: "bg-warning" },
   { key: "pending", color: "bg-muted-foreground" },
-  { key: "validated", color: "bg-emerald-500" },
+  { key: "validated", color: "bg-success" },
   { key: "not_done", color: "bg-destructive" },
   { key: "rejected", color: "bg-destructive" },
   { key: "skipped", color: "bg-muted-foreground/50" },
-  { key: "late", color: "bg-orange-500" },
-  { key: "done", color: "bg-blue-500" },
+  { key: "late", color: "bg-spark" },
+  { key: "done", color: "bg-info" },
 ];
 
 export default function ParentTaskList() {
@@ -45,7 +46,7 @@ export default function ParentTaskList() {
 
   const isReadOnly = isImpersonating && realRole === "child";
 
-  const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = useMemo(() => ({
     pending: { label: t("taskList.pending"), variant: "outline" },
     done: { label: t("taskList.done"), variant: "secondary" },
     awaiting_validation: { label: t("taskList.awaitingValidation"), variant: "default" },
@@ -54,7 +55,7 @@ export default function ParentTaskList() {
     late: { label: t("taskList.late"), variant: "destructive" },
     skipped: { label: t("taskList.skipped"), variant: "outline" },
     not_done: { label: t("taskList.notDone"), variant: "destructive" },
-  };
+  }), [t]);
 
   // Count tasks per status
   const statusCounts = useMemo(() => {
@@ -84,8 +85,8 @@ export default function ParentTaskList() {
     try {
       await validateTask.mutateAsync({ instanceId, approved });
       toast({ title: approved ? t("taskList.taskValidated") : t("taskList.taskRejected") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -93,8 +94,8 @@ export default function ParentTaskList() {
     try {
       await resetTask.mutateAsync(instanceId);
       toast({ title: t("taskList.taskReset") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -102,8 +103,8 @@ export default function ParentTaskList() {
     try {
       await markNotDone.mutateAsync(instanceId);
       toast({ title: t("penalties.penaltyApplied") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -130,8 +131,8 @@ export default function ParentTaskList() {
         { id: currentTask.id, display_order: targetOrder },
         { id: targetTask.id, display_order: currentOrder }
       ]);
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
@@ -151,8 +152,8 @@ export default function ParentTaskList() {
     try {
       await reorderDailyTasks.mutateAsync(updates);
       toast({ title: "✓", description: t("taskList.sortByTime") });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 

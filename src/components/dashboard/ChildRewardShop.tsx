@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Gift, Star, ShoppingCart, Clock, CheckCircle2, XCircle, Banknote } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function ChildRewardShop() {
   const { t } = useTranslation();
@@ -40,17 +42,17 @@ export default function ChildRewardShop() {
 
       toast({ title: t("rewards.requestSent"), description: t("rewards.requestSentDesc", { title }) });
       queryClient.invalidateQueries({ queryKey: ["redemptions"] });
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     }
   };
 
-  const STATUS_MAP: Record<string, { label: string; icon: typeof Clock }> = {
+  const STATUS_MAP: Record<string, { label: string; icon: typeof Clock }> = useMemo(() => ({
     requested: { label: t("rewards.requested"), icon: Clock },
     approved: { label: t("rewards.approved"), icon: CheckCircle2 },
     rejected: { label: t("rewards.rejected"), icon: XCircle },
     delivered: { label: t("rewards.delivered"), icon: Gift },
-  };
+  }), [t]);
 
   return (
     <div className="space-y-4">
@@ -60,7 +62,7 @@ export default function ChildRewardShop() {
             <ShoppingCart className="h-5 w-5 text-primary flex-shrink-0" />
             <span className="break-words whitespace-normal leading-tight">{t("rewards.shop")}</span>
           </CardTitle>
-          <Badge variant="secondary" className="text-xs flex-shrink-0">
+          <Badge variant="secondary" className="text-xs flex-shrink-0 font-data tabular-nums">
             <Star className="h-3 w-3 mr-1" />
             {currentPoints} {t("common.pts")}
           </Badge>
@@ -89,13 +91,13 @@ export default function ChildRewardShop() {
                       {reward.description && <p className="text-xs text-muted-foreground break-words whitespace-normal mt-0.5 leading-tight">{reward.description}</p>}
                       <div className="flex items-center gap-2 mt-1 text-xs text-primary">
                         {reward.cost_points > 0 && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 font-data tabular-nums">
                             <Star className="h-3 w-3" />
                             {reward.cost_points} {t("common.pts")}
                           </span>
                         )}
                         {reward.cost_money && reward.cost_money > 0 && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 font-data tabular-nums">
                             <Banknote className="h-3 w-3" />
                             {reward.cost_money.toFixed(2)}{currencySymbol}
                           </span>

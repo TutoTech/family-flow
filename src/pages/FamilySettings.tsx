@@ -17,9 +17,12 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2, KeyRound, CheckCircle2 } from "lucide-react";
+import { Save, ArrowLeft, DollarSign, Flame, AlertTriangle, Clock, Camera, Globe, Coins, Shield, Trash2, KeyRound, CheckCircle2, Palette } from "lucide-react";
 import SetPinDialog from "@/components/dashboard/SetPinDialog";
 import { CURRENCIES, CurrencyCode } from "@/hooks/useCurrency";
+import { useSkin, type Skin } from "@/hooks/useSkin";
+import { useTheme } from "next-themes";
+import { getErrorMessage } from "@/lib/utils";
 
 interface FamilySettings {
   points_to_money_rate: number;
@@ -34,6 +37,8 @@ interface FamilySettings {
 
 export default function FamilySettingsPage() {
   const { t, i18n } = useTranslation();
+  const { skin, setSkin } = useSkin();
+  const { theme, setTheme } = useTheme();
   const { profile, role, user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -157,6 +162,50 @@ export default function FamilySettingsPage() {
           </div>
         </div>
 
+        {/* Apparence : skin (Maison/Classique) + mode d'affichage — préférences locales à l'appareil */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Palette className="h-5 w-5 text-primary" />
+              {t("settings.appearance")}
+            </CardTitle>
+            <CardDescription>{t("settings.appearanceDesc")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t("settings.skinLabel")}</Label>
+              <Select value={skin} onValueChange={(value) => setSkin(value as Skin)}>
+                <SelectTrigger className="max-w-64">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="maison">
+                    {t("settings.skinMaison")}
+                    <span className="ml-2 text-xs text-muted-foreground">{t("settings.skinMaisonHint")}</span>
+                  </SelectItem>
+                  <SelectItem value="classique">
+                    {t("settings.skinClassique")}
+                    <span className="ml-2 text-xs text-muted-foreground">{t("settings.skinClassiqueHint")}</span>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>{t("settings.modeLabel")}</Label>
+              <Select value={theme ?? "system"} onValueChange={setTheme}>
+                <SelectTrigger className="max-w-64">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">{t("theme.light")}</SelectItem>
+                  <SelectItem value="dark">{t("theme.dark")}</SelectItem>
+                  <SelectItem value="system">{t("theme.system")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Language */}
         <Card>
           <CardHeader>
@@ -227,7 +276,7 @@ export default function FamilySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Flame className="h-5 w-5 text-orange-500" />
+              <Flame className="h-5 w-5 text-spark" />
               {t("settings.streaksBonus")}
             </CardTitle>
             <CardDescription>{t("settings.streaksBonusDesc")}</CardDescription>
@@ -268,7 +317,7 @@ export default function FamilySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Clock className="h-5 w-5 text-blue-500" />
+              <Clock className="h-5 w-5 text-info" />
               {t("settings.delaysTitle")}
             </CardTitle>
             <CardDescription>{t("settings.delaysDesc")}</CardDescription>
@@ -298,7 +347,7 @@ export default function FamilySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <CheckCircle2 className="h-5 w-5 text-success" />
               {t("settings.autoValidateTitle")}
             </CardTitle>
             <CardDescription>{t("settings.autoValidateDesc")}</CardDescription>
@@ -395,8 +444,8 @@ export default function FamilySettingsPage() {
                   toast.success(t("auth.passwordUpdated"));
                   setNewPassword("");
                   setConfirmNewPassword("");
-                } catch (err: any) {
-                  toast.error(err.message);
+                } catch (err) {
+                  toast.error(getErrorMessage(err) || t("common.error"));
                 } finally {
                   setChangingPassword(false);
                 }
@@ -478,8 +527,8 @@ export default function FamilySettingsPage() {
                   toast.success(t("settings.deleteAccountSuccess"));
                   await supabase.auth.signOut();
                   navigate("/");
-                } catch (err: any) {
-                  toast.error(t("settings.deleteAccountError"), { description: err.message });
+                } catch (err) {
+                  toast.error(t("settings.deleteAccountError"), { description: getErrorMessage(err) });
                   setDeleting(false);
                 }
               }}

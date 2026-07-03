@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { getErrorMessage } from "@/lib/utils";
 
 interface Reward {
   id: string;
@@ -77,8 +78,8 @@ export default function EditRewardDialog({ open, onOpenChange, reward }: Props) 
       toast({ title: t("rewards.rewardUpdated") });
       queryClient.invalidateQueries({ queryKey: ["rewards"] });
       onOpenChange(false);
-    } catch (err: any) {
-      toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({ title: t("common.error"), description: getErrorMessage(err), variant: "destructive" });
     } finally {
       setLoading(false);
     }

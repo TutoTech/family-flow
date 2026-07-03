@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { LogIn, Mail, Lock, User, Hash, Users, Baby } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils";
 
 type LoginMode = "parent" | "child";
 
@@ -44,10 +45,11 @@ export default function LoginForm() {
     try {
       await signIn(email, password);
       navigate("/dashboard");
-    } catch (error: any) {
+    } catch (error) {
+      const message = getErrorMessage(error);
       toast({
         title: t("auth.loginError"),
-        description: error.message === "Invalid login credentials" ? t("auth.invalidCredentials") : error.message,
+        description: message === "Invalid login credentials" ? t("auth.invalidCredentials") : message || t("auth.loginError"),
         variant: "destructive",
       });
     } finally {
@@ -79,10 +81,11 @@ export default function LoginForm() {
 
       await signIn(resolvedEmail as string, password);
       navigate("/dashboard");
-    } catch (error: any) {
+    } catch (error) {
+      const message = getErrorMessage(error);
       toast({
         title: t("auth.loginError"),
-        description: error.message === "Invalid login credentials" ? t("auth.invalidCredentials") : error.message,
+        description: message === "Invalid login credentials" ? t("auth.invalidCredentials") : message || t("auth.loginError"),
         variant: "destructive",
       });
     } finally {

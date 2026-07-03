@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { Lock, KeyRound } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils";
 
 interface ResetChildPasswordDialogProps {
   open: boolean;
@@ -72,10 +73,10 @@ export default function ResetChildPasswordDialog({
         description: t("family.resetChildPasswordSuccessDesc", { name: childName }),
       });
       handleClose();
-    } catch (err: any) {
+    } catch (err) {
       toast({
         title: t("common.error"),
-        description: err.message || t("family.resetChildPasswordError"),
+        description: getErrorMessage(err) || t("family.resetChildPasswordError"),
         variant: "destructive",
       });
     } finally {
