@@ -175,7 +175,7 @@ export default function FamilySettingsPage() {
             <div className="space-y-2">
               <Label>{t("settings.skinLabel")}</Label>
               <Select value={skin} onValueChange={(value) => setSkin(value as Skin)}>
-                <SelectTrigger className="max-w-64">
+                <SelectTrigger className="max-w-64" aria-describedby="skin-hint">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -185,8 +185,9 @@ export default function FamilySettingsPage() {
               </Select>
               {/* Description affichée sous le select : un SelectItem ne doit contenir
                   que son libellé, sans quoi ce contenu réapparaît dans le champ fermé
-                  (Radix affiche le contenu de l'item sélectionné dans SelectValue). */}
-              <p className="text-xs text-muted-foreground">
+                  (Radix affiche le contenu de l'item sélectionné dans SelectValue).
+                  aria-describedby relie ce texte au select pour les lecteurs d'écran. */}
+              <p id="skin-hint" className="text-xs text-muted-foreground">
                 {skin === "maison" ? t("settings.skinMaisonHint") : t("settings.skinClassiqueHint")}
               </p>
             </div>
