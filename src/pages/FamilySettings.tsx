@@ -175,20 +175,21 @@ export default function FamilySettingsPage() {
             <div className="space-y-2">
               <Label>{t("settings.skinLabel")}</Label>
               <Select value={skin} onValueChange={(value) => setSkin(value as Skin)}>
-                <SelectTrigger className="max-w-64">
+                <SelectTrigger className="max-w-64" aria-describedby="skin-hint">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="maison">
-                    {t("settings.skinMaison")}
-                    <span className="ml-2 text-xs text-muted-foreground">{t("settings.skinMaisonHint")}</span>
-                  </SelectItem>
-                  <SelectItem value="classique">
-                    {t("settings.skinClassique")}
-                    <span className="ml-2 text-xs text-muted-foreground">{t("settings.skinClassiqueHint")}</span>
-                  </SelectItem>
+                  <SelectItem value="maison">{t("settings.skinMaison")}</SelectItem>
+                  <SelectItem value="classique">{t("settings.skinClassique")}</SelectItem>
                 </SelectContent>
               </Select>
+              {/* Description affichée sous le select : un SelectItem ne doit contenir
+                  que son libellé, sans quoi ce contenu réapparaît dans le champ fermé
+                  (Radix affiche le contenu de l'item sélectionné dans SelectValue).
+                  aria-describedby relie ce texte au select pour les lecteurs d'écran. */}
+              <p id="skin-hint" className="text-xs text-muted-foreground">
+                {skin === "maison" ? t("settings.skinMaisonHint") : t("settings.skinClassiqueHint")}
+              </p>
             </div>
             <div className="space-y-2">
               <Label>{t("settings.modeLabel")}</Label>
