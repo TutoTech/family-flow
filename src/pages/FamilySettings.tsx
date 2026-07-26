@@ -179,16 +179,16 @@ export default function FamilySettingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="maison">
-                    {t("settings.skinMaison")}
-                    <span className="ml-2 text-xs text-muted-foreground">{t("settings.skinMaisonHint")}</span>
-                  </SelectItem>
-                  <SelectItem value="classique">
-                    {t("settings.skinClassique")}
-                    <span className="ml-2 text-xs text-muted-foreground">{t("settings.skinClassiqueHint")}</span>
-                  </SelectItem>
+                  <SelectItem value="maison">{t("settings.skinMaison")}</SelectItem>
+                  <SelectItem value="classique">{t("settings.skinClassique")}</SelectItem>
                 </SelectContent>
               </Select>
+              {/* Description affichée sous le select : un SelectItem ne doit contenir
+                  que son libellé, sans quoi ce contenu réapparaît dans le champ fermé
+                  (Radix affiche le contenu de l'item sélectionné dans SelectValue). */}
+              <p className="text-xs text-muted-foreground">
+                {skin === "maison" ? t("settings.skinMaisonHint") : t("settings.skinClassiqueHint")}
+              </p>
             </div>
             <div className="space-y-2">
               <Label>{t("settings.modeLabel")}</Label>

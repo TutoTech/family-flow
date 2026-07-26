@@ -12,14 +12,17 @@ const HeroLedger = () => {
   const { t } = useTranslation();
 
   const entries = [
-    { icon: "🛏️", title: t("hero.ledger.entry1"), date: t("hero.ledger.today"), amount: "+10", positive: true },
-    { icon: "🍽️", title: t("hero.ledger.entry2"), date: t("hero.ledger.today"), amount: "+5", positive: true },
-    { icon: "🔥", title: t("hero.ledger.entry3"), date: t("hero.ledger.yesterday"), amount: "+5", positive: true },
-    { icon: "🚲", title: t("hero.ledger.entry4"), date: t("hero.ledger.yesterday"), amount: "−20", positive: false },
+    { id: "entry1", icon: "🛏️", title: t("hero.ledger.entry1"), date: t("hero.ledger.today"), amount: "+10", positive: true },
+    { id: "entry2", icon: "🍽️", title: t("hero.ledger.entry2"), date: t("hero.ledger.today"), amount: "+5", positive: true },
+    { id: "entry3", icon: "🔥", title: t("hero.ledger.entry3"), date: t("hero.ledger.yesterday"), amount: "+5", positive: true },
+    { id: "entry4", icon: "🚲", title: t("hero.ledger.entry4"), date: t("hero.ledger.yesterday"), amount: "−20", positive: false },
   ];
 
   return (
-    <div className="relative" role="img" aria-label={t("hero.heroAlt")}>
+    /* Purement décoratif (données de démonstration, à l'image de l'illustration
+       qu'il remplace en Classique) : masqué aux technologies d'assistance pour
+       éviter qu'un contenu chiffré fictif soit annoncé comme réel. */
+    <div className="relative" aria-hidden="true">
       {/* Feuillet décoratif derrière le livret */}
       <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-xl bg-primary/10 border border-primary/15" aria-hidden="true" />
 
@@ -50,7 +53,7 @@ const HeroLedger = () => {
         {/* Écritures */}
         <div className="divide-y divide-border/60 border-t border-border">
           {entries.map((entry) => (
-            <div key={entry.title} className="flex items-center gap-2.5 py-2.5">
+            <div key={entry.id} className="flex items-center gap-2.5 py-2.5">
               <span className="text-base shrink-0" aria-hidden="true">{entry.icon}</span>
               <span className="text-sm text-foreground truncate flex-1">{entry.title}</span>
               <span className="text-xs text-muted-foreground shrink-0">{entry.date}</span>
