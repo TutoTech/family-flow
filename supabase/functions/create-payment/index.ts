@@ -53,8 +53,8 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return new Response(JSON.stringify({ error: message }), {
+    console.error("Create payment error:", error);
+    return new Response(JSON.stringify({ error: "Une erreur est survenue lors de la création du paiement." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

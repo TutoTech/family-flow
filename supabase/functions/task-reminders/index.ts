@@ -102,7 +102,7 @@ serve(async (req) => {
     });
   } catch (err) {
     console.error("Task reminders error:", err);
-    return new Response(JSON.stringify({ error: String(err) }), {
+    return new Response(JSON.stringify({ error: "Une erreur est survenue lors du traitement des rappels." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
