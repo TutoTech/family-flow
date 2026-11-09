@@ -91,7 +91,7 @@
 
 | Couche | Technologie |
 |---|---|
-| **Frontend** | React 18, TypeScript 5, Vite 5 |
+| **Frontend** | React 18, TypeScript 5, Vite 8 |
 | **UI** | Tailwind CSS 3, shadcn/ui, Radix UI, Lucide Icons |
 | **State** | TanStack React Query, React Context |
 | **Backend** | Supabase |
@@ -142,7 +142,7 @@ Les tables principales :
 
 ### Prérequis
 
-- [Node.js](https://nodejs.org/) ≥ 18 (recommandé : via [nvm](https://github.com/nvm-sh/nvm))
+- [Node.js](https://nodejs.org/) ≥ 22.12 (recommandé : via [nvm](https://github.com/nvm-sh/nvm))
 - npm ou bun
 
 ### Lancement
@@ -213,7 +213,7 @@ Avant de commencer, assurez-vous d'avoir :
    # Linux (Ubuntu/Debian)
    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
    ```
-3. **Node.js ≥ 18** installé ([télécharger](https://nodejs.org/))
+3. **Node.js ≥ 22.12** installé ([télécharger](https://nodejs.org/))
 4. **Git** installé
 5. **Un compte GitHub** (Azure Static Web Apps se connecte à GitHub pour le CI/CD)
 6. **Un compte Stripe** avec vos clés API ([dashboard.stripe.com](https://dashboard.stripe.com))
