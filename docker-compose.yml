@@ -1,0 +1,18 @@
+# Production deployment for Stop-Repeat (family-flow) on Coolify.
+# L'image est construite par GitHub Actions (.github/workflows/image.yml), JAMAIS sur le serveur :
+# le build sur la VM saturerait sa mémoire (8 Go de RAM, swap déjà utilisé).
+# Coolify suit la branche `production`, où `:main` est remplacé par le commit exact à déployer
+# (.github/scripts/compose_production.py, qui refuse tout compose contenant « build: »).
+
+services:
+  app:
+    image: ghcr.io/tutotech/family-flow:main
+    restart: unless-stopped
+    ports:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/version.json"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3

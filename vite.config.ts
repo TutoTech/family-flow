@@ -9,6 +9,31 @@ const FALLBACK_BACKEND_PUBLISHABLE_KEY =
 const FALLBACK_BACKEND_PROJECT_ID = "fzstjebbxbejypgwamqx";
 
 // https://vitejs.dev/config/
+function versionJsonPlugin() {
+  return {
+    name: "generate-version-json",
+    generateBundle() {
+      const commit =
+        process.env.APP_VERSION ||
+        process.env.VITE_COMMIT_SHA ||
+        process.env.COMMIT_SHA ||
+        "dev";
+      this.emitFile({
+        type: "asset",
+        fileName: "version.json",
+        source: JSON.stringify(
+          {
+            version: commit,
+            built_at: new Date().toISOString(),
+          },
+          null,
+          2
+        ),
+      });
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
@@ -30,10 +55,11 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
+    versionJsonPlugin(),
     process.env.SENTRY_AUTH_TOKEN &&
       sentryVitePlugin({
-        org: process.env.SENTRY_ORG,
-        project: process.env.SENTRY_PROJECT,
+        org: process.env.SENTRY_ORG || "tutotech",
+        project: process.env.SENTRY_PROJECT || "stop-repeat-family-flow",
         authToken: process.env.SENTRY_AUTH_TOKEN,
         ...(process.env.VITE_SENTRY_RELEASE
           ? { release: { name: process.env.VITE_SENTRY_RELEASE } }

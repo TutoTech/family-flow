@@ -22,26 +22,60 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Ce commit a-t-il déjà été testé sur sa PR ?
+        id: deja_teste
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: python3 .github/scripts/deja_teste.py CI
+
       - name: Setup Node.js
+        if: steps.deja_teste.outputs.skip != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
       - name: Install dependencies
+        if: steps.deja_teste.outputs.skip != 'true'
         run: npm ci
 
       # Lint non bloquant : il reste des erreurs `any` à résorber
       # progressivement, on les rend visibles sans bloquer la CI.
       - name: Lint
+        if: steps.deja_teste.outputs.skip != 'true'
         run: npm run lint
         continue-on-error: true
 
       - name: Type check
+        if: steps.deja_teste.outputs.skip != 'true'
         run: npx tsc --noEmit
 
-      - name: Test
+      - name: Test unitaires frontend
+        if: steps.deja_teste.outputs.skip != 'true'
         run: npm test
 
+      - name: Test unitaires scripts CI/CD
+        if: steps.deja_teste.outputs.skip != 'true'
+        run: python3 -m unittest discover -s tests
+
       - name: Build
+        if: steps.deja_teste.outputs.skip != 'true'
         run: npm run build
+        env:
+          APP_VERSION: ${{ github.sha }}
+
+      - name: Valider la présence et le format de dist/version.json
+        if: steps.deja_teste.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          test -f dist/version.json
+          python3 -c '
+          import json
+          with open("dist/version.json") as f:
+              d = json.load(f)
+          assert "version" in d and len(d["version"]) > 0, "clé version manquante ou vide"
+          assert "built_at" in d and len(d["built_at"]) > 0, "clé built_at manquante ou vide"
+          print(f"dist/version.json validé : {d}")
+          '

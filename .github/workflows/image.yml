@@ -1,0 +1,226 @@
+name: image
+
+# Fabrique l'image de production sur GitHub Actions, puis la fait déployer par Coolify sans rien construire
+# sur le serveur.
+#
+# Circuit :
+#   push sur main ─► construire : image ghcr.io/tutotech/family-flow:<commit> (et :main), cache GitHub Actions
+#                 ─► deployer   : met à jour la branche `production` avec l'image épinglée sur le commit
+#                 ─► Coolify    : suit la branche `production`, télécharge l'image GHCR et redémarre le conteneur
+#                 ─► verifier   : attend que https://stop-repeat.tutotech.org/version.json affiche <commit> (5 min max)
+#                 ─► nettoyer   : conserve les 30 dernières images dans GHCR
+#
+# Retour arrière (Rollback) : « Run workflow » avec le commit voulu. Son image existant déjà sur GHCR, elle
+# n'est pas reconstruite et Coolify redéploie immédiatement.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: "Commit SHA à déployer (retour arrière). Laisser vide pour la tête de main."
+        required: false
+        default: ""
+      skip_verifier:
+        description: "Ignorer l'étape verifier en cas d'urgence opérationnelle (true/false)"
+        required: false
+        default: "false"
+
+concurrency:
+  group: image-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  IMAGE: ghcr.io/tutotech/family-flow
+
+jobs:
+  construire:
+    name: construire et publier l'image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      commit: ${{ steps.commit.outputs.commit }}
+    steps:
+      - name: Choisir et valider le commit
+        id: commit
+        env:
+          DEMANDE: ${{ inputs.commit }}
+          SHA: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ -z "$DEMANDE" ]; then
+            commit="$SHA"
+          else
+            if ! printf '%s' "$DEMANDE" | grep -Eq '^[0-9a-f]{7,40}$'; then
+              echo "::error::« $DEMANDE » n'est pas un commit (7 à 40 caractères hexadécimaux)."
+              exit 1
+            fi
+            commit=$(gh api "repos/$DEPOT/commits/$DEMANDE" --jq .sha)
+            statut=$(gh api "repos/$DEPOT/compare/$commit...main" --jq .status)
+            case "$statut" in
+              identical|ahead) ;;
+              *) echo "::error::$commit n'est pas dans l'historique de main ($statut)."; exit 1 ;;
+            esac
+          fi
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          echo "Commit sélectionné : $commit"
+
+      - name: Connexion à GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: L'image existe-t-elle déjà ?
+        id: existe
+        env:
+          COMMIT: ${{ steps.commit.outputs.commit }}
+        run: |
+          if docker manifest inspect "$IMAGE:$COMMIT" > /dev/null 2>&1; then
+            echo "existe=oui" >> "$GITHUB_OUTPUT"
+            echo "Image déjà publiée sur GHCR : $IMAGE:$COMMIT (reconstruction sautée)"
+          else
+            echo "existe=non" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Vérifier les réglages Sentry
+        if: steps.existe.outputs.existe == 'non'
+        env:
+          DSN: ${{ vars.VITE_SENTRY_DSN }}
+          JETON: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          [ -n "$DSN" ] || echo "::warning::Variable VITE_SENTRY_DSN absente : aucune erreur ne remontera dans Sentry."
+          [ -n "$JETON" ] || echo "::warning::Secret SENTRY_AUTH_TOKEN absent : les sourcemaps ne seront pas envoyées à Sentry."
+
+      - uses: actions/checkout@v4
+        if: steps.existe.outputs.existe == 'non'
+        with:
+          ref: ${{ steps.commit.outputs.commit }}
+          persist-credentials: false
+
+      - uses: docker/setup-buildx-action@v3
+        if: steps.existe.outputs.existe == 'non'
+
+      - name: Construire et publier sur GHCR
+        if: steps.existe.outputs.existe == 'non'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ steps.commit.outputs.commit }}
+            ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && format('{0}:main', env.IMAGE) || '' }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ steps.commit.outputs.commit }}
+          provenance: false
+          build-args: |
+            APP_VERSION=${{ steps.commit.outputs.commit }}
+            VITE_SENTRY_RELEASE=${{ steps.commit.outputs.commit }}
+            VITE_SENTRY_DSN=${{ vars.VITE_SENTRY_DSN }}
+            VITE_SENTRY_ENVIRONMENT=${{ vars.VITE_SENTRY_ENVIRONMENT || 'production' }}
+            SENTRY_ORG=${{ vars.SENTRY_ORG || 'tutotech' }}
+            SENTRY_PROJECT=${{ vars.SENTRY_PROJECT || 'stop-repeat-family-flow' }}
+            VITE_SUPABASE_URL=${{ vars.VITE_SUPABASE_URL }}
+            VITE_SUPABASE_PROJECT_ID=${{ vars.VITE_SUPABASE_PROJECT_ID }}
+            VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          secrets: |
+            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deployer:
+    name: déployer (branche production)
+    needs: construire
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    outputs:
+      deploye: ${{ steps.pousser.outputs.deploye }}
+    env:
+      COMMIT: ${{ needs.construire.outputs.commit }}
+    steps:
+      - name: Vérifier si main est toujours à jour (push uniquement)
+        id: tete
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          tete=$(gh api "repos/$DEPOT/commits/main" --jq .sha)
+          if [ "$tete" = "$COMMIT" ]; then
+            echo "a_jour=oui" >> "$GITHUB_OUTPUT"
+          else
+            echo "a_jour=non" >> "$GITHUB_OUTPUT"
+            echo "::notice::main a avancé ($tete) : déploiement délégué au workflow du nouveau commit."
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.tete.outputs.a_jour != 'non'
+        with:
+          ref: ${{ env.COMMIT }}
+
+      - name: Pousser la branche production
+        id: pousser
+        if: steps.tete.outputs.a_jour != 'non'
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/compose_production.py "$COMMIT" docker-compose.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -am "Déploiement de ${COMMIT:0:7}" -m "Image $IMAGE:$COMMIT construite par GitHub Actions : $RUN_URL"
+          git push --force origin HEAD:refs/heads/production
+          echo "deploye=oui" >> "$GITHUB_OUTPUT"
+
+  verifier:
+    name: vérifier la version en ligne
+    needs: [construire, deployer]
+    if: needs.deployer.outputs.deploye == 'oui' && inputs.skip_verifier != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      COMMIT: ${{ needs.construire.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+
+      - name: Vérifier https://stop-repeat.tutotech.org/version.json
+        run: python3 .github/scripts/verifier_deploiement.py "$COMMIT" --timeout 300
+
+  nettoyer:
+    name: nettoyer les vieilles images (garder 30)
+    needs: [deployer, verifier]
+    # S'exécute après déploiement que verifier soit passé ou sauté (ou réussi)
+    if: always() && needs.deployer.outputs.deploye == 'oui' && (needs.verifier.result == 'success' || needs.verifier.result == 'skipped')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+
+      - name: Supprimer les images au-delà des 30 plus récentes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/nettoyer_ghcr.py

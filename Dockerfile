@@ -16,22 +16,25 @@ ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
 ENV VITE_SUPABASE_PROJECT_ID=$VITE_SUPABASE_PROJECT_ID
 
-# Build-time Sentry config (DSN bundled into JS; auth token consumed only here)
+# Version and Sentry build-time config
+ARG APP_VERSION
 ARG VITE_SENTRY_DSN
 ARG VITE_SENTRY_ENVIRONMENT
 ARG VITE_SENTRY_RELEASE
-ARG SENTRY_AUTH_TOKEN
 ARG SENTRY_ORG
 ARG SENTRY_PROJECT
-ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN \
+ENV APP_VERSION=$APP_VERSION \
+    VITE_SENTRY_DSN=$VITE_SENTRY_DSN \
     VITE_SENTRY_ENVIRONMENT=$VITE_SENTRY_ENVIRONMENT \
     VITE_SENTRY_RELEASE=$VITE_SENTRY_RELEASE \
-    SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN \
     SENTRY_ORG=$SENTRY_ORG \
     SENTRY_PROJECT=$SENTRY_PROJECT
 
 COPY . .
-RUN npm run build
+# SENTRY_AUTH_TOKEN is mounted via BuildKit secret to avoid persisting credentials in image layers
+RUN --mount=type=secret,id=sentry_auth_token \
+    SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token 2>/dev/null || echo "") \
+    npm run build
 
 # ---------- Runtime stage ----------
 FROM nginxinc/nginx-unprivileged:1.27-alpine

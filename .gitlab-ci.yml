@@ -1,0 +1,43 @@
+# Satellite de sécurité GitLab Ultimate pour Stop-Repeat (family-flow)
+# Utilise les 50 000 min/an gratuites de GitLab Ultimate for Nonprofits (0 minute GitHub Actions consommée)
+
+stages:
+  - test
+  - dast
+
+include:
+  # 1. Analyse statique du code (SAST avec Semgrep)
+  - template: Jobs/SAST.gitlab-ci.yml
+  # 2. Détection des fuites de secrets (Secret Detection avec Gitleaks)
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+  # 3. Analyse des dépendances applicatives (Node.js / npm)
+  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+  # 4. Scan de vulnérabilités de l'image Docker de production (Container Scanning)
+  - template: Jobs/Container-Scanning.gitlab-ci.yml
+  # 5. Audit de sécurité dynamique en direct sur la production (DAST)
+  - template: Security/DAST.gitlab-ci.yml
+
+variables:
+  SECURE_LOG_LEVEL: "info"
+  # Cible du scan de conteneur (identifiants CS_REGISTRY_USER et CS_REGISTRY_PASSWORD configurés dans les variables CI/CD du projet)
+  CS_IMAGE: "ghcr.io/tutotech/family-flow:main"
+  # Cible du scan dynamique en ligne
+  DAST_WEBSITE: "https://stop-repeat.tutotech.org"
+
+# Le scan DAST tourne lors de l'audit hebdomadaire planifié ou sur demande manuelle
+dast:
+  stage: dast
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $DAST_RUN == "true"
+
+# Envoi de la télémétrie de sécurité à New Relic
+notify_newrelic:
+  stage: .post
+  image: python:3.11-alpine
+  rules:
+    - if: $NEW_RELIC_INGEST_KEY
+      when: always
+  script:
+    - python3 scripts/notify-newrelic.py
