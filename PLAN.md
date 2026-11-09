@@ -141,7 +141,7 @@ Synthesized from this review's findings. Each task derives from a specific findi
   - Surfaced by: Findings DX-Documentation, Rollback Runbook
   - Files: `docs/deployment.md`
   - Verify: Fichier markdown complet et liens valides.
-- [ ] **T7 (P1, human: ~30min / CC: ~5min)** — Coolify Configuration — Reconfigurer Stop-Repeat sur Coolify pour déployer la branche production via Docker Compose
+- [x] **T7 (P1, human: ~30min / CC: ~5min)** — Coolify Configuration — Reconfigurer Stop-Repeat sur Coolify pour déployer la branche production via Docker Compose
   - Surfaced by: Étape 5 & Recette finale
   - Files: Interface Coolify
   - Verify: `curl -s https://stop-repeat.tutotech.org/version.json` renvoie le SHA du commit déployé.
