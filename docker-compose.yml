@@ -6,7 +6,7 @@
 
 services:
   app:
-    image: ghcr.io/tutotech/family-flow:main
+    image: ghcr.io/tutotech/family-flow:ac5a2a53e5c885dd6a977cbf673a05eed57440e0
     restart: unless-stopped
     ports:
       - "8080"
