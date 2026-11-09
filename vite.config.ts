@@ -50,16 +50,16 @@ export default defineConfig(({ mode }) => ({
          * séparés afin qu'elles soient mises en cache indépendamment du
          * code applicatif et chargées seulement lorsque c'est nécessaire.
          */
-        manualChunks: {
-          charts: ["recharts"],
-          supabase: ["@supabase/supabase-js"],
+        manualChunks(id: string) {
+          if (id.includes("node_modules/recharts")) return "charts";
+          if (id.includes("node_modules/@supabase/supabase-js")) return "supabase";
         },
       },
     },
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
 }));
